@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/clarke'
+
+if ARGV.size != 1
+  $stderr.puts 'usage: clarke [filename]'
+  exit 1
+end
+
+res = Clarke::Grammar::PROGRAM.apply(File.read(ARGV[0]))
+case res
+when DParse::Success
+  require 'pp'
+  pp res.data
+  puts
+
+  evaluator = Clarke::Evaluator.new
+  evaluator.evaluate_array(res.data, env: evaluator.new_env)
+  puts
+when DParse::Failure
+  $stderr.puts res.pretty_message
+  exit 1
+end

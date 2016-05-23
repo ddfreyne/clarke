@@ -1,0 +1,18 @@
+def multiply(a, b) {
+  if (a > 0) {
+    b + multiply(a - 1, b);
+  } else {
+    0;
+  }
+}
+
+b = multiply(3, 5) + 1;
+print(b + 1 + b);
+
+if (b > 2) {
+  print(1 + 2 + 3);
+} else {
+  print(100);
+}
+
+print(1);
