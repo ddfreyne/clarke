@@ -1,0 +1,12 @@
+let hello = 1
+let donkey = hello + 4
+
+let multiply = fun (a, b) {
+  if (b > 0) {
+    a + multiply(a, b - 1)
+  } else {
+    0
+  }
+}
+
+1 + multiply(2) + 3

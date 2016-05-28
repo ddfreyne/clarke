@@ -4,48 +4,23 @@ module Clarke
   module Grammar
     extend DParse::DSL
 
-    # primitives
+    def self.repeat1(a)
+      seq(a, repeat(a)).map { |d| [d[0]] + d[1] }
+    end
 
     DIGIT = char_in('0'..'9')
+
+    NUMBER =
+      repeat1(DIGIT)
+      .capture
+      .map { |d| Clarke::AST::IntegerLiteral.new(d.to_i) }
+
     LETTER = char_in('a'..'z')
-    UNDERSCORE = char('_')
-    LPAREN = char('(')
-    RPAREN = char(')')
-    COMMA = char(',')
-    SEMICOLON = char(';')
-    LBRACE = char('{')
-    RBRACE = char('}')
 
-    # basic
-
-    IDENTIFIER_CHAR =
+    SPACE_OR_TAB =
       alt(
-        LETTER,
-        UNDERSCORE,
-      )
-
-    IDENTIFIER =
-      describe(
-        seq(
-          IDENTIFIER_CHAR,
-          repeat(IDENTIFIER_CHAR),
-        ).capture,
-        'identifier',
-      )
-
-    INTEGER =
-      seq(
-        DIGIT,
-        repeat(DIGIT),
-      ).capture.map { |d| Clarke::AST::Int.new(value: d.to_i(10)) }
-
-    VAR =
-      IDENTIFIER.map { |d| Clarke::AST::Var.new(name: d) }
-
-    EOF =
-      seq(
-        opt(char("\n")),
-        eof,
+        char(' '),
+        char("\t"),
       )
 
     WHITESPACE_CHAR =
@@ -62,197 +37,190 @@ module Clarke
     WHITESPACE1 =
       seq(WHITESPACE_CHAR, WHITESPACE0)
 
-    # complex
-
-    FUNDEF_ARGLIST =
-      opt(
-        intersperse(
-          VAR,
-          seq(
-            COMMA,
-            WHITESPACE0,
-          ),
-        ).select_even,
-      ).map { |d| d || [] }
-
-    FUNDEF =
-      seq(
-        string('def').ignore,
-        WHITESPACE1.ignore,
-        IDENTIFIER,
-        LPAREN.ignore,
-        FUNDEF_ARGLIST,
-        RPAREN.ignore,
-        WHITESPACE1.ignore,
-        LBRACE.ignore,
-        WHITESPACE0.ignore,
-        repeat(lazy { STATEMENT }),
-        WHITESPACE0.ignore,
-        RBRACE.ignore,
-      ).compact.map do |d|
-        Clarke::AST::Def.new(
-          name: d[0],
-          args: d[1],
-          body: d[2],
-        )
-      end
-
-    OPERAND_BASIC =
-      alt(
-        lazy { FUNCALL },
-        INTEGER,
-        VAR,
+    RESERVED_WORD =
+      describe(
+        alt(
+          string('else'),
+          string('false'),
+          string('fun'),
+          string('if'),
+          string('in'),
+          string('let'),
+          string('true'),
+        ),
+        'reserved keyword',
       )
 
-    OPERATOR =
-      alt(
-        string('>'),
-        string('>='),
-        string('<'),
-        string('<='),
-        string('=='),
-        string('+'),
-        string('*'),
-        string('-'),
-      ).capture
+    IDENTIFIER =
+      except(
+        describe(
+          repeat1(LETTER).capture,
+          'identifier',
+        ),
+        RESERVED_WORD,
+      )
 
-    OPERATOR_EXPRESSION =
+    FUNCTION_NAME = IDENTIFIER
+    VARIABLE_NAME = IDENTIFIER
+
+    FUNCTION_CALL =
       seq(
-        OPERAND_BASIC,
+        FUNCTION_NAME,
+        char('(').ignore,
+        opt(
+          intersperse(
+            seq(
+              WHITESPACE0.ignore,
+              lazy { EXPRESSION },
+              WHITESPACE0.ignore,
+            ).compact.first,
+            char(',').ignore,
+          ).select_even,
+        ).map { |d| d || [] },
+        char(')').ignore,
+      ).compact.map do |data, success, old_pos|
+        Clarke::AST::FunctionCall.new(data[0], data[1], success.input, old_pos, success.pos)
+      end
+
+    VARIABLE_REF = VARIABLE_NAME.map { |d| Clarke::AST::Var.new(d) }
+
+    SCOPE =
+      seq(
+        char('{').ignore,
         WHITESPACE0.ignore,
-        OPERATOR,
+        intersperse(lazy { EXPRESSION }, WHITESPACE1).select_even,
+        WHITESPACE0.ignore,
+        char('}').ignore,
+      ).compact.first.map do |data|
+        Clarke::AST::Scope.new(data)
+      end
+
+    ASSIGNMENT =
+      seq(
+        string('let').ignore,
+        WHITESPACE1.ignore,
+        VARIABLE_NAME,
+        WHITESPACE0.ignore,
+        char('=').ignore,
         WHITESPACE0.ignore,
         lazy { EXPRESSION },
-      ).compact.map do |d|
-        fname =
-          case d[1]
-          when '>'
-            '_op_gt'
-          when '>='
-            '_op_gte'
-          when '<'
-            '_op_lt'
-          when '<='
-            '_op_lte'
-          when '=='
-            '_op_eq'
-          when '+'
-            '_op_add'
-          when '*'
-            '_op_mul'
-          when '-'
-            '_op_sub'
-          end
-
-        Clarke::AST::Call.new(
-          name: fname,
-          args: [d[0], d[2]],
-        )
-      end
-
-    EXPRESSION =
-      alt(
-        lazy { FUNCALL },
-        OPERATOR_EXPRESSION,
-        INTEGER,
-        VAR,
-      )
-
-    FUNCALL_ARGLIST =
-      opt(
-        intersperse(
-          EXPRESSION,
+        opt(
           seq(
-            COMMA,
-            WHITESPACE0,
-          ),
-        ).select_even,
-      ).map { |d| d || [] }
-
-    FUNCALL =
-      seq(
-        IDENTIFIER,
-        LPAREN.ignore,
-        FUNCALL_ARGLIST,
-        RPAREN.ignore,
-      ).compact.map do |d|
-        Clarke::AST::Call.new(
-          name: d[0],
-          args: d[1],
-        )
+            WHITESPACE1.ignore,
+            string('in').ignore,
+            WHITESPACE1.ignore,
+            SCOPE,
+          ).compact.first,
+        ),
+      ).compact.map do |data|
+        if data[2]
+          Clarke::AST::ScopedLet.new(data[0], data[1], data[2])
+        else
+          Clarke::AST::Assignment.new(data[0], data[1])
+        end
       end
 
     IF =
       seq(
         string('if').ignore,
-        WHITESPACE1.ignore,
-        LPAREN.ignore,
-        EXPRESSION,
-        RPAREN.ignore,
         WHITESPACE0.ignore,
-        LBRACE.ignore,
+        char('(').ignore,
         WHITESPACE0.ignore,
-        intersperse(
-          lazy { STATEMENT },
-          WHITESPACE0.ignore,
-        ).compact,
-        RBRACE.ignore,
-        opt(
-          seq(
-            WHITESPACE0.ignore,
-            string('else').ignore,
-            WHITESPACE0.ignore,
-            LBRACE.ignore,
-            WHITESPACE0.ignore,
-            intersperse(
-              lazy { STATEMENT },
-              WHITESPACE0.ignore,
-            ).compact,
-            RBRACE.ignore,
-          ).compact.first,
-        )
-      ).compact.map do |d|
-        Clarke::AST::If.new(
-          cond: d[0],
-          body_true: d[1],
-          body_false: d[2],
-        )
+        lazy { EXPRESSION },
+        WHITESPACE0.ignore,
+        char(')').ignore,
+        WHITESPACE0.ignore,
+        SCOPE,
+        WHITESPACE0.ignore,
+        string('else').ignore,
+        WHITESPACE0.ignore,
+        SCOPE,
+      ).compact.map do |data|
+        Clarke::AST::If.new(data[0], data[1], data[2])
       end
 
-    ASSIGN =
+    LAMBDA_DEF =
       seq(
-        VAR,
+        string('fun').ignore,
+        WHITESPACE1.ignore,
+        char('(').ignore,
+        opt(
+          intersperse(
+            seq(
+              WHITESPACE0.ignore,
+              VARIABLE_NAME,
+              WHITESPACE0.ignore,
+            ).compact.first,
+            char(',').ignore,
+          ).select_even,
+        ).map { |d| d || [] },
+        char(')').ignore,
         WHITESPACE0.ignore,
-        string('=').ignore,
-        WHITESPACE0.ignore,
-        EXPRESSION,
-        SEMICOLON.ignore,
-      ).compact.map do |d|
-        Clarke::AST::Assign.new(
-          var: d[0],
-          value: d[1],
-        )
+        SCOPE,
+      ).compact.map do |data|
+        Clarke::AST::LambdaDef.new(data[0], data[1])
       end
 
-    STATEMENT =
+    OPERATOR =
       alt(
-        FUNDEF,
+        char('^'),
+        char('*'),
+        char('/'),
+        char('+'),
+        char('-'),
+        string('=='),
+        string('>='),
+        string('>'),
+        string('<='),
+        string('<'),
+        string('&&'),
+        string('||'),
+      ).capture.map { |d| Clarke::AST::Op.new(d) }
+
+    TRUE =
+      string('true').map { |_| Clarke::AST::TrueLiteral }
+
+    FALSE =
+      string('false').map { |_| Clarke::AST::FalseLiteral }
+
+    OPERAND =
+      alt(
+        TRUE,
+        FALSE,
+        FUNCTION_CALL,
+        NUMBER,
+        ASSIGNMENT,
+        SCOPE,
         IF,
-        ASSIGN,
-        seq(
-          EXPRESSION,
-          SEMICOLON.ignore,
-          WHITESPACE0.ignore,
-        ).compact.first,
+        LAMBDA_DEF,
+        VARIABLE_REF,
       )
 
-    PROGRAM =
-      seq(
-        intersperse(
-          STATEMENT,
+    EXPRESSION =
+      intersperse(
+        OPERAND,
+        seq(
           WHITESPACE0.ignore,
-        ).compact,
-        EOF.ignore,
-      ).compact.first
+          OPERATOR,
+          WHITESPACE0.ignore,
+        ).compact.first,
+      ).map do |data|
+        Clarke::AST::OpSeq.new(data)
+      end
+
+    LINE_BREAK =
+      seq(
+        repeat(SPACE_OR_TAB),
+        char("\n"),
+        WHITESPACE0,
+      )
+
+    STATEMENTS =
+      intersperse(
+        EXPRESSION,
+        LINE_BREAK,
+      ).select_even
+
+    PROGRAM = seq(WHITESPACE0.ignore, STATEMENTS, WHITESPACE0.ignore, eof.ignore).compact.first
   end
 end

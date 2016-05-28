@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'd-parse', github: 'ddfreyne/d-parse'
+gem 'd-parse', path: '../d-parse'
 
 gem 'coveralls', require: false
 gem 'guard'

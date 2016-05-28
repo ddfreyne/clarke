@@ -10,13 +10,13 @@ end
 res = Clarke::Grammar::PROGRAM.apply(File.read(ARGV[0]))
 case res
 when DParse::Success
-  require 'pp'
-  pp res.data
-  puts
-
   evaluator = Clarke::Evaluator.new
-  evaluator.evaluate_array(res.data, env: evaluator.new_env)
-  puts
+  begin
+    evaluator.eval_exprs(res.data)
+  rescue Clarke::Evaluator::Error => e
+    $stderr.puts "#{e.fancy_message}"
+    exit 1
+  end
 when DParse::Failure
   $stderr.puts res.pretty_message
   exit 1

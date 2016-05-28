@@ -1,18 +1,95 @@
-def multiply(a, b) {
-  if (a > 0) {
-    b + multiply(a - 1, b);
+if (3 == 4) {
+  print(1)
+} else {
+  print(0)
+}
+
+if (true && true) {
+  print(1)
+} else {
+  print(0)
+}
+
+if (true && false) {
+  print(1)
+} else {
+  print(0)
+}
+
+if (true || true) {
+  print(1)
+} else {
+  print(0)
+}
+
+if (true || false) {
+  print(1)
+} else {
+  print(0)
+}
+
+let a = 3
+print(a)
+let a = 4 in { print(a) }
+print(a)
+
+print(1)
+print(1+2)
+print(1+2+3)
+print(1+2*3)
+print(1+2*3+16/2^2)
+
+let eelse = 4
+
+let giraffe = fun (a) {
+  a + 100
+}
+
+if (false) {
+  print(111)
+} else {
+  print(222)
+}
+
+print(giraffe(11))
+
+let multiply = {
+  let x = fun (a, b, recur) {
+    if (b > 0) {
+      a + recur(a, b - 1, recur)
+    } else {
+      0
+    }
+  }
+
+  fun (a, b) { x(a, b, x) }
+}
+
+let multiply = fun (a, b) {
+  if (b > 0) {
+    a + multiply(a, b - 1)
   } else {
-    0;
+    0
   }
 }
 
-b = multiply(3, 5) + 1;
-print(b + 1 + b);
+print(multiply(0, 5))
+print(multiply(1, 5))
+print(multiply(2, 5))
+print(multiply(3, 5))
+print(multiply(4, 5))
 
-if (b > 2) {
-  print(1 + 2 + 3);
+let thirteen = 13
+let five = 5
+print(five + thirteen )
+print({
+  let seven = 7
+  4
+  five
+  seven
+})
+print(if (false) {
+  1
 } else {
-  print(100);
-}
-
-print(1);
+  2
+})

@@ -1,81 +1,40 @@
 module Clarke
   module AST
-    def self.Node(*args)
-      Class.new do
-        args.each { |a| attr_reader a }
-
-        define_method(:initialize) do |hash|
-          args.each do |a|
-            instance_variable_set('@' + a.to_s, hash.fetch(a))
-          end
-        end
-      end
+    IntegerLiteral = Struct.new(:value) do
     end
 
-    class Def < Node(:name, :args, :body)
-      def pretty_print(pp)
-        pp.text('AST:Def(')
-        pp.nest(1) do
-          pp.text(@name)
-          pp.comma_breakable
-          pp.pp(@args)
-          pp.comma_breakable
-          pp.pp(@body)
-        end
-        pp.text(')')
-      end
+    TrueLiteral = Object.new
+    FalseLiteral = Object.new
+
+    # TODO: add context everywhere
+    FunctionCall = Struct.new(:name, :arguments, :input, :old_pos, :new_pos) do
     end
 
-    class If < Node(:cond, :body_true, :body_false)
-      def pretty_print(pp)
-        pp.text('AST:If(')
-        pp.pp(@cond)
-        pp.comma_breakable
-        pp.pp(@body_true)
-        pp.comma_breakable
-        pp.pp(@body_false)
-        pp.text(')')
-      end
+    FunctionDef = Struct.new(:name, :argument_names, :body) do
     end
 
-    class Var < Node(:name)
-      def pretty_print(pp)
-        pp.text('AST:Var(')
-        pp.text(@name)
-        pp.text(')')
-      end
+    LambdaDef = Struct.new(:argument_names, :body) do
     end
 
-    class Int < Node(:value)
-      def pretty_print(pp)
-        pp.text('AST:Int(')
-        pp.text(@value.to_s)
-        pp.text(')')
-      end
+    Var = Struct.new(:name) do
     end
 
-    class Call < Node(:name, :args)
-      def pretty_print(pp)
-        pp.text('AST:Call(')
-          pp.nest(1) do
-          pp.text(@name)
-          pp.comma_breakable
-          pp.pp(@args)
-        end
-        pp.text(')')
-      end
+    Assignment = Struct.new(:variable_name, :expr) do
     end
 
-    class Assign < Node(:var, :value)
-      def pretty_print(pp)
-        pp.text('AST:Assign(')
-          pp.nest(1) do
-          pp.pp(@var)
-          pp.comma_breakable
-          pp.pp(@value)
-        end
-        pp.text(')')
-      end
+    ScopedLet = Struct.new(:variable_name, :expr, :body) do
+    end
+
+    Scope = Struct.new(:exprs) do
+    end
+
+    If = Struct.new(:cond, :body_true, :body_false) do
+    end
+
+    Op = Struct.new(:name) do
+    end
+
+    OpSeq = Struct.new(:seq) do
     end
   end
 end
