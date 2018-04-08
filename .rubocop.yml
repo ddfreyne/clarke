@@ -1,6 +1,8 @@
 AllCops:
   TargetRubyVersion: 2.1
 
+
+
 # ----- CONFIGURED -----
 
 FileName:
@@ -10,8 +12,12 @@ FileName:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: consistent_comma
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
 
 
 # ----- DISABLED (opinionated) -----
@@ -20,6 +26,9 @@ AsciiComments:
   Enabled: false
 
 Documentation:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
   Enabled: false
 
 Style/RaiseArgs:
@@ -32,6 +41,7 @@ Style/GuardClause:
   Enabled: false
 
 
+
 # ----- DISABLED (metrics) -----
 
 # Cops for metrics are disabled because they should not cause tests to fail.
@@ -40,6 +50,9 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/BlockLength:
   Enabled: false
 
 Metrics/ClassLength:
