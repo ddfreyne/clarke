@@ -63,7 +63,7 @@ module Clarke
       end
 
       def to_s
-      "(Op #{name})"
+        "(Op #{name})"
       end
     end
 
@@ -103,7 +103,7 @@ module Clarke
       end
 
       def to_s
-       "(Var #{name})"
+        "(Var #{name})"
       end
     end
   end
