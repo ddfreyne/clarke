@@ -16,7 +16,7 @@ module Clarke
         if @parent
           @contents.fetch(key) { @parent.fetch(key, expr: expr) }
         else
-          @contents.fetch(key) { raise NameError.new(key, expr) }
+          @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
         end
       end
 
