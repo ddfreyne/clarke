@@ -23,8 +23,10 @@ case args.fetch(:cmd)
 when 'interpret'
   evaluator = Clarke::Evaluator.new
   begin
-    evaluator.eval_exprs(res.data)
-  rescue Clarke::Evaluator::Error => e
+    transformer = Clarke::Transformers::SimplifyOpSeq.new
+    exprs = transformer.transform_exprs(res.data)
+    evaluator.eval_exprs(exprs)
+  rescue Clarke::Language::Error => e
     warn e.fancy_message.to_s
     exit 1
   end

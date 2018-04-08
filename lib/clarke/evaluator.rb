@@ -235,7 +235,7 @@ module Clarke
       when Clarke::AST::LambdaDef
         eval_lambda_def(expr, env)
       else
-        raise Clarke::Language::ArgumentError
+        raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end
     end
 
