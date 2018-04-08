@@ -118,11 +118,11 @@ describe 'Clarke' do
   end
 
   it 'errors on wrong function counts' do
-    expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Evaluator::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Evaluator::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Evaluator::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Evaluator::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Evaluator::ArgumentCountError)
+    expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
+    expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
+    expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Language::ArgumentCountError)
+    expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
+    expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Language::ArgumentCountError)
   end
 
   it 'handles if' do
@@ -137,27 +137,27 @@ describe 'Clarke' do
   it 'handles scoped let' do
     expect("let a = 1\nlet a = 2 in { a }").to evaluate_to(Clarke::Evaluator::Integer.new(2))
     expect("let a = 1\nlet a = 2 in { a }\na").to evaluate_to(Clarke::Evaluator::Integer.new(1))
-    expect("let a = 2 in { a }\na").to fail_with(Clarke::Evaluator::NameError)
+    expect("let a = 2 in { a }\na").to fail_with(Clarke::Language::NameError)
   end
 
   it 'handles scope' do
     expect("let a = 1\n{let a = 2}").to evaluate_to(Clarke::Evaluator::Integer.new(2))
     expect("let a = 1\n{let a = 2}\na").to evaluate_to(Clarke::Evaluator::Integer.new(1))
-    expect("{let a = 2}\na").to fail_with(Clarke::Evaluator::NameError)
+    expect("{let a = 2}\na").to fail_with(Clarke::Language::NameError)
   end
 
   it 'raises NameError when appropriate' do
-    expect('x()').to fail_with(Clarke::Evaluator::NameError)
-    expect('a').to fail_with(Clarke::Evaluator::NameError)
+    expect('x()').to fail_with(Clarke::Language::NameError)
+    expect('a').to fail_with(Clarke::Language::NameError)
   end
 
   it 'raises TypeError when appropriate' do
-    expect("let x = 1\nx()").to fail_with(Clarke::Evaluator::TypeError)
-    expect("let x = true\nx()").to fail_with(Clarke::Evaluator::TypeError)
-    expect("let x = false\nx()").to fail_with(Clarke::Evaluator::TypeError)
+    expect("let x = 1\nx()").to fail_with(Clarke::Language::TypeError)
+    expect("let x = true\nx()").to fail_with(Clarke::Language::TypeError)
+    expect("let x = false\nx()").to fail_with(Clarke::Language::TypeError)
 
-    expect('if (0) { 1 } else { 2 }').to fail_with(Clarke::Evaluator::TypeError)
-    expect("let x = fun () { 5 }\nif (x) { 1 } else { 2 }").to fail_with(Clarke::Evaluator::TypeError)
+    expect('if (0) { 1 } else { 2 }').to fail_with(Clarke::Language::TypeError)
+    expect("let x = fun () { 5 }\nif (x) { 1 } else { 2 }").to fail_with(Clarke::Language::TypeError)
   end
 
   it 'does not allow reserved words for variables' do

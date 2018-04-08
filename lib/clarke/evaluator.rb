@@ -2,72 +2,6 @@
 
 module Clarke
   class Evaluator
-    class Error < StandardError
-      attr_reader :expr
-
-      def initialize(expr)
-        @expr = expr
-      end
-
-      def fancy_message
-        fancy_message_for(@expr.input, @expr.old_pos, @expr.new_pos)
-      end
-
-      def fancy_message_for(input, old_pos, new_pos)
-        lines = []
-        lines << "line #{old_pos.line + 1}: #{message}"
-        lines << ''
-        lines << (input.lines[old_pos.line] || '').rstrip
-        lines << "\e[31m" + ' ' * old_pos.column + ('~' * (new_pos.column - old_pos.column)) + "\e[0m"
-        lines.join("\n")
-      end
-    end
-
-    class NameError < Error
-      attr_reader :name
-
-      def initialize(name, expr)
-        super(expr)
-
-        @name = name
-      end
-
-      def message
-        "#{@name}: no such name"
-      end
-    end
-
-    class TypeError < Error
-      attr_reader :val, :klass
-
-      def initialize(val, klass, expr)
-        super(expr)
-
-        @val = val
-        @klass = klass
-      end
-
-      def message
-        "expected #{@klass.describe}, but got #{@val.describe}"
-      end
-    end
-
-    class ArgumentCountError < Error
-      attr_reader :actual
-      attr_reader :expected
-
-      def initialize(actual:, expected:, expr:)
-        super(expr)
-
-        @actual = actual
-        @expected = expected
-      end
-
-      def message
-        "wrong number of arguments: expected #{@expected}, but got #{@actual}"
-      end
-    end
-
     Function = Struct.new(:argument_names, :body, :env) do
       def describe
         'function'
@@ -153,39 +87,6 @@ module Clarke
     True = Boolean.new(true)
     False = Boolean.new(false)
 
-    class Env
-      def initialize(parent: nil, contents: {})
-        @parent = parent
-        @contents = contents
-      end
-
-      def key?(key)
-        @contents.key?(key) || (@parent&.key?(key))
-      end
-
-      def fetch(key, expr: nil)
-        if @parent
-          @contents.fetch(key) { @parent.fetch(key, expr: expr) }
-        else
-          @contents.fetch(key) { raise NameError.new(key, expr) }
-        end
-      end
-
-      def []=(key, value)
-        @contents[key] = value
-      end
-
-      def merge(hash)
-        pushed = push
-        hash.each { |k, v| pushed[k] = v }
-        pushed
-      end
-
-      def push
-        self.class.new(parent: self)
-      end
-    end
-
     INITIAL_ENV = {
       'print' => Function.new(['a'], ->(a) { puts(a.value.inspect) }),
     }.freeze
@@ -194,7 +95,11 @@ module Clarke
       function = check_type(env.fetch(expr.name, expr: expr), Function, expr)
 
       if expr.arguments.count != function.argument_names.size
-        raise ArgumentCountError.new(expected: function.argument_names.size, actual: expr.arguments.count, expr: expr)
+        raise Clarke::Language::ArgumentCountError.new(
+          expected: function.argument_names.size,
+          actual: expr.arguments.count,
+          expr: expr,
+        )
       end
 
       values = expr.arguments.map { |e| eval_expr(e, env) }
@@ -330,12 +235,12 @@ module Clarke
       when Clarke::AST::LambdaDef
         eval_lambda_def(expr, env)
       else
-        raise ArgumentError
+        raise Clarke::Language::ArgumentError
       end
     end
 
     def eval_exprs(exprs)
-      env = Env.new(contents: INITIAL_ENV).push
+      env = Clarke::Language::Env.new(contents: INITIAL_ENV).push
       exprs.reduce(0) do |_, expr|
         # FIXME: almost the same as #eval_scope
         eval_expr(expr, env)
@@ -348,7 +253,7 @@ module Clarke
       if val.is_a?(klass)
         val
       else
-        raise TypeError.new(val, klass, expr)
+        raise Clarke::Language::TypeError.new(val, klass, expr)
       end
     end
   end

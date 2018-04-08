@@ -57,7 +57,7 @@ RSpec::Matchers.define :fail_with do |expected|
     else
       nil
     end
-  rescue Clarke::Evaluator::Error => e
+  rescue Clarke::Language::Error => e
     e
   end
 
