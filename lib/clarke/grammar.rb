@@ -56,7 +56,15 @@ module Clarke
     IDENTIFIER =
       except(
         describe(
-          repeat1(LETTER).capture,
+          seq(
+            LETTER,
+            repeat(
+              alt(
+                LETTER,
+                NUMBER,
+              ),
+            ),
+          ).capture,
           'identifier',
         ),
         RESERVED_WORD,

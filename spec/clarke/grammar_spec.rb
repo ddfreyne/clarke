@@ -15,6 +15,12 @@ describe 'Clarke' do
     expect("true\n").to evaluate_to(Clarke::Runtime::True)
   end
 
+  it 'handles valid identifiers' do
+    expect("let a = 1\na").to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect("let ab = 1\nab").to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect("let a1 = 1\na1").to evaluate_to(Clarke::Runtime::Integer.new(1))
+  end
+
   it 'handles booleans' do
     expect('true').to evaluate_to(Clarke::Runtime::True)
     expect('false').to evaluate_to(Clarke::Runtime::False)
