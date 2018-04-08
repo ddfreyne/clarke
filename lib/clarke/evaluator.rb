@@ -76,11 +76,11 @@ module Clarke
           end
         end
 
-      rpn_seq = shunting_yard(
-        values,
+      shunting_yard = Clarke::Util::ShuntingYard.new(
         Clarke::Language::PRECEDENCES,
         Clarke::Language::ASSOCIATIVITIES,
       )
+      rpn_seq = shunting_yard.run(values)
       stack = []
       rpn_seq.each do |e|
         case e
