@@ -9,16 +9,15 @@ if ARGV.size != 1
 end
 
 res = Clarke::Grammar::PROGRAM.apply(File.read(ARGV[0]))
-case res
-when DParse::Success
-  evaluator = Clarke::Evaluator.new
-  begin
-    evaluator.eval_exprs(res.data)
-  rescue Clarke::Evaluator::Error => e
-    warn e.fancy_message.to_s
-    exit 1
-  end
-when DParse::Failure
+if res.is_a?(DParse::Failure)
   warn res.pretty_message
+  exit 1
+end
+
+evaluator = Clarke::Evaluator.new
+begin
+  evaluator.eval_exprs(res.data)
+rescue Clarke::Evaluator::Error => e
+  warn e.fancy_message.to_s
   exit 1
 end
