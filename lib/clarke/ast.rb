@@ -13,7 +13,7 @@ module Clarke
         res = +''
         res << '(' << ast_name
         if ast_children.empty?
-        elsif ast_children.all? { |c| !c.respond_to?(:ast_children) || c.ast_children.empty? }
+        elsif children_lines.size == 1 && !ast_children[0].respond_to?(:ast_children)
           res << ' '
           res << children_lines.first
         else
