@@ -146,6 +146,12 @@ describe 'Clarke' do
     expect("let a = 2 in { a }\na").to fail_with(Clarke::Language::NameError)
   end
 
+  it 'handles scoped let without curly braces' do
+    expect("let a = 1\nlet a = 2 in a").to evaluate_to(Clarke::Evaluator::Integer.new(2))
+    expect("let a = 1\nlet a = 2 in a\na").to evaluate_to(Clarke::Evaluator::Integer.new(1))
+    expect("let a = 2 in a\na").to fail_with(Clarke::Language::NameError)
+  end
+
   it 'handles scope' do
     expect("let a = 1\n{let a = 2}").to evaluate_to(Clarke::Evaluator::Integer.new(2))
     expect("let a = 1\n{let a = 2}\na").to evaluate_to(Clarke::Evaluator::Integer.new(1))

@@ -111,7 +111,7 @@ module Clarke
             WHITESPACE1.ignore,
             string('in').ignore,
             WHITESPACE1.ignore,
-            SCOPE,
+            lazy { EXPRESSION },
           ).compact.first,
         ),
       ).compact.map do |data|
