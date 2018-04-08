@@ -10,6 +10,10 @@ module Clarke
       def self.describe
         'function'
       end
+
+      def clarke_to_string
+        '<function>'
+      end
     end
 
     Integer = Struct.new(:value) do
@@ -19,6 +23,10 @@ module Clarke
 
       def self.describe
         'integer'
+      end
+
+      def clarke_to_string
+        value.to_s
       end
 
       def add(other)
@@ -69,6 +77,10 @@ module Clarke
 
       def self.describe
         'boolean'
+      end
+
+      def clarke_to_string
+        value ? 'true' : 'false'
       end
 
       def eq(other)

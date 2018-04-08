@@ -3,7 +3,10 @@
 module Clarke
   class Evaluator
     INITIAL_ENV = {
-      'print' => Clarke::Runtime::Function.new(['a'], ->(a) { puts(a.value.inspect) }),
+      'print' => Clarke::Runtime::Function.new(
+        ['a'],
+        ->(a) { puts(a.clarke_to_string) },
+      ),
     }.freeze
 
     def eval_function_call(expr, env)

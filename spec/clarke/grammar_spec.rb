@@ -158,6 +158,13 @@ describe 'Clarke' do
     expect("{let a = 2}\na").to fail_with(Clarke::Language::NameError)
   end
 
+  it 'prints things properly' do
+    expect { run('print(1)') }.to output("1\n").to_stdout
+    expect { run('print(true)') }.to output("true\n").to_stdout
+    expect { run('print(false)') }.to output("false\n").to_stdout
+    expect { run("let a = () => 1\nprint(a)") }.to output("<function>\n").to_stdout
+  end
+
   it 'raises NameError when appropriate' do
     expect('x()').to fail_with(Clarke::Language::NameError)
     expect('a').to fail_with(Clarke::Language::NameError)
