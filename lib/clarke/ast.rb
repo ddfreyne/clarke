@@ -37,18 +37,11 @@ module Clarke
       end
     end
 
-    class EmptyStructInstance
+    FalseLiteral = Struct.new(:context) do
       include Printable
 
-      attr_reader :context
-
-      def initialize(name, context)
-        @name = name
-        @context = context
-      end
-
       def ast_name
-        @name
+        'FalseLiteral'
       end
 
       def ast_children
@@ -56,18 +49,17 @@ module Clarke
       end
     end
 
-    class EmptyStruct
-      def initialize(name)
-        @name = name
+    TrueLiteral = Struct.new(:context) do
+      include Printable
+
+      def ast_name
+        'TrueLiteral'
       end
 
-      def new(context)
-        EmptyStructInstance.new(@name, context)
+      def ast_children
+        []
       end
     end
-
-    FalseLiteral = EmptyStruct.new('FalseLiteral')
-    TrueLiteral = EmptyStruct.new('TrueLiteral')
 
     Assignment = Struct.new(:variable_name, :expr, :context) do
       include Printable
