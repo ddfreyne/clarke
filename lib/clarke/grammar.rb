@@ -141,7 +141,7 @@ module Clarke
         Clarke::AST::If.new(data[0], data[1], data[2])
       end
 
-    LAMBDA_DEF =
+    FUN_LAMBDA_DEF =
       seq(
         string('fun').ignore,
         WHITESPACE1.ignore,
@@ -162,6 +162,34 @@ module Clarke
       ).compact.map do |data|
         Clarke::AST::LambdaDef.new(data[0], data[1])
       end
+
+    ARROW_LAMBDA_DEF =
+      seq(
+        char('(').ignore,
+        opt(
+          intersperse(
+            seq(
+              WHITESPACE0.ignore,
+              VARIABLE_NAME,
+              WHITESPACE0.ignore,
+            ).compact.first,
+            char(',').ignore,
+          ).select_even,
+        ).map { |d| d || [] },
+        char(')').ignore,
+        WHITESPACE0.ignore,
+        string('=>').ignore,
+        WHITESPACE0.ignore,
+        lazy { EXPRESSION },
+      ).compact.map do |data|
+        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Scope.new([data[1]]))
+      end
+
+    LAMBDA_DEF =
+      alt(
+        FUN_LAMBDA_DEF,
+        ARROW_LAMBDA_DEF,
+      )
 
     OPERATOR =
       alt(

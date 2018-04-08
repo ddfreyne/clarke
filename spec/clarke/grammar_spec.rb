@@ -113,6 +113,12 @@ describe 'Clarke' do
     expect("let x = fun () { 5 }\nx()").to evaluate_to(Clarke::Evaluator::Integer.new(5))
   end
 
+  it 'handles arrow function definitions and function calls' do
+    expect("let x = (a, b) => a + b\nx(2, 3)").to evaluate_to(Clarke::Evaluator::Integer.new(5))
+    expect("let x = (a) => a + 3\nx(2)").to evaluate_to(Clarke::Evaluator::Integer.new(5))
+    expect("let x = () => 5\nx()").to evaluate_to(Clarke::Evaluator::Integer.new(5))
+  end
+
   it 'handles closures' do
     expect("let a = 1\nlet x = fun () { a }\nlet a = 2 in { x() }").to evaluate_to(Clarke::Evaluator::Integer.new(1))
   end
