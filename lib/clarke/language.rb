@@ -73,15 +73,13 @@ module Clarke
       end
 
       def fancy_message
-        fancy_message_for(@expr.input, @expr.old_pos, @expr.new_pos)
-      end
+        ctx = @expr.context
 
-      def fancy_message_for(input, old_pos, new_pos)
         lines = []
-        lines << "line #{old_pos.line + 1}: #{message}"
+        lines << "line #{ctx.from.line + 1}: #{message}"
         lines << ''
-        lines << (input.lines[old_pos.line] || '').rstrip
-        lines << "\e[31m" + ' ' * old_pos.column + ('~' * (new_pos.column - old_pos.column)) + "\e[0m"
+        lines << (ctx.input.lines[ctx.from.line] || '').rstrip
+        lines << "\e[31m" + ' ' * ctx.from.column + ('~' * (ctx.to.column - ctx.from.column)) + "\e[0m"
         lines.join("\n")
       end
     end

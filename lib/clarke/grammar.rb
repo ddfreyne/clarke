@@ -15,7 +15,10 @@ module Clarke
     NUMBER =
       repeat1(DIGIT)
       .capture
-      .map { |d| Clarke::AST::IntegerLiteral.new(d.to_i) }
+      .map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::IntegerLiteral.new(data.to_i, context)
+      end
 
     LETTER = char_in('a'..'z')
 
@@ -89,10 +92,15 @@ module Clarke
         ).map { |d| d || [] },
         char(')').ignore,
       ).compact.map do |data, success, old_pos|
-        Clarke::AST::FunctionCall.new(data[0], data[1], success.input, old_pos, success.pos)
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::FunctionCall.new(data[0], data[1], context)
       end
 
-    VARIABLE_REF = VARIABLE_NAME.map { |d| Clarke::AST::Var.new(d) }
+    VARIABLE_REF =
+      VARIABLE_NAME.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::Var.new(data, context)
+      end
 
     SCOPE =
       seq(
@@ -101,8 +109,9 @@ module Clarke
         intersperse(lazy { EXPRESSION }, WHITESPACE1).select_even,
         WHITESPACE0.ignore,
         char('}').ignore,
-      ).compact.first.map do |data|
-        Clarke::AST::Scope.new(data)
+      ).compact.first.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::Scope.new(data, context)
       end
 
     ASSIGNMENT =
@@ -122,11 +131,12 @@ module Clarke
             lazy { EXPRESSION },
           ).compact.first,
         ),
-      ).compact.map do |data|
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         if data[2]
-          Clarke::AST::ScopedLet.new(data[0], data[1], data[2])
+          Clarke::AST::ScopedLet.new(data[0], data[1], data[2], context)
         else
-          Clarke::AST::Assignment.new(data[0], data[1])
+          Clarke::AST::Assignment.new(data[0], data[1], context)
         end
       end
 
@@ -145,8 +155,9 @@ module Clarke
         string('else').ignore,
         WHITESPACE0.ignore,
         SCOPE,
-      ).compact.map do |data|
-        Clarke::AST::If.new(data[0], data[1], data[2])
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::If.new(data[0], data[1], data[2], context)
       end
 
     FUN_LAMBDA_DEF =
@@ -167,8 +178,9 @@ module Clarke
         char(')').ignore,
         WHITESPACE0.ignore,
         SCOPE,
-      ).compact.map do |data|
-        Clarke::AST::LambdaDef.new(data[0], data[1])
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::LambdaDef.new(data[0], data[1], context)
       end
 
     ARROW_LAMBDA_DEF =
@@ -189,8 +201,9 @@ module Clarke
         string('=>').ignore,
         WHITESPACE0.ignore,
         lazy { EXPRESSION },
-      ).compact.map do |data|
-        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Scope.new([data[1]]))
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Scope.new([data[1]]), context)
       end
 
     LAMBDA_DEF =
@@ -213,13 +226,22 @@ module Clarke
         string('<'),
         string('&&'),
         string('||'),
-      ).capture.map { |d| Clarke::AST::Op.new(d) }
+      ).capture.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::Op.new(data, context)
+      end
 
     TRUE =
-      string('true').map { |_| Clarke::AST::TrueLiteral }
+      string('true').map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::TrueLiteral.new(context)
+      end
 
     FALSE =
-      string('false').map { |_| Clarke::AST::FalseLiteral }
+      string('false').map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::FalseLiteral.new(context)
+      end
 
     OPERAND =
       alt(
@@ -242,8 +264,9 @@ module Clarke
           OPERATOR,
           WHITESPACE0.ignore,
         ).compact.first,
-      ).map do |data|
-        Clarke::AST::OpSeq.new(data)
+      ).map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::OpSeq.new(data, context)
       end
 
     LINE_BREAK =

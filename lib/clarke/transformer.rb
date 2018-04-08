@@ -6,6 +6,7 @@ module Clarke
       Clarke::AST::Assignment.new(
         expr.variable_name,
         transform_expr(expr.expr),
+        expr.context,
       )
     end
 
@@ -17,9 +18,7 @@ module Clarke
       Clarke::AST::FunctionCall.new(
         expr.name,
         expr.arguments.map { |a| transform_expr(a) },
-        expr.input,
-        expr.old_pos,
-        expr.new_pos,
+        expr.context,
       )
     end
 
@@ -28,6 +27,7 @@ module Clarke
         transform_expr(expr.cond),
         transform_expr(expr.body_true),
         transform_expr(expr.body_false),
+        expr.context,
       )
     end
 
@@ -39,6 +39,7 @@ module Clarke
       Clarke::AST::LambdaDef.new(
         expr.argument_names,
         transform_expr(expr.body),
+        expr.context,
       )
     end
 
@@ -49,12 +50,14 @@ module Clarke
     def transform_op_seq(expr)
       Clarke::AST::OpSeq.new(
         expr.seq.map { |e| transform_expr(e) },
+        expr.context,
       )
     end
 
     def transform_scope(expr)
       Clarke::AST::Scope.new(
         expr.exprs.map { |e| transform_expr(e) },
+        expr.context,
       )
     end
 
@@ -63,6 +66,7 @@ module Clarke
         expr.variable_name,
         transform_expr(expr.expr),
         transform_expr(expr.body),
+        expr.context,
       )
     end
 

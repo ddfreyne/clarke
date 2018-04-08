@@ -2,8 +2,6 @@
 
 module Clarke
   module AST
-    # TODO: add context everywhere
-
     module Printable
       def inspect
         to_s
@@ -27,13 +25,30 @@ module Clarke
       end
     end
 
-    class EmptyStruct
+    class Context
+      attr_reader :input
+      attr_reader :from
+      attr_reader :to
+
+      def initialize(input:, from:, to:)
+        @input = input
+        @from = from
+        @to = to
+      end
+    end
+
+    class EmptyStructInstance
       include Printable
 
-      attr_reader :ast_name
+      attr_reader :context
 
-      def initialize(ast_name)
-        @ast_name = ast_name
+      def initialize(name, context)
+        @name = name
+        @context = context
+      end
+
+      def ast_name
+        @name
       end
 
       def ast_children
@@ -41,10 +56,20 @@ module Clarke
       end
     end
 
+    class EmptyStruct
+      def initialize(name)
+        @name = name
+      end
+
+      def new(context)
+        EmptyStructInstance.new(@name, context)
+      end
+    end
+
     FalseLiteral = EmptyStruct.new('FalseLiteral')
     TrueLiteral = EmptyStruct.new('TrueLiteral')
 
-    Assignment = Struct.new(:variable_name, :expr) do
+    Assignment = Struct.new(:variable_name, :expr, :context) do
       include Printable
 
       def ast_name
@@ -56,7 +81,7 @@ module Clarke
       end
     end
 
-    FunctionCall = Struct.new(:name, :arguments, :input, :old_pos, :new_pos) do
+    FunctionCall = Struct.new(:name, :arguments, :context) do
       include Printable
 
       def ast_name
@@ -68,7 +93,7 @@ module Clarke
       end
     end
 
-    If = Struct.new(:cond, :body_true, :body_false) do
+    If = Struct.new(:cond, :body_true, :body_false, :context) do
       include Printable
 
       def ast_name
@@ -80,7 +105,7 @@ module Clarke
       end
     end
 
-    IntegerLiteral = Struct.new(:value) do
+    IntegerLiteral = Struct.new(:value, :context) do
       include Printable
 
       def ast_name
@@ -92,7 +117,7 @@ module Clarke
       end
     end
 
-    LambdaDef = Struct.new(:argument_names, :body) do
+    LambdaDef = Struct.new(:argument_names, :body, :context) do
       include Printable
 
       def ast_name
@@ -104,7 +129,7 @@ module Clarke
       end
     end
 
-    Op = Struct.new(:name) do
+    Op = Struct.new(:name, :context) do
       include Printable
 
       def ast_name
@@ -116,7 +141,7 @@ module Clarke
       end
     end
 
-    OpSeq = Struct.new(:seq) do
+    OpSeq = Struct.new(:seq, :context) do
       include Printable
 
       def ast_name
@@ -128,7 +153,7 @@ module Clarke
       end
     end
 
-    Scope = Struct.new(:exprs) do
+    Scope = Struct.new(:exprs, :context) do
       include Printable
 
       def ast_name
@@ -140,7 +165,7 @@ module Clarke
       end
     end
 
-    ScopedLet = Struct.new(:variable_name, :expr, :body) do
+    ScopedLet = Struct.new(:variable_name, :expr, :body, :context) do
       include Printable
 
       def ast_name
@@ -152,7 +177,7 @@ module Clarke
       end
     end
 
-    Var = Struct.new(:name) do
+    Var = Struct.new(:name, :context) do
       include Printable
 
       def ast_name
