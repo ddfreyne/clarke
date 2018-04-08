@@ -158,7 +158,7 @@ module Clarke
     end
 
     def eval_exprs(exprs)
-      env = Clarke::Language::Env.new(contents: INITIAL_ENV).push
+      env = Clarke::Util::Env.new(contents: INITIAL_ENV).push
       exprs.reduce(0) do |_, expr|
         # FIXME: almost the same as #eval_scope
         eval_expr(expr, env)
