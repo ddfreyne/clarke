@@ -4,17 +4,16 @@ This is an interpreted programming language made for fun. Not even close to fini
 
 ```
 let factor = 3
-let a = fun () { 4 * factor } in print(a())
+let a = () => 4 * factor in print(a())
 ```
 
 ```
-let multiply = fun (a, b) {
+let multiply = (a, b) =>
   if (b > 0) {
     a + multiply(a, b - 1)
   } else {
     0
   }
-}
 
 print(multiply(2, 3))
 ```
