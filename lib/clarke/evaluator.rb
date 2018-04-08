@@ -15,7 +15,7 @@ module Clarke
 
       def fancy_message_for(input, old_pos, new_pos)
         lines = []
-        lines << "line #{old_pos.line}: #{message}"
+        lines << "line #{old_pos.line + 1}: #{message}"
         lines << ''
         lines << (input.lines[old_pos.line] || '').rstrip
         lines << "\e[31m" + ' ' * old_pos.column + ('~' * (new_pos.column - old_pos.column)) + "\e[0m"
