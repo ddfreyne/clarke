@@ -232,13 +232,13 @@ module Clarke
       end
 
     TRUE =
-      string('true').map do |data, success, old_pos|
+      string('true').map do |_data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::TrueLiteral.new(context)
       end
 
     FALSE =
-      string('false').map do |data, success, old_pos|
+      string('false').map do |_data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::FalseLiteral.new(context)
       end
