@@ -190,36 +190,6 @@ module Clarke
       'print' => Function.new(['a'], ->(a) { puts(a.value.inspect) }),
     }.freeze
 
-    PRECEDENCES = {
-      '^' => 3,
-      '*' => 2,
-      '/' => 2,
-      '+' => 1,
-      '-' => 1,
-      '&&' => 0,
-      '||' => 0,
-      '==' => 0,
-      '>'  => 0,
-      '<'  => 0,
-      '>=' => 0,
-      '<=' => 0,
-    }.freeze
-
-    ASSOCIATIVITIES = {
-      '^' => :right,
-      '*' => :left,
-      '/' => :left,
-      '+' => :left,
-      '-' => :left,
-      '==' => :left,
-      '>'  => :left,
-      '<'  => :left,
-      '>=' => :left,
-      '<=' => :left,
-      '&&' => :left,
-      '||' => :left,
-    }.freeze
-
     def eval_function_call(expr, env)
       function = check_type(env.fetch(expr.name, expr: expr), Function, expr)
 
@@ -283,7 +253,11 @@ module Clarke
           end
         end
 
-      rpn_seq = shunting_yard(values, PRECEDENCES, ASSOCIATIVITIES)
+      rpn_seq = shunting_yard(
+        values,
+        Clarke::Language::PRECEDENCES,
+        Clarke::Language::ASSOCIATIVITIES,
+      )
       stack = []
       rpn_seq.each do |e|
         case e
