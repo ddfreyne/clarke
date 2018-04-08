@@ -16,7 +16,7 @@ let multiply = fun (a, b) {
   }
 }
 
-print(multiply(2, 3))=
+print(multiply(2, 3))
 ```
 
 ## Requirements
