@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'Clarke' do
   it 'handles expressions with any kind of indentation/line breaking' do
     expect('true').to evaluate_to(Clarke::Evaluator::True)

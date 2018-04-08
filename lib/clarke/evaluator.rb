@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Clarke
   class Evaluator
     class Error < StandardError
@@ -158,7 +160,7 @@ module Clarke
       end
 
       def key?(key)
-        @contents.key?(key) || (@parent && @parent.key?(key))
+        @contents.key?(key) || (@parent&.key?(key))
       end
 
       def fetch(key, expr: nil)

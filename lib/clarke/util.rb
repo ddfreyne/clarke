@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def shunting_yard(tokens, precedences, associativities)
   output = []
   stack = []

@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require_relative '../lib/clarke'
 
 if ARGV.size != 1
-  $stderr.puts 'usage: clarke [filename]'
+  warn 'usage: clarke [filename]'
   exit 1
 end
 
@@ -14,10 +15,10 @@ when DParse::Success
   begin
     evaluator.eval_exprs(res.data)
   rescue Clarke::Evaluator::Error => e
-    $stderr.puts "#{e.fancy_message}"
+    warn e.fancy_message.to_s
     exit 1
   end
 when DParse::Failure
-  $stderr.puts res.pretty_message
+  warn res.pretty_message
   exit 1
 end
