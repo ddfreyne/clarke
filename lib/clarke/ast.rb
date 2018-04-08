@@ -14,7 +14,8 @@ module Clarke
 
         res = +''
         res << '(' << ast_name
-        if ast_children.all? { |c| !c.respond_to?(:ast_children) || c.ast_children.empty? }
+        if ast_children.empty?
+        elsif ast_children.all? { |c| !c.respond_to?(:ast_children) || c.ast_children.empty? }
           res << ' '
           res << children_lines.first
         else
@@ -26,8 +27,22 @@ module Clarke
       end
     end
 
-    FalseLiteral = Object.new
-    TrueLiteral = Object.new
+    class EmptyStruct
+      include Printable
+
+      attr_reader :ast_name
+
+      def initialize(ast_name)
+        @ast_name = ast_name
+      end
+
+      def ast_children
+        []
+      end
+    end
+
+    FalseLiteral = EmptyStruct.new('FalseLiteral')
+    TrueLiteral = EmptyStruct.new('TrueLiteral')
 
     Assignment = Struct.new(:variable_name, :expr) do
       include Printable
