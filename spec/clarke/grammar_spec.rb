@@ -144,6 +144,11 @@ describe 'Clarke' do
     expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Language::ArgumentCountError)
   end
 
+  it 'handles complex function calls' do
+    expect("let sum = fun (a) { fun (b) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Runtime::Integer.new(3))
+    expect("let sum = (a) => (b) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Runtime::Integer.new(3))
+  end
+
   it 'handles if' do
     expect('if (true) { 1 } else { 2 }').to evaluate_to(Clarke::Runtime::Integer.new(1))
     expect('if (false) { 1 } else { 2 }').to evaluate_to(Clarke::Runtime::Integer.new(2))

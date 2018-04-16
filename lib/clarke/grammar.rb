@@ -76,6 +76,12 @@ module Clarke
     FUNCTION_NAME = IDENTIFIER
     VARIABLE_NAME = IDENTIFIER
 
+    VARIABLE_REF =
+      VARIABLE_NAME.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::Var.new(data, context)
+      end
+
     ARGLIST =
       seq(
         char('(').ignore,
@@ -94,17 +100,13 @@ module Clarke
 
     FUNCTION_CALL =
       seq(
-        FUNCTION_NAME,
-        ARGLIST,
+        VARIABLE_REF,
+        repeat1(ARGLIST),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FunctionCall.new(data[0], data[1], context)
-      end
-
-    VARIABLE_REF =
-      VARIABLE_NAME.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Var.new(data, context)
+        data[1].reduce(data[0]) do |memo, arglist|
+          Clarke::AST::FunctionCall.new(memo, arglist, context)
+        end
       end
 
     SCOPE =

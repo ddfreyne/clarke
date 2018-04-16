@@ -10,7 +10,7 @@ module Clarke
     }.freeze
 
     def eval_function_call(expr, env)
-      function = check_type(env.fetch(expr.name, expr: expr), Clarke::Runtime::Function, expr)
+      function = check_type(eval_expr(expr.name, env), Clarke::Runtime::Function, expr)
 
       if expr.arguments.count != function.argument_names.size
         raise Clarke::Language::ArgumentCountError.new(
