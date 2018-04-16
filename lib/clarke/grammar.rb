@@ -73,7 +73,6 @@ module Clarke
         RESERVED_WORD,
       )
 
-    FUNCTION_NAME = IDENTIFIER
     VARIABLE_NAME = IDENTIFIER
 
     VARIABLE_REF =
