@@ -76,9 +76,8 @@ module Clarke
     FUNCTION_NAME = IDENTIFIER
     VARIABLE_NAME = IDENTIFIER
 
-    FUNCTION_CALL =
+    ARGLIST =
       seq(
-        FUNCTION_NAME,
         char('(').ignore,
         opt(
           intersperse(
@@ -91,6 +90,12 @@ module Clarke
           ).select_even,
         ).map { |d| d || [] },
         char(')').ignore,
+      ).compact.first
+
+    FUNCTION_CALL =
+      seq(
+        FUNCTION_NAME,
+        ARGLIST,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::FunctionCall.new(data[0], data[1], context)
