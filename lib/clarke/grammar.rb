@@ -97,9 +97,15 @@ module Clarke
         char(')').ignore,
       ).compact.first
 
+    FUNCTION_CALL_BASE =
+      alt(
+        VARIABLE_REF,
+        lazy { PARENTHESISED_EXPRESSION },
+      )
+
     FUNCTION_CALL =
       seq(
-        VARIABLE_REF,
+        FUNCTION_CALL_BASE,
         repeat1(ARGLIST),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)

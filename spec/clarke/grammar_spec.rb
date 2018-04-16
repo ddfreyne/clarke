@@ -147,6 +147,7 @@ describe 'Clarke' do
   it 'handles complex function calls' do
     expect("let sum = fun (a) { fun (b) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Runtime::Integer.new(3))
     expect("let sum = (a) => (b) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Runtime::Integer.new(3))
+    expect { run('print(((a) => (b) => a + b)(1)(2))') }.to output("3\n").to_stdout
   end
 
   it 'handles if' do

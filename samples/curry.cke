@@ -2,3 +2,4 @@ let sum = (a) => (b) => a + b
 let sum1 = sum(1)
 print(sum1(2))
 print(sum(1)(2))
+print(((a) => (b) => a + b)(1)(2))
