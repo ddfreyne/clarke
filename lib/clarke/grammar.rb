@@ -243,6 +243,15 @@ module Clarke
         Clarke::AST::FalseLiteral.new(context)
       end
 
+    PARENTHESISED_EXPRESSION =
+      seq(
+        char('(').ignore,
+        WHITESPACE0.ignore,
+        lazy { EXPRESSION },
+        WHITESPACE0.ignore,
+        char(')').ignore,
+      ).compact.first
+
     OPERAND =
       alt(
         TRUE,
@@ -254,6 +263,7 @@ module Clarke
         IF,
         LAMBDA_DEF,
         VARIABLE_REF,
+        PARENTHESISED_EXPRESSION,
       )
 
     EXPRESSION =

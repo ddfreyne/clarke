@@ -129,6 +129,13 @@ describe 'Clarke' do
     expect("let a = 1\nlet x = fun () { a }\nlet a = 2 in { x() }").to evaluate_to(Clarke::Runtime::Integer.new(1))
   end
 
+  it 'handles parens' do
+    expect('1').to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect('(1)').to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect('((1))').to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect('(((1)))').to evaluate_to(Clarke::Runtime::Integer.new(1))
+  end
+
   it 'errors on wrong function counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
