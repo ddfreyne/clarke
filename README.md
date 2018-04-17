@@ -37,32 +37,28 @@ Call `bin/clarke` with `interpret` and the name of the file to run, e.g.
 bin/clarke interpret samples/lambda.cke
 ```
 
-## To do
+## Ideas
 
-* [ ] Static types
-  * [ ] In arguments (x int, y int ; x, y int)
-  * [ ] In return value
-  * [ ] In let
-* [ ] Comments
-* [ ] Other types
-  * [ ] Strings
-  * [ ] Chars
-  * [ ] Floats
-  * [ ] Unit
-* [ ] Let -> var and const/val
-* [ ] If without else
-* [ ] Pattern matching
-* [ ] Structs
-* [ ] Tuples/records
-* [ ] Loops
-* [ ] Ranges
-* [ ] Classes
-* [ ] Collections
-  * [ ] Array
-  * [ ] Set
-  * [ ] List
-  * [ ] Map
-* [ ] Iterators
-* [ ] Objects
-* [ ] Interfaces
-* [ ] Modules
+In no particular order:
+
+* Comments
+* More primitive types
+  * Strings
+  * Chars
+  * Floats
+  * Null
+* Compound types
+  * Arrays
+  * Structs
+  * Maps
+  * Ranges
+  * Sets
+  * Enumerable mixin
+* Iterators
+* Classes (without inheritance)
+* If without else
+* Static types
+  * In arguments (x int, y int ; x, y int)
+  * In return value
+  * In let
+* Modules
