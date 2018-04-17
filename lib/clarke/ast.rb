@@ -61,6 +61,18 @@ module Clarke
       end
     end
 
+    StringLiteral = Struct.new(:value, :context) do
+      include Printable
+
+      def ast_name
+        'String'
+      end
+
+      def ast_children
+        [value]
+      end
+    end
+
     Assignment = Struct.new(:variable_name, :expr, :context) do
       include Printable
 

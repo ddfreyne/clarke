@@ -43,7 +43,6 @@ In no particular order:
 
 * Comments
 * More primitive types
-  * Strings
   * Chars
   * Floats
   * Null

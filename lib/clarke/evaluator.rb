@@ -136,6 +136,8 @@ module Clarke
         Clarke::Runtime::True
       when Clarke::AST::FalseLiteral
         Clarke::Runtime::False
+      when Clarke::AST::StringLiteral
+        Clarke::Runtime::String.new(expr.value)
       when Clarke::AST::FunctionCall
         eval_function_call(expr, env)
       when Clarke::AST::Var

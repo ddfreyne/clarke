@@ -63,6 +63,21 @@ module Clarke
         Clarke::AST::FalseLiteral.new(context)
       end
 
+    STRING =
+      seq(
+        char('"').ignore,
+        repeat(
+          alt(
+            string('\"').capture.map { |_| '"' },
+            char_not('"').capture,
+          ),
+        ),
+        char('"').ignore,
+      ).compact.first.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::StringLiteral.new(data.join(''), context)
+      end
+
     # … Other …
 
     RESERVED_WORD =
@@ -279,6 +294,7 @@ module Clarke
       alt(
         TRUE,
         FALSE,
+        STRING,
         FUNCTION_CALL,
         NUMBER,
         ASSIGNMENT,

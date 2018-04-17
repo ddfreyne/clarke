@@ -32,6 +32,11 @@ describe 'Clarke' do
     expect('234').to evaluate_to(Clarke::Runtime::Integer.new(234))
   end
 
+  it 'handles strings' do
+    expect('"hi"').to evaluate_to(Clarke::Runtime::String.new('hi'))
+    expect { run('print("hi")') }.to output("hi\n").to_stdout
+  end
+
   it 'handles operator sequences' do
     expect('1+2').to evaluate_to(Clarke::Runtime::Integer.new(3))
     expect('1+ 2').to evaluate_to(Clarke::Runtime::Integer.new(3))

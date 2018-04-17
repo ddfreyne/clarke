@@ -16,6 +16,20 @@ module Clarke
       end
     end
 
+    String = Struct.new(:value) do
+      def describe
+        'string'
+      end
+
+      def self.describe
+        'string'
+      end
+
+      def clarke_to_string
+        value
+      end
+    end
+
     Integer = Struct.new(:value) do
       def describe
         'integer'

@@ -70,6 +70,10 @@ module Clarke
       )
     end
 
+    def transform_string(expr)
+      expr
+    end
+
     def transform_true(expr)
       expr
     end
@@ -100,6 +104,8 @@ module Clarke
         transform_scope(expr)
       when Clarke::AST::ScopedLet
         transform_scoped_let(expr)
+      when Clarke::AST::StringLiteral
+        transform_string(expr)
       when Clarke::AST::TrueLiteral
         transform_true(expr)
       when Clarke::AST::Var
