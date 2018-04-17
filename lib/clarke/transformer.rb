@@ -111,7 +111,7 @@ module Clarke
       when Clarke::AST::Var
         transform_var(expr)
       else
-        raise Clarke::Language::ArgumentError
+        raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end
     end
 
