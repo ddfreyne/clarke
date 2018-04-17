@@ -10,23 +10,7 @@ module Clarke
       seq(a, repeat(a)).map { |d| [d[0]] + d[1] }
     end
 
-    DIGIT = char_in('0'..'9')
-
-    NUMBER =
-      repeat1(DIGIT)
-      .capture
-      .map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::IntegerLiteral.new(data.to_i, context)
-      end
-
-    LETTER = char_in('a'..'z')
-
-    SPACE_OR_TAB =
-      alt(
-        char(' '),
-        char("\t"),
-      )
+    # Whitespace
 
     WHITESPACE_CHAR =
       alt(
@@ -36,11 +20,54 @@ module Clarke
         char("\r"),
       )
 
+    SPACE_OR_TAB =
+      alt(
+        char(' '),
+        char("\t"),
+      )
+
     WHITESPACE0 =
       repeat(WHITESPACE_CHAR)
 
     WHITESPACE1 =
       seq(WHITESPACE_CHAR, WHITESPACE0)
+
+    LINE_BREAK =
+      seq(
+        repeat(SPACE_OR_TAB),
+        char("\n"),
+        WHITESPACE0,
+      )
+
+    # Basic components
+
+    DIGIT = char_in('0'..'9')
+
+    LETTER = char_in('a'..'z')
+
+    # Primitives
+
+    NUMBER =
+      repeat1(DIGIT)
+      .capture
+      .map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::IntegerLiteral.new(data.to_i, context)
+      end
+
+    TRUE =
+      string('true').map do |_data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::TrueLiteral.new(context)
+      end
+
+    FALSE =
+      string('false').map do |_data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::FalseLiteral.new(context)
+      end
+
+    # … Other …
 
     RESERVED_WORD =
       describe(
@@ -243,18 +270,6 @@ module Clarke
         Clarke::AST::Op.new(data, context)
       end
 
-    TRUE =
-      string('true').map do |_data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::TrueLiteral.new(context)
-      end
-
-    FALSE =
-      string('false').map do |_data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FalseLiteral.new(context)
-      end
-
     PARENTHESISED_EXPRESSION =
       seq(
         char('(').ignore,
@@ -290,13 +305,6 @@ module Clarke
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::OpSeq.new(data, context)
       end
-
-    LINE_BREAK =
-      seq(
-        repeat(SPACE_OR_TAB),
-        char("\n"),
-        WHITESPACE0,
-      )
 
     STATEMENTS =
       intersperse(
