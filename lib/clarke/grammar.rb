@@ -6,10 +6,6 @@ module Clarke
   module Grammar
     extend DParse::DSL
 
-    def self.repeat1(a)
-      seq(a, repeat(a)).map { |d| [d[0]] + d[1] }
-    end
-
     # Whitespace
 
     WHITESPACE_CHAR =
