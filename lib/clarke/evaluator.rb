@@ -49,10 +49,7 @@ module Clarke
     end
 
     def eval_scope(expr, env)
-      new_env = env.push
-      expr.exprs.reduce(0) do |_, e|
-        eval_expr(e, new_env)
-      end
+      multi_eval(expr.exprs, env.push)
     end
 
     def eval_if(expr, env)
@@ -161,10 +158,7 @@ module Clarke
 
     def eval_exprs(exprs)
       env = Clarke::Util::Env.new(contents: INITIAL_ENV).push
-      exprs.reduce(0) do |_, expr|
-        # FIXME: almost the same as #eval_scope
-        eval_expr(expr, env)
-      end
+      multi_eval(exprs, env)
     end
 
     private
@@ -174,6 +168,12 @@ module Clarke
         val
       else
         raise Clarke::Language::TypeError.new(val, klass, expr)
+      end
+    end
+
+    def multi_eval(exprs, env)
+      exprs.reduce(0) do |_, expr|
+        eval_expr(expr, env)
       end
     end
   end
