@@ -5,4 +5,4 @@ module Clarke
   end
 end
 
-require_relative 'transformers/example'
+require_relative 'transformers/simplify_op_seq'
