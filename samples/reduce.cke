@@ -9,3 +9,6 @@ let reduce = (arr, init, fn) => {
     res
 }
 print(reduce(arr, 0, (a, e) => a + e))
+
+let sum = (arr) => reduce(arr, 0, (a, e) => a + e)
+print(sum(arr))
