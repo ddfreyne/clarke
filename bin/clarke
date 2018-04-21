@@ -33,16 +33,7 @@ end
 case args.fetch(:cmd)
 when 'interpret'
   begin
-    local_depths = {}
-    stack = Clarke::TransformerStack.new([
-      Clarke::Transformers::SimplifyOpSeq.new,
-      Clarke::Transformers::BuildScopes.new(local_depths),
-    ],)
-    exprs = stack.transform_exprs(res.data)
-    exprs.each { |e| p e } if options[:verbose]
-
-    evaluator = Clarke::Evaluator.new(local_depths)
-    evaluator.eval_exprs(exprs)
+    Clarke.run(res.data, verbose: options[:verbose])
   rescue Clarke::Language::Error => e
     warn e.fancy_message.to_s
     exit 1
