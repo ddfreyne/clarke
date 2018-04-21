@@ -10,9 +10,7 @@ require 'clarke'
 
 module Helpers
   def run(string)
-    error = nil
-    ret = Clarke.run(string, verbose: false) { |e| error = e }
-    error || ret
+    Clarke.run(string, verbose: false)
   end
 end
 
