@@ -72,7 +72,7 @@ module Clarke
       value
     end
 
-    def eval_scoped_let(expr, env)
+    def eval_scoped_var_decl(expr, env)
       new_env = env.push
       new_env[expr.variable_name] = eval_expr(expr.expr, env)
       eval_expr(expr.body, new_env)
@@ -171,8 +171,8 @@ module Clarke
         eval_var(expr, env)
       when Clarke::AST::VarDecl
         eval_var_decl(expr, env)
-      when Clarke::AST::ScopedLet
-        eval_scoped_let(expr, env)
+      when Clarke::AST::ScopedVarDecl
+        eval_scoped_var_decl(expr, env)
       when Clarke::AST::Scope
         eval_scope(expr, env)
       when Clarke::AST::If

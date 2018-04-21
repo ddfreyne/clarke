@@ -188,7 +188,7 @@ module Clarke
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         if data[2]
-          Clarke::AST::ScopedLet.new(data[0], data[1], data[2], context)
+          Clarke::AST::ScopedVarDecl.new(data[0], data[1], data[2], context)
         else
           Clarke::AST::VarDecl.new(data[0], data[1], context)
         end

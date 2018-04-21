@@ -169,11 +169,11 @@ module Clarke
       end
     end
 
-    ScopedLet = Struct.new(:variable_name, :expr, :body, :context) do
+    ScopedVarDecl = Struct.new(:variable_name, :expr, :body, :context) do
       include Printable
 
       def ast_name
-        'ScopedLet'
+        'ScopedVarDecl'
       end
 
       def ast_children
