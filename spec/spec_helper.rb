@@ -10,13 +10,9 @@ require 'clarke'
 
 module Helpers
   def run(string)
-    res = Clarke::Grammar::PROGRAM.apply(string)
-    case res
-    when DParse::Success
-      Clarke.run(res.data, verbose: false)
-    when DParse::Failure
-      res
-    end
+    error = nil
+    ret = Clarke.run(string, verbose: false) { |e| error = e }
+    error || ret
   end
 end
 
@@ -46,41 +42,31 @@ end
 RSpec::Matchers.define :fail_with do |expected|
   match do |input|
     res = error_for(input)
+    @actual = res
 
-    case expected
-    when String
-      res.is_a?(DParse::Failure) && res.message == expected
-    else
-      res.is_a?(expected)
-    end
+    res.is_a?(expected)
   end
 
   def error_for(input)
-    res = run(input)
-    if res.is_a?(DParse::Failure)
-      res
-    else
-      nil
-    end
-  rescue Clarke::Language::Error => e
+    run(input)
+    nil
+  rescue StandardError => e
     e
   end
 
   failure_message do |input|
-    actual = error_for(input)
     if actual
-      "expected #{input.inspect} to fail, but with #{expected} rather than #{actual}"
+      "expected #{input.inspect} to fail, but with #{expected} rather than #{@actual_class}"
     else
       "expected #{input.inspect} to fail with #{expected}, but it didn’t"
     end
   end
 
   failure_message_when_negated do |input|
-    actual = error_for(input)
     if actual
       "expected #{input.inspect} not to fail with #{expected}, but it did"
     else
-      "expected #{input.inspect} not to fail, but with #{expected} rather than #{actual}"
+      "expected #{input.inspect} not to fail, but with #{expected} rather than #{@actual_class}"
     end
   end
 end

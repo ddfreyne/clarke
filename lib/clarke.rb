@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 module Clarke
-  def self.run(exprs, verbose:)
+  def self.run(code, verbose:)
+    # Parse
+    res = Clarke::Grammar::PROGRAM.apply(code)
+    if res.is_a?(DParse::Failure)
+      raise Clarke::Language::SyntaxError.new(res.pretty_message)
+    end
+
     # Transform
     global_names = Clarke::Evaluator::INITIAL_ENV.keys
     local_depths = {}
@@ -9,7 +15,7 @@ module Clarke
       Clarke::Transformers::SimplifyOpSeq.new,
       Clarke::Transformers::BuildScopes.new(global_names, local_depths),
     ],)
-    transformed_exprs = stack.transform_exprs(exprs)
+    transformed_exprs = stack.transform_exprs(res.data)
 
     # Debug
     transformed_exprs.each { |e| p e } if verbose

@@ -24,18 +24,11 @@ args = {
   filename: ARGV[1],
 }
 
-res = Clarke::Grammar::PROGRAM.apply(File.read(args.fetch(:filename)))
-if res.is_a?(DParse::Failure)
-  warn res.pretty_message
-  exit 1
-end
-
 case args.fetch(:cmd)
 when 'interpret'
-  begin
-    Clarke.run(res.data, verbose: options[:verbose])
-  rescue Clarke::Language::Error => e
-    warn e.fancy_message.to_s
+  code = File.read(args.fetch(:filename))
+  Clarke.run(code, verbose: options[:verbose]) do |error|
+    warn error.to_s
     exit 1
   end
 end

@@ -51,6 +51,9 @@ module Clarke
       end
     end
 
+    class SyntaxError < StandardError
+    end
+
     class NameError < Error
       attr_reader :name
 

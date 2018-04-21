@@ -204,12 +204,12 @@ describe 'Clarke' do
   end
 
   it 'does not allow reserved words for variables' do
-    expect('let else = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let false = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let fun = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let if = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let in = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let let = 1').to fail_with('expected identifier, not reserved keyword')
-    expect('let true = 1').to fail_with('expected identifier, not reserved keyword')
+    expect('let else = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let false = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let fun = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let if = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let in = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let let = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let true = 1').to fail_with(Clarke::Language::SyntaxError)
   end
 end

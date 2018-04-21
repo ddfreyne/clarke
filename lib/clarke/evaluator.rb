@@ -24,8 +24,8 @@ module Clarke
             ev.eval_scope(fn.body, new_env)
           end
           # TODO: return value?
-        end
-      )
+        end,
+      ),
     }.freeze
 
     def initialize(local_depths)
