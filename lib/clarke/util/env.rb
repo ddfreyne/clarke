@@ -12,6 +12,14 @@ module Clarke
         @contents.key?(key) || (@parent&.key?(key))
       end
 
+      def at_depth(depth)
+        if depth.zero?
+          self
+        else
+          @parent.at_depth(depth - 1)
+        end
+      end
+
       def fetch(key, depth: nil, expr: nil)
         unless depth
           raise "Missing depth when fetching #{key.inspect} (env: #{inspect})"

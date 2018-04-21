@@ -168,6 +168,10 @@ describe 'Clarke' do
     expect("let a = 6\na = 7\na").to evaluate_to(Clarke::Runtime::Integer.new(7))
   end
 
+  it 'handles reassignment at correct level' do
+    expect("let a = 6\n{ a = 7 }\na").to evaluate_to(Clarke::Runtime::Integer.new(7))
+  end
+
   it 'forbids reassigment of non-declared vars' do
     expect('a = 4').to fail_with(Clarke::Language::NameError)
   end

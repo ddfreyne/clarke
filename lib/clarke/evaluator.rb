@@ -75,8 +75,7 @@ module Clarke
     def eval_assignment(expr, env)
       if @local_depths.key?(expr)
         value = eval_expr(expr.expr, env)
-        # FIXME: set in correct env
-        env[expr.variable_name] = value
+        env.at_depth(@local_depths.fetch(expr))[expr.variable_name] = value
         value
       else
         raise Clarke::Language::NameError.new(expr.variable_name, expr)
