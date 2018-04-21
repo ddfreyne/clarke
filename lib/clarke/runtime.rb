@@ -16,6 +16,15 @@ module Clarke
       end
     end
 
+    Null = Object.new
+    def Null.describe
+      'null'
+    end
+
+    def Null.clarke_to_string
+      'null'
+    end
+
     String = Struct.new(:value) do
       def describe
         'string'

@@ -7,3 +7,6 @@ print(arr)
 array_add(arr, 3)
 print(arr)
 array_each(arr, (e) => print(e))
+
+print(array_each(arr, (e) => print(e)))
+print(print(arr))

@@ -5,7 +5,10 @@ module Clarke
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
         %w[a],
-        ->(_ev, a) { puts(a.clarke_to_string) },
+        lambda do |_ev, a|
+          puts(a.clarke_to_string)
+          Clarke::Runtime::Null
+        end,
       ),
       'array_new' => Clarke::Runtime::Function.new(
         %w[],
@@ -23,7 +26,7 @@ module Clarke
               fn.env.merge(Hash[fn.argument_names.zip([elem])])
             ev.eval_scope(fn.body, new_env)
           end
-          # TODO: return value?
+          Clarke::Runtime::Null
         end,
       ),
     }.freeze
