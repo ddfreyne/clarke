@@ -29,6 +29,12 @@ module Clarke
         super
       end
 
+      def transform_lambda_def(expr)
+        push do
+          super
+        end
+      end
+
       private
 
       def push

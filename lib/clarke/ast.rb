@@ -85,6 +85,7 @@ module Clarke
       end
     end
 
+    # FIXME: name -> base
     FunctionCall = Struct.new(:name, :arguments, :context) do
       include Printable
 

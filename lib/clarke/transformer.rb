@@ -16,7 +16,7 @@ module Clarke
 
     def transform_function_call(expr)
       Clarke::AST::FunctionCall.new(
-        expr.name,
+        transform_expr(expr.name),
         expr.arguments.map { |a| transform_expr(a) },
         expr.context,
       )

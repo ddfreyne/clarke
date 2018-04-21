@@ -38,7 +38,6 @@ module Clarke
 
     def eval_var(expr, env)
       depth = @local_depths[expr]
-      depth = depth ? depth + 1 : nil
       env.fetch(expr.name, depth: depth, expr: expr)
     end
 
