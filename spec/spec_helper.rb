@@ -24,7 +24,10 @@ end
 
 RSpec::Matchers.define :evaluate_to do |expected|
   match do |input|
+    old_stdout = $stdout
+    $stdout = StringIO.new
     @actual = run(input)
+    $stdout = old_stdout
     @actual == expected
   end
 

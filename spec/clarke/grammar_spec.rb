@@ -187,6 +187,7 @@ describe 'Clarke' do
     expect { run('print(true)') }.to output("true\n").to_stdout
     expect { run('print(false)') }.to output("false\n").to_stdout
     expect { run("let a = () => 1\nprint(a)") }.to output("<function>\n").to_stdout
+    expect('print("hi")').to evaluate_to(Clarke::Runtime::Null)
   end
 
   it 'raises NameError when appropriate' do
@@ -211,5 +212,18 @@ describe 'Clarke' do
     expect('let in = 1').to fail_with(Clarke::Language::SyntaxError)
     expect('let let = 1').to fail_with(Clarke::Language::SyntaxError)
     expect('let true = 1').to fail_with(Clarke::Language::SyntaxError)
+  end
+
+  it 'handles arrays' do
+    expect('let x = array_new()')
+      .to evaluate_to(Clarke::Runtime::Array.new([]))
+    expect("let x = array_new()\narray_add(x, 1)")
+      .to evaluate_to(Clarke::Runtime::Array.new([Clarke::Runtime::Integer.new(1)]))
+    expect("let x = array_new()\narray_add(x, 1)\nx")
+      .to evaluate_to(Clarke::Runtime::Array.new([Clarke::Runtime::Integer.new(1)]))
+    expect("let x = array_new()\narray_add(x, 1)\narray_each(x, (a) => print(a))")
+      .to evaluate_to(Clarke::Runtime::Null)
+    expect { run("let x = array_new()\narray_add(x, 1)\narray_each(x, (a) => print(a))") }
+      .to output("1\n").to_stdout
   end
 end

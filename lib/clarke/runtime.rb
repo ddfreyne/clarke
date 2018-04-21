@@ -25,6 +25,10 @@ module Clarke
       'null'
     end
 
+    def Null.inspect
+      '<Null>'
+    end
+
     String = Struct.new(:value) do
       def describe
         'string'

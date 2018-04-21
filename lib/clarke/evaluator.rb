@@ -16,7 +16,10 @@ module Clarke
       ),
       'array_add' => Clarke::Runtime::Function.new(
         %w[a e],
-        ->(_ev, a, e) { a.add(e) },
+        lambda do |_ev, a, e|
+          a.add(e)
+          a
+        end,
       ),
       'array_each' => Clarke::Runtime::Function.new(
         %w[a fn],
