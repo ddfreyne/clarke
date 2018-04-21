@@ -6,3 +6,4 @@ module Clarke
 end
 
 require_relative 'transformers/simplify_op_seq'
+require_relative 'transformers/build_scopes'

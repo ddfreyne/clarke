@@ -12,8 +12,10 @@ module Clarke
         @contents.key?(key) || (@parent&.key?(key))
       end
 
-      def fetch(key, expr: nil)
-        if @parent
+      def fetch(key, depth: nil, expr: nil)
+        if depth&.positive?
+          @parent.fetch(key, depth: depth - 1, expr: expr)
+        elsif @parent
           @contents.fetch(key) { @parent.fetch(key, expr: expr) }
         else
           @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
@@ -32,6 +34,10 @@ module Clarke
 
       def push
         self.class.new(parent: self)
+      end
+
+      def inspect
+        "<Env keys=#{@contents.keys} parent=#{@parent.inspect}>"
       end
     end
   end

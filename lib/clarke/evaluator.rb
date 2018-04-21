@@ -9,6 +9,10 @@ module Clarke
       ),
     }.freeze
 
+    def initialize(local_depths)
+      @local_depths = local_depths
+    end
+
     def eval_function_call(expr, env)
       function = check_type(eval_expr(expr.name, env), Clarke::Runtime::Function, expr)
 
@@ -33,7 +37,9 @@ module Clarke
     end
 
     def eval_var(expr, env)
-      env.fetch(expr.name, expr: expr)
+      depth = @local_depths[expr]
+      depth = depth ? depth + 1 : nil
+      env.fetch(expr.name, depth: depth, expr: expr)
     end
 
     def eval_assignment(assignment, env)

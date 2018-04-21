@@ -1,0 +1,9 @@
+let a = "global"
+
+{
+  let show = () => print(a)
+
+  show()
+  let a = "block"
+  show()
+}

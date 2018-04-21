@@ -12,7 +12,8 @@ module Helpers
     res = Clarke::Grammar::PROGRAM.apply(string)
     case res
     when DParse::Success
-      evaluator = Clarke::Evaluator.new
+      local_depths = {}
+      evaluator = Clarke::Evaluator.new(local_depths)
       evaluator.eval_exprs(res.data)
     when DParse::Failure
       res
