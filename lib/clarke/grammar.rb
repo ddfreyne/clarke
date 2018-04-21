@@ -151,8 +151,8 @@ module Clarke
         repeat1(ARGLIST),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        data[1].reduce(data[0]) do |memo, arglist|
-          Clarke::AST::FunctionCall.new(memo, arglist, context)
+        data[1].reduce(data[0]) do |base, arglist|
+          Clarke::AST::FunctionCall.new(base, arglist, context)
         end
       end
 

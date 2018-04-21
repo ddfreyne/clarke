@@ -85,8 +85,7 @@ module Clarke
       end
     end
 
-    # FIXME: name -> base
-    FunctionCall = Struct.new(:name, :arguments, :context) do
+    FunctionCall = Struct.new(:base, :arguments, :context) do
       include Printable
 
       def ast_name
@@ -94,7 +93,7 @@ module Clarke
       end
 
       def ast_children
-        [name, *arguments]
+        [base, *arguments]
       end
     end
 
