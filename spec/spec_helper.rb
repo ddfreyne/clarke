@@ -2,6 +2,7 @@
 
 require 'rspec'
 require 'coveralls'
+require 'fuubar'
 
 Coveralls.wear!
 
@@ -23,6 +24,10 @@ end
 
 RSpec.configure do |c|
   c.include Helpers
+
+  c.fuubar_progress_bar_options = {
+    format: '%c/%C |<%b>%i| %p%%',
+  }
 end
 
 RSpec::Matchers.define :evaluate_to do |expected|
