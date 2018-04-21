@@ -164,6 +164,14 @@ describe 'Clarke' do
     expect("let a = 6\na").to evaluate_to(Clarke::Runtime::Integer.new(6))
   end
 
+  it 'handles reassignment' do
+    expect("let a = 6\na = 7\na").to evaluate_to(Clarke::Runtime::Integer.new(7))
+  end
+
+  it 'forbids reassigment of non-declared vars' do
+    expect('a = 4').to fail_with(Clarke::Language::NameError)
+  end
+
   it 'handles scoped let' do
     expect("let a = 1\nlet a = 2 in { a }").to evaluate_to(Clarke::Runtime::Integer.new(2))
     expect("let a = 1\nlet a = 2 in { a }\na").to evaluate_to(Clarke::Runtime::Integer.new(1))

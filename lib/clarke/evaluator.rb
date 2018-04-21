@@ -72,6 +72,17 @@ module Clarke
       value
     end
 
+    def eval_assignment(expr, env)
+      if @local_depths.key?(expr)
+        value = eval_expr(expr.expr, env)
+        # FIXME: set in correct env
+        env[expr.variable_name] = value
+        value
+      else
+        raise Clarke::Language::NameError.new(expr.variable_name, expr)
+      end
+    end
+
     def eval_scoped_var_decl(expr, env)
       new_env = env.push
       new_env[expr.variable_name] = eval_expr(expr.expr, env)
@@ -171,6 +182,8 @@ module Clarke
         eval_var(expr, env)
       when Clarke::AST::VarDecl
         eval_var_decl(expr, env)
+      when Clarke::AST::Assignment
+        eval_assignment(expr, env)
       when Clarke::AST::ScopedVarDecl
         eval_scoped_var_decl(expr, env)
       when Clarke::AST::Scope

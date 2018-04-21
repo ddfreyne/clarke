@@ -26,6 +26,11 @@ module Clarke
         super
       end
 
+      def transform_assignment(expr)
+        @local_depths[expr] = scope_idx_containing(expr.variable_name, expr)
+        super
+      end
+
       def transform_var(expr)
         @local_depths[expr] = scope_idx_containing(expr.name, expr)
         super

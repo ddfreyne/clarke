@@ -2,6 +2,14 @@
 
 module Clarke
   class Transformer
+    def transform_assignment(expr)
+      Clarke::AST::Assignment.new(
+        expr.variable_name,
+        transform_expr(expr.expr),
+        expr.context,
+      )
+    end
+
     def transform_var_decl(expr)
       Clarke::AST::VarDecl.new(
         expr.variable_name,
@@ -86,6 +94,8 @@ module Clarke
       case expr
       when Clarke::AST::VarDecl
         transform_var_decl(expr)
+      when Clarke::AST::Assignment
+        transform_assignment(expr)
       when Clarke::AST::FalseLiteral
         transform_false(expr)
       when Clarke::AST::FunctionCall

@@ -168,6 +168,18 @@ module Clarke
         Clarke::AST::Scope.new(data, context)
       end
 
+    ASSIGNMENT =
+      seq(
+        VARIABLE_NAME,
+        WHITESPACE0.ignore,
+        char('=').ignore,
+        WHITESPACE0.ignore,
+        lazy { EXPRESSION },
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::Assignment.new(data[0], data[1], context)
+      end
+
     VAR_DECL =
       seq(
         string('let').ignore,
@@ -302,6 +314,7 @@ module Clarke
         FUNCTION_CALL,
         NUMBER,
         VAR_DECL,
+        ASSIGNMENT,
         SCOPE,
         IF,
         LAMBDA_DEF,
