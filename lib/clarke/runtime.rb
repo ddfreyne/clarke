@@ -84,6 +84,28 @@ module Clarke
       end
     end
 
+    Array = Struct.new(:values) do
+      def describe
+        'array'
+      end
+
+      def self.describe
+        'array'
+      end
+
+      def clarke_to_string
+        '[' + values.map(&:clarke_to_string).join(',') + ']'
+      end
+
+      def add(value)
+        values << value
+      end
+
+      def each
+        values.each { |e| yield(e) }
+      end
+    end
+
     Boolean = Struct.new(:value) do
       def describe
         'boolean'

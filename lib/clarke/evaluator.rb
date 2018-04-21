@@ -4,9 +4,28 @@ module Clarke
   class Evaluator
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
-        ['a'],
-        ->(a) { puts(a.clarke_to_string) },
+        %w[a],
+        ->(_ev, a) { puts(a.clarke_to_string) },
       ),
+      'array_new' => Clarke::Runtime::Function.new(
+        %w[],
+        ->(_ev) { Clarke::Runtime::Array.new([]) },
+      ),
+      'array_add' => Clarke::Runtime::Function.new(
+        %w[a e],
+        ->(_ev, a, e) { a.add(e) },
+      ),
+      'array_each' => Clarke::Runtime::Function.new(
+        %w[a fn],
+        lambda do |ev, array, fn|
+          array.each do |elem|
+            new_env =
+              fn.env.merge(Hash[fn.argument_names.zip([elem])])
+            ev.eval_scope(fn.body, new_env)
+          end
+          # TODO: return value?
+        end
+      )
     }.freeze
 
     def initialize(local_depths)
@@ -32,7 +51,7 @@ module Clarke
           function.env.merge(Hash[function.argument_names.zip(values)])
         eval_scope(function.body, new_env)
       when Proc
-        function.body.call(*values)
+        function.body.call(self, *values)
       end
     end
 

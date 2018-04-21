@@ -38,8 +38,8 @@ module Clarke
     # Basic components
 
     DIGIT = char_in('0'..'9')
-
     LETTER = char_in('a'..'z')
+    UNDERSCORE = char('_')
 
     # Primitives
 
@@ -98,10 +98,14 @@ module Clarke
       except(
         describe(
           seq(
-            LETTER,
+            alt(
+              LETTER,
+              UNDERSCORE,
+            ),
             repeat(
               alt(
                 LETTER,
+                UNDERSCORE,
                 NUMBER,
               ),
             ),
