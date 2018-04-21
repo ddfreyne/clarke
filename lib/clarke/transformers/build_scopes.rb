@@ -16,7 +16,10 @@ module Clarke
 
       def transform_scoped_let(expr)
         current_scope << expr.variable_name
-        super
+
+        push do
+          super
+        end
       end
 
       def transform_assignment(expr)
