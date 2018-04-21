@@ -13,15 +13,13 @@ module Clarke
       end
 
       def fetch(key, depth: nil, expr: nil)
-        if depth&.positive?
+        unless depth
+          raise "Missing depth when fetching #{key.inspect} (env: #{inspect})"
+        end
+
+        if depth.positive?
           @parent.fetch(key, depth: depth - 1, expr: expr)
-        elsif depth&.zero?
-          @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
-        elsif @parent
-          # TODO: remove
-          @contents.fetch(key) { @parent.fetch(key, expr: expr) }
-        else
-          # TODO: remove
+        elsif depth.zero?
           @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
         end
       end
@@ -42,6 +40,10 @@ module Clarke
 
       def inspect
         "<Env keys=#{@contents.keys} parent=#{@parent.inspect}>"
+      end
+
+      def to_s
+        inspect
       end
     end
   end

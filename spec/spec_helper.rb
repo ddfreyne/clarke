@@ -30,15 +30,16 @@ end
 
 RSpec::Matchers.define :evaluate_to do |expected|
   match do |input|
-    run(input) == expected
+    @actual = run(input)
+    @actual == expected
   end
 
   failure_message do |input|
-    "expected #{input.inspect} to evaluate to #{expected} (but was #{run(input).inspect})"
+    "expected #{input.inspect} to evaluate to #{expected} (but was #{@actual.inspect})"
   end
 
   failure_message_when_negated do |input|
-    "expected #{input.inspect} not to evaluate to #{expected} (but was #{run(input).inspect})"
+    "expected #{input.inspect} not to evaluate to #{expected} (but was #{@actual.inspect})"
   end
 end
 

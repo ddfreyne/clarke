@@ -3,9 +3,9 @@
 module Clarke
   module Transformers
     class BuildScopes < Clarke::Transformer
-      def initialize(local_depths)
+      def initialize(global_names, local_depths)
         @local_depths = local_depths
-        @scopes = [Set.new]
+        @scopes = [Set.new(global_names), Set.new]
       end
 
       def transform_scope(expr)
@@ -15,9 +15,8 @@ module Clarke
       end
 
       def transform_scoped_let(expr)
-        current_scope << expr.variable_name
-
         push do
+          current_scope << expr.variable_name
           super
         end
       end
@@ -28,12 +27,13 @@ module Clarke
       end
 
       def transform_var(expr)
-        @local_depths[expr] = scope_idx_containing(expr.name)
+        @local_depths[expr] = scope_idx_containing(expr.name, expr)
         super
       end
 
       def transform_lambda_def(expr)
         push do
+          expr.argument_names.each { |n| current_scope << n }
           super
         end
       end
@@ -51,14 +51,10 @@ module Clarke
         @scopes.last
       end
 
-      def scope_idx_containing(name)
-        count = @scopes.size
-
-        count.times do |i|
-          return count - i - 1 if @scopes[i].include?(name)
-        end
-
-        nil
+      def scope_idx_containing(name, expr)
+        x = @scopes.reverse_each.find_index { |s| s.include?(name) }
+        raise Clarke::Language::NameError.new(name, expr) unless x
+        x
       end
     end
   end

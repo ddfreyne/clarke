@@ -3,10 +3,11 @@
 module Clarke
   def self.run(exprs, verbose:)
     # Transform
+    global_names = Clarke::Evaluator::INITIAL_ENV.keys
     local_depths = {}
     stack = Clarke::TransformerStack.new([
       Clarke::Transformers::SimplifyOpSeq.new,
-      Clarke::Transformers::BuildScopes.new(local_depths),
+      Clarke::Transformers::BuildScopes.new(global_names, local_depths),
     ],)
     transformed_exprs = stack.transform_exprs(exprs)
 
