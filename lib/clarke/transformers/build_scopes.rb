@@ -21,7 +21,7 @@ module Clarke
         end
       end
 
-      def transform_assignment(expr)
+      def transform_var_decl(expr)
         current_scope << expr.variable_name
         super
       end

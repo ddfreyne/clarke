@@ -73,11 +73,11 @@ module Clarke
       end
     end
 
-    Assignment = Struct.new(:variable_name, :expr, :context) do
+    VarDecl = Struct.new(:variable_name, :expr, :context) do
       include Printable
 
       def ast_name
-        'Assignment'
+        'VarDecl'
       end
 
       def ast_children

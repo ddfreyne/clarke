@@ -168,7 +168,7 @@ module Clarke
         Clarke::AST::Scope.new(data, context)
       end
 
-    ASSIGNMENT =
+    VAR_DECL =
       seq(
         string('let').ignore,
         WHITESPACE1.ignore,
@@ -190,7 +190,7 @@ module Clarke
         if data[2]
           Clarke::AST::ScopedLet.new(data[0], data[1], data[2], context)
         else
-          Clarke::AST::Assignment.new(data[0], data[1], context)
+          Clarke::AST::VarDecl.new(data[0], data[1], context)
         end
       end
 
@@ -301,7 +301,7 @@ module Clarke
         STRING,
         FUNCTION_CALL,
         NUMBER,
-        ASSIGNMENT,
+        VAR_DECL,
         SCOPE,
         IF,
         LAMBDA_DEF,

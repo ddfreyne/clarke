@@ -66,9 +66,9 @@ module Clarke
       env.fetch(expr.name, depth: depth, expr: expr)
     end
 
-    def eval_assignment(assignment, env)
-      value = eval_expr(assignment.expr, env)
-      env[assignment.variable_name] = value
+    def eval_var_decl(expr, env)
+      value = eval_expr(expr.expr, env)
+      env[expr.variable_name] = value
       value
     end
 
@@ -169,8 +169,8 @@ module Clarke
         eval_function_call(expr, env)
       when Clarke::AST::Var
         eval_var(expr, env)
-      when Clarke::AST::Assignment
-        eval_assignment(expr, env)
+      when Clarke::AST::VarDecl
+        eval_var_decl(expr, env)
       when Clarke::AST::ScopedLet
         eval_scoped_let(expr, env)
       when Clarke::AST::Scope
