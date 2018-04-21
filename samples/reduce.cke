@@ -1,0 +1,11 @@
+let arr = array_new()
+array_add(arr, 10)
+array_add(arr, 5)
+array_add(arr, 2)
+
+let reduce = (arr, init, fn) => {
+    let res = init
+    array_each(arr, (elem) => res = fn(res, elem))
+    res
+}
+print(reduce(arr, 0, (a, e) => a + e))
