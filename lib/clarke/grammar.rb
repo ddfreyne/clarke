@@ -139,20 +139,28 @@ module Clarke
         char(')').ignore,
       ).compact.first
 
-    FUNCTION_CALL_BASE =
+    EXTENSION_BASE =
       alt(
         VARIABLE_REF,
         lazy { PARENTHESISED_EXPRESSION },
       )
 
-    FUNCTION_CALL =
+    FUNCTION_CALL_EXTENSION =
+      ARGLIST.map { |d| [:function_call, d] }
+
+    EXTENSION_SEQ =
       seq(
-        FUNCTION_CALL_BASE,
-        repeat1(ARGLIST),
+        EXTENSION_BASE,
+        repeat1(
+          FUNCTION_CALL_EXTENSION,
+        ),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        data[1].reduce(data[0]) do |base, arglist|
-          Clarke::AST::FunctionCall.new(base, arglist, context)
+        data[1].reduce(data[0]) do |base, ext|
+          case ext[0]
+          when :function_call
+            Clarke::AST::FunctionCall.new(base, ext[1], context)
+          end
         end
       end
 
@@ -311,7 +319,7 @@ module Clarke
         TRUE,
         FALSE,
         STRING,
-        FUNCTION_CALL,
+        EXTENSION_SEQ,
         NUMBER,
         VAR_DECL,
         ASSIGNMENT,
