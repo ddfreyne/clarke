@@ -38,7 +38,7 @@ module Clarke
     # Basic components
 
     DIGIT = char_in('0'..'9')
-    LETTER = char_in('a'..'z')
+    LETTER = alt(char_in('a'..'z'), char_in('A'..'Z'))
     UNDERSCORE = char('_')
 
     # Primitives
@@ -148,11 +148,20 @@ module Clarke
     FUNCTION_CALL_EXTENSION =
       ARGLIST.map { |d| [:function_call, d] }
 
+    GET_PROP_EXTENSION =
+      seq(
+        char('.').ignore,
+        IDENTIFIER,
+      ).compact.first.map { |d| [:prop, d] }
+
     EXTENSION_SEQ =
       seq(
         EXTENSION_BASE,
         repeat1(
-          FUNCTION_CALL_EXTENSION,
+          alt(
+            FUNCTION_CALL_EXTENSION,
+            GET_PROP_EXTENSION,
+          ),
         ),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
@@ -160,6 +169,8 @@ module Clarke
           case ext[0]
           when :function_call
             Clarke::AST::FunctionCall.new(base, ext[1], context)
+          when :prop
+            Clarke::AST::GetProp.new(base, ext[1], context)
           end
         end
       end

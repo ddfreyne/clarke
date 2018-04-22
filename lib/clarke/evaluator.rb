@@ -10,6 +10,12 @@ module Clarke
           Clarke::Runtime::Null
         end,
       ),
+      'Array' => Clarke::Runtime::Object.new(
+        new: Clarke::Runtime::Function.new(
+          %w[],
+          ->(_ev) { Clarke::Runtime::Array.new([]) },
+        ),
+      ),
       'array_new' => Clarke::Runtime::Function.new(
         %w[],
         ->(_ev) { Clarke::Runtime::Array.new([]) },
@@ -59,6 +65,21 @@ module Clarke
       when Proc
         function.body.call(self, *values)
       end
+    end
+
+    def eval_get_prop(expr, env)
+      base_value = eval_expr(expr.base, env)
+      name = expr.name.to_sym
+
+      unless base_value.is_a?(Clarke::Runtime::Object)
+        raise Clarke::Language::NameError.new(name, expr)
+      end
+
+      unless base_value.props.key?(name)
+        raise Clarke::Language::NameError.new(name, expr)
+      end
+
+      base_value.props.fetch(name)
     end
 
     def eval_var(expr, env)
@@ -177,6 +198,8 @@ module Clarke
         Clarke::Runtime::String.new(expr.value)
       when Clarke::AST::FunctionCall
         eval_function_call(expr, env)
+      when Clarke::AST::GetProp
+        eval_get_prop(expr, env)
       when Clarke::AST::Var
         eval_var(expr, env)
       when Clarke::AST::VarDecl

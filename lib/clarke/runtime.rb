@@ -29,6 +29,20 @@ module Clarke
       '<Null>'
     end
 
+    Object = Struct.new(:props) do
+      def describe
+        'object'
+      end
+
+      def self.describe
+        'object'
+      end
+
+      def clarke_to_string
+        '<object>'
+      end
+    end
+
     String = Struct.new(:value) do
       def describe
         'string'

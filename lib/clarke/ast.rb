@@ -97,6 +97,18 @@ module Clarke
       end
     end
 
+    GetProp = Struct.new(:base, :name, :context) do
+      include Printable
+
+      def ast_name
+        'GetProp'
+      end
+
+      def ast_children
+        [base, name]
+      end
+    end
+
     FunctionCall = Struct.new(:base, :arguments, :context) do
       include Printable
 

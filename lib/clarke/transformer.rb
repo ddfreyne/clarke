@@ -30,6 +30,14 @@ module Clarke
       )
     end
 
+    def transform_get_prop(expr)
+      Clarke::AST::GetProp.new(
+        transform_expr(expr.base),
+        expr.name,
+        expr.context,
+      )
+    end
+
     def transform_if(expr)
       Clarke::AST::If.new(
         transform_expr(expr.cond),
@@ -100,6 +108,8 @@ module Clarke
         transform_false(expr)
       when Clarke::AST::FunctionCall
         transform_function_call(expr)
+      when Clarke::AST::GetProp
+        transform_get_prop(expr)
       when Clarke::AST::If
         transform_if(expr)
       when Clarke::AST::IntegerLiteral

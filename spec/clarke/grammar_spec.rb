@@ -141,6 +141,10 @@ describe 'Clarke' do
     expect('(((1)))').to evaluate_to(Clarke::Runtime::Integer.new(1))
   end
 
+  it 'handles properties' do
+    expect('Array.new()').to evaluate_to(Clarke::Runtime::Array.new([]))
+  end
+
   it 'errors on wrong function counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
