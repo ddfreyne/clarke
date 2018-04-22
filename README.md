@@ -37,6 +37,47 @@ Call `bin/clarke` with `interpret` and the name of the file to run, e.g.
 bin/clarke interpret samples/lambda.cke
 ```
 
+## Syntax
+
+Values:
+
+```
+3
+"string"
+true
+false
+```
+
+Declaration and assignment:
+
+```
+let factor = 3
+```
+
+```
+let double = (a) => 2 * a
+```
+
+```
+let double = fun (a) { 2 * a }
+```
+
+Function calls:
+
+```
+print(123)
+```
+
+Conditionals:
+
+```
+if (b > 0) {
+  print("Bigger!")
+} else {
+  print("Smaller!)
+}
+```
+
 ## Ideas
 
 In no particular order:
