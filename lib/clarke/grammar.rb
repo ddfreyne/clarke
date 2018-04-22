@@ -8,7 +8,7 @@ module Clarke
 
     # Whitespace
 
-    WHITESPACE_CHAR =
+    WS_CHAR =
       alt(
         char(' '),
         char("\t"),
@@ -22,17 +22,14 @@ module Clarke
         char("\t"),
       )
 
-    WHITESPACE0 =
-      repeat(WHITESPACE_CHAR)
-
-    WHITESPACE1 =
-      seq(WHITESPACE_CHAR, WHITESPACE0)
+    WS0 = repeat0(WS_CHAR)
+    WS1 = repeat1(WS_CHAR)
 
     LINE_BREAK =
       seq(
         repeat(SPACE_OR_TAB),
         char("\n"),
-        WHITESPACE0,
+        WS0,
       )
 
     # Basic components
@@ -115,23 +112,23 @@ module Clarke
         RESERVED_WORD,
       )
 
-    VARIABLE_NAME = IDENTIFIER
+    VAR_NAME = IDENTIFIER
 
-    VARIABLE_REF =
-      VARIABLE_NAME.map do |data, success, old_pos|
+    VAR_REF =
+      VAR_NAME.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Var.new(data, context)
       end
 
-    ARGLIST =
+    ARG_LIST =
       seq(
         char('(').ignore,
         opt(
           intersperse(
             seq(
-              WHITESPACE0.ignore,
-              lazy { EXPRESSION },
-              WHITESPACE0.ignore,
+              WS0.ignore,
+              lazy { EXPR },
+              WS0.ignore,
             ).compact.first,
             char(',').ignore,
           ).select_even,
@@ -139,35 +136,35 @@ module Clarke
         char(')').ignore,
       ).compact.first
 
-    EXTENSION_BASE =
+    EXT_BASE =
       alt(
-        VARIABLE_REF,
-        lazy { PARENTHESISED_EXPRESSION },
+        VAR_REF,
+        lazy { GROUPED_EXPR },
       )
 
-    FUNCTION_CALL_EXTENSION =
-      ARGLIST.map { |d| [:function_call, d] }
+    CALL_EXT =
+      ARG_LIST.map { |d| [:call, d] }
 
-    GET_PROP_EXTENSION =
+    GET_PROP_EXT =
       seq(
         char('.').ignore,
         IDENTIFIER,
       ).compact.first.map { |d| [:prop, d] }
 
-    EXTENSION_SEQ =
+    EXT_SEQ =
       seq(
-        EXTENSION_BASE,
+        EXT_BASE,
         repeat1(
           alt(
-            FUNCTION_CALL_EXTENSION,
-            GET_PROP_EXTENSION,
+            CALL_EXT,
+            GET_PROP_EXT,
           ),
         ),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         data[1].reduce(data[0]) do |base, ext|
           case ext[0]
-          when :function_call
+          when :call
             Clarke::AST::FunctionCall.new(base, ext[1], context)
           when :prop
             Clarke::AST::GetProp.new(base, ext[1], context)
@@ -178,9 +175,9 @@ module Clarke
     SCOPE =
       seq(
         char('{').ignore,
-        WHITESPACE0.ignore,
-        intersperse(lazy { EXPRESSION }, WHITESPACE1).select_even,
-        WHITESPACE0.ignore,
+        WS0.ignore,
+        intersperse(lazy { EXPR }, WS1).select_even,
+        WS0.ignore,
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
@@ -189,11 +186,11 @@ module Clarke
 
     ASSIGNMENT =
       seq(
-        VARIABLE_NAME,
-        WHITESPACE0.ignore,
+        VAR_NAME,
+        WS0.ignore,
         char('=').ignore,
-        WHITESPACE0.ignore,
-        lazy { EXPRESSION },
+        WS0.ignore,
+        lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Assignment.new(data[0], data[1], context)
@@ -202,18 +199,18 @@ module Clarke
     VAR_DECL =
       seq(
         string('let').ignore,
-        WHITESPACE1.ignore,
-        VARIABLE_NAME,
-        WHITESPACE0.ignore,
+        WS1.ignore,
+        VAR_NAME,
+        WS0.ignore,
         char('=').ignore,
-        WHITESPACE0.ignore,
-        lazy { EXPRESSION },
+        WS0.ignore,
+        lazy { EXPR },
         opt(
           seq(
-            WHITESPACE1.ignore,
+            WS1.ignore,
             string('in').ignore,
-            WHITESPACE1.ignore,
-            lazy { EXPRESSION },
+            WS1.ignore,
+            lazy { EXPR },
           ).compact.first,
         ),
       ).compact.map do |data, success, old_pos|
@@ -228,17 +225,17 @@ module Clarke
     IF =
       seq(
         string('if').ignore,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         char('(').ignore,
-        WHITESPACE0.ignore,
-        lazy { EXPRESSION },
-        WHITESPACE0.ignore,
+        WS0.ignore,
+        lazy { EXPR },
+        WS0.ignore,
         char(')').ignore,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         SCOPE,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         string('else').ignore,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         SCOPE,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
@@ -248,20 +245,20 @@ module Clarke
     FUN_LAMBDA_DEF =
       seq(
         string('fun').ignore,
-        WHITESPACE1.ignore,
+        WS1.ignore,
         char('(').ignore,
         opt(
           intersperse(
             seq(
-              WHITESPACE0.ignore,
-              VARIABLE_NAME,
-              WHITESPACE0.ignore,
+              WS0.ignore,
+              VAR_NAME,
+              WS0.ignore,
             ).compact.first,
             char(',').ignore,
           ).select_even,
         ).map { |d| d || [] },
         char(')').ignore,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         SCOPE,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
@@ -274,18 +271,18 @@ module Clarke
         opt(
           intersperse(
             seq(
-              WHITESPACE0.ignore,
-              VARIABLE_NAME,
-              WHITESPACE0.ignore,
+              WS0.ignore,
+              VAR_NAME,
+              WS0.ignore,
             ).compact.first,
             char(',').ignore,
           ).select_even,
         ).map { |d| d || [] },
         char(')').ignore,
-        WHITESPACE0.ignore,
+        WS0.ignore,
         string('=>').ignore,
-        WHITESPACE0.ignore,
-        lazy { EXPRESSION },
+        WS0.ignore,
+        lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Scope.new([data[1]]), context)
@@ -316,38 +313,38 @@ module Clarke
         Clarke::AST::Op.new(data, context)
       end
 
-    PARENTHESISED_EXPRESSION =
+    GROUPED_EXPR =
       seq(
         char('(').ignore,
-        WHITESPACE0.ignore,
-        lazy { EXPRESSION },
-        WHITESPACE0.ignore,
+        WS0.ignore,
+        lazy { EXPR },
+        WS0.ignore,
         char(')').ignore,
       ).compact.first
 
     OPERAND =
       alt(
-        TRUE,
-        FALSE,
-        STRING,
-        EXTENSION_SEQ,
-        NUMBER,
-        VAR_DECL,
         ASSIGNMENT,
-        SCOPE,
+        EXT_SEQ,
+        FALSE,
         IF,
         LAMBDA_DEF,
-        VARIABLE_REF,
-        PARENTHESISED_EXPRESSION,
+        NUMBER,
+        GROUPED_EXPR,
+        SCOPE,
+        STRING,
+        TRUE,
+        VAR_DECL,
+        VAR_REF,
       )
 
-    EXPRESSION =
+    EXPR =
       intersperse(
         OPERAND,
         seq(
-          WHITESPACE0.ignore,
+          WS0.ignore,
           OPERATOR,
-          WHITESPACE0.ignore,
+          WS0.ignore,
         ).compact.first,
       ).map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
@@ -356,10 +353,10 @@ module Clarke
 
     STATEMENTS =
       intersperse(
-        EXPRESSION,
+        EXPR,
         LINE_BREAK,
       ).select_even
 
-    PROGRAM = seq(WHITESPACE0.ignore, STATEMENTS, WHITESPACE0.ignore, eof.ignore).compact.first
+    PROGRAM = seq(WS0.ignore, STATEMENTS, WS0.ignore, eof.ignore).compact.first
   end
 end
