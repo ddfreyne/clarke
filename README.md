@@ -59,7 +59,7 @@ let factor = 3 in { print(factor) }
 ```
 
 ```
-let factor =3
+let factor = 3
 factor = 4
 ```
 

@@ -105,7 +105,7 @@ module Clarke
 
     def eval_scoped_var_decl(expr, env)
       new_env = env.push
-      new_env[expr.variable_name] = eval_expr(expr.expr, env)
+      new_env[expr.variable_name] = eval_expr(expr.expr, new_env)
       eval_expr(expr.body, new_env)
     end
 

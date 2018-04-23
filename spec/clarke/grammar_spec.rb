@@ -183,6 +183,7 @@ describe 'Clarke' do
   it 'handles scoped let' do
     expect("let a = 1\nlet a = 2 in { a }").to evaluate_to(Clarke::Runtime::Integer.new(2))
     expect("let a = 1\nlet a = 2 in { a }\na").to evaluate_to(Clarke::Runtime::Integer.new(1))
+    expect("let a = 1\nlet b = a in { b }").to evaluate_to(Clarke::Runtime::Integer.new(1))
     expect("let a = 2 in { a }\na").to fail_with(Clarke::Language::NameError)
   end
 
