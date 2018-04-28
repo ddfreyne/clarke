@@ -7,22 +7,22 @@ module Clarke
     if res.is_a?(DParse::Failure)
       raise Clarke::Language::SyntaxError.new(res.pretty_message)
     end
+    exprs = res.data
+
+    # Simplify
+    exprs = Clarke::Transformers::SimplifyOpSeq.new.visit_exprs(exprs)
 
     # Transform
     global_names = Clarke::Evaluator::INITIAL_ENV.keys
     local_depths = {}
-    stack = Clarke::TransformerStack.new([
-      Clarke::Transformers::SimplifyOpSeq.new,
-      Clarke::Transformers::BuildScopes.new(global_names, local_depths),
-    ],)
-    transformed_exprs = stack.transform_exprs(res.data)
+    Clarke::Transformers::BuildScopes.new(global_names, local_depths).visit_exprs(exprs)
 
     # Debug
-    transformed_exprs.each { |e| p e } if verbose
+    exprs.each { |e| p e } if verbose
 
     # Run
     evaluator = Clarke::Evaluator.new(local_depths)
-    evaluator.eval_exprs(transformed_exprs)
+    evaluator.eval_exprs(exprs)
   end
 end
 
@@ -31,6 +31,7 @@ require_relative 'clarke/ast'
 require_relative 'clarke/language'
 require_relative 'clarke/runtime'
 require_relative 'clarke/evaluator'
+require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
 require_relative 'clarke/transformer_stack'
 require_relative 'clarke/transformers'

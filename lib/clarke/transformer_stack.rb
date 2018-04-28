@@ -6,8 +6,8 @@ module Clarke
       @transformers = transformers
     end
 
-    def transform_exprs(exprs)
-      @transformers.reduce(exprs) { |a, e| e.transform_exprs(a) }
+    def visit_exprs(exprs)
+      @transformers.reduce(exprs) { |a, e| e.visit_exprs(a) }
     end
   end
 end

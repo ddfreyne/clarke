@@ -3,9 +3,9 @@
 module Clarke
   module Transformers
     class SimplifyOpSeq < Clarke::Transformer
-      def transform_op_seq(expr)
+      def visit_op_seq(expr)
         if expr.seq.size == 1
-          transform_expr(expr.seq.first)
+          visit_expr(expr.seq.first)
         else
           super
         end

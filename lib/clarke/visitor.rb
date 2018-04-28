@@ -1,92 +1,72 @@
 # frozen_string_literal: true
 
 module Clarke
-  class Transformer
+  class Visitor
     def visit_assignment(expr)
-      Clarke::AST::Assignment.new(
-        expr.variable_name,
-        visit_expr(expr.expr),
-        expr.context,
-      )
+      visit_expr(expr.expr)
+      nil
     end
 
     def visit_var_decl(expr)
-      Clarke::AST::VarDecl.new(
-        expr.variable_name,
-        visit_expr(expr.expr),
-        expr.context,
-      )
+      visit_expr(expr.expr)
+      nil
     end
 
-    def visit_false(expr)
-      expr
+    def visit_false(_expr)
+      nil
     end
 
     def visit_function_call(expr)
-      Clarke::AST::FunctionCall.new(
-        visit_expr(expr.base),
-        expr.arguments.map { |a| visit_expr(a) },
-        expr.context,
-      )
+      expr.arguments.map { |a| visit_expr(a) }
+      visit_expr(expr.base)
+      nil
     end
 
     def visit_get_prop(expr)
-      Clarke::AST::GetProp.new(
-        visit_expr(expr.base),
-        expr.name,
-        expr.context,
-      )
+      visit_expr(expr.base)
+      nil
     end
 
     def visit_if(expr)
-      Clarke::AST::If.new(
-        visit_expr(expr.cond),
-        visit_expr(expr.body_true),
-        visit_expr(expr.body_false),
-        expr.context,
-      )
+      visit_expr(expr.cond)
+      visit_expr(expr.body_true)
+      visit_expr(expr.body_false)
+      nil
     end
 
-    def visit_integer_literal(expr)
-      expr
+    def visit_integer_literal(_expr)
+      nil
     end
 
     def visit_lambda_def(expr)
-      Clarke::AST::LambdaDef.new(
-        expr.argument_names,
-        visit_expr(expr.body),
-        expr.context,
-      )
+      visit_expr(expr.body)
+      nil
     end
 
-    def visit_op(expr)
-      expr
+    def visit_op(_expr)
+      nil
     end
 
     def visit_op_seq(expr)
-      Clarke::AST::OpSeq.new(
-        expr.seq.map { |e| visit_expr(e) },
-        expr.context,
-      )
+      expr.seq.map { |e| visit_expr(e) }
+      nil
     end
 
     def visit_block(expr)
-      Clarke::AST::Block.new(
-        expr.exprs.map { |e| visit_expr(e) },
-        expr.context,
-      )
+      expr.exprs.map { |e| visit_expr(e) }
+      nil
     end
 
-    def visit_string(expr)
-      expr
+    def visit_string(_expr)
+      nil
     end
 
-    def visit_true(expr)
-      expr
+    def visit_true(_expr)
+      nil
     end
 
-    def visit_var(expr)
-      expr
+    def visit_var(_expr)
+      nil
     end
 
     def visit_expr(expr)
