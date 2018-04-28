@@ -1,0 +1,6 @@
+class Donkey {
+  fun init(i) { this.fn = (a) => a + i }
+  fun doSomething(b) { (a) => this.fn(a + b) }
+}
+
+print(Donkey(100).doSomething(10)(1))
