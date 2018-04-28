@@ -30,8 +30,6 @@ if (true || false) {
 
 let a = 3
 print(a)
-let a = 4 in { print(a) }
-print(a)
 
 print(1)
 print(1+2)

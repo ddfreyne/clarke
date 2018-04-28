@@ -193,18 +193,6 @@ module Clarke
       end
     end
 
-    ScopedVarDecl = Struct.new(:variable_name, :expr, :body, :context) do
-      include Printable
-
-      def ast_name
-        'ScopedVarDecl'
-      end
-
-      def ast_children
-        [variable_name, expr, body]
-      end
-    end
-
     Var = Struct.new(:name, :context) do
       include Printable
 

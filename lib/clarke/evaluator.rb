@@ -103,12 +103,6 @@ module Clarke
       end
     end
 
-    def eval_scoped_var_decl(expr, env)
-      new_env = env.push
-      new_env[expr.variable_name] = eval_expr(expr.expr, new_env)
-      eval_expr(expr.body, new_env)
-    end
-
     def eval_scope(expr, env)
       multi_eval(expr.exprs, env.push)
     end
@@ -206,8 +200,6 @@ module Clarke
         eval_var_decl(expr, env)
       when Clarke::AST::Assignment
         eval_assignment(expr, env)
-      when Clarke::AST::ScopedVarDecl
-        eval_scoped_var_decl(expr, env)
       when Clarke::AST::Scope
         eval_scope(expr, env)
       when Clarke::AST::If

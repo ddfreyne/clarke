@@ -2,7 +2,3 @@ let factor = 3
 
 let a = () => 4 * factor
 print(a())
-
-let b = () => 4 * factor in {
-  print(b())
-}

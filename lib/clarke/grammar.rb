@@ -84,7 +84,6 @@ module Clarke
           string('false'),
           string('fun'),
           string('if'),
-          string('in'),
           string('let'),
           string('true'),
         ),
@@ -205,21 +204,9 @@ module Clarke
         char('=').ignore,
         WS0.ignore,
         lazy { EXPR },
-        opt(
-          seq(
-            WS1.ignore,
-            string('in').ignore,
-            WS1.ignore,
-            lazy { EXPR },
-          ).compact.first,
-        ),
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        if data[2]
-          Clarke::AST::ScopedVarDecl.new(data[0], data[1], data[2], context)
-        else
-          Clarke::AST::VarDecl.new(data[0], data[1], context)
-        end
+        Clarke::AST::VarDecl.new(data[0], data[1], context)
       end
 
     IF =

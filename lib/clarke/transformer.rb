@@ -77,15 +77,6 @@ module Clarke
       )
     end
 
-    def transform_scoped_var_decl(expr)
-      Clarke::AST::ScopedVarDecl.new(
-        expr.variable_name,
-        transform_expr(expr.expr),
-        transform_expr(expr.body),
-        expr.context,
-      )
-    end
-
     def transform_string(expr)
       expr
     end
@@ -122,8 +113,6 @@ module Clarke
         transform_op_seq(expr)
       when Clarke::AST::Scope
         transform_scope(expr)
-      when Clarke::AST::ScopedVarDecl
-        transform_scoped_var_decl(expr)
       when Clarke::AST::StringLiteral
         transform_string(expr)
       when Clarke::AST::TrueLiteral

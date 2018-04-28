@@ -3,11 +3,6 @@
 This is an interpreted programming language made for fun. Not even close to finished.
 
 ```
-let factor = 3
-let a = () => 4 * factor in print(a())
-```
-
-```
 let multiply = (a, b) =>
   if (b > 0) {
     a + multiply(a, b - 1)
@@ -52,10 +47,6 @@ Declaration and assignment:
 
 ```
 let factor = 3
-```
-
-```
-let factor = 3 in { print(factor) }
 ```
 
 ```

@@ -14,13 +14,6 @@ module Clarke
         end
       end
 
-      def transform_scoped_var_decl(expr)
-        push do
-          current_scope << expr.variable_name
-          super
-        end
-      end
-
       def transform_var_decl(expr)
         current_scope << expr.variable_name
         super
