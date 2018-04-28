@@ -89,6 +89,21 @@ module Clarke
       expr
     end
 
+    def visit_class_def(expr)
+      Clarke::AST::ClassDef.new(
+        expr.name,
+        expr.functions.map { |e| visit_expr(e) },
+      )
+    end
+
+    def visit_fun_def(expr)
+      Clarke::AST::FunDef.new(
+        expr.name,
+        expr.argument_names,
+        visit_expr(expr.body),
+      )
+    end
+
     def visit_expr(expr)
       case expr
       when Clarke::AST::VarDecl
@@ -119,6 +134,10 @@ module Clarke
         visit_true(expr)
       when Clarke::AST::Var
         visit_var(expr)
+      when Clarke::AST::ClassDef
+        visit_class_def(expr)
+      when Clarke::AST::FunDef
+        visit_fun_def(expr)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end

@@ -10,7 +10,7 @@ module Clarke
           Clarke::Runtime::Null
         end,
       ),
-      'Array' => Clarke::Runtime::Object.new(
+      'Array' => Clarke::Runtime::Instance.new(
         new: Clarke::Runtime::Function.new(
           %w[],
           ->(_ev) { Clarke::Runtime::Array.new([]) },
@@ -45,25 +45,32 @@ module Clarke
     end
 
     def eval_function_call(expr, env)
-      function = check_type(eval_expr(expr.base, env), Clarke::Runtime::Function, expr)
+      base = eval_expr(expr.base, env)
 
-      if expr.arguments.count != function.argument_names.size
-        raise Clarke::Language::ArgumentCountError.new(
-          expected: function.argument_names.size,
-          actual: expr.arguments.count,
-          expr: expr,
-        )
-      end
+      if base.is_a?(Clarke::Runtime::Function)
+        function = base
+        if expr.arguments.count != function.argument_names.size
+          raise Clarke::Language::ArgumentCountError.new(
+            expected: function.argument_names.size,
+            actual: expr.arguments.count,
+            expr: expr,
+          )
+        end
 
-      values = expr.arguments.map { |e| eval_expr(e, env) }
+        values = expr.arguments.map { |e| eval_expr(e, env) }
 
-      case function.body
-      when Clarke::AST::Block
-        new_env =
-          function.env.merge(Hash[function.argument_names.zip(values)])
-        eval_block(function.body, new_env)
-      when Proc
-        function.body.call(self, *values)
+        case function.body
+        when Clarke::AST::Block
+          new_env =
+            function.env.merge(Hash[function.argument_names.zip(values)])
+          eval_block(function.body, new_env)
+        when Proc
+          function.body.call(self, *values)
+        end
+      elsif base.is_a?(Clarke::Runtime::Class)
+        Clarke::Runtime::Instance.new({}, base)
+      else
+        raise Clarke::Language::TypeError.new(base, [Clarke::Runtime::Function, Clarke::Runtime::Class], expr)
       end
     end
 
@@ -71,15 +78,17 @@ module Clarke
       base_value = eval_expr(expr.base, env)
       name = expr.name.to_sym
 
-      unless base_value.is_a?(Clarke::Runtime::Object)
+      unless base_value.is_a?(Clarke::Runtime::Instance)
         raise Clarke::Language::NameError.new(name, expr)
       end
 
-      unless base_value.props.key?(name)
+      if base_value.props.key?(name)
+        base_value.props.fetch(name)
+      elsif base_value.klass && base_value.klass.functions.key?(name)
+        base_value.klass.functions.fetch(name)
+      else
         raise Clarke::Language::NameError.new(name, expr)
       end
-
-      base_value.props.fetch(name)
     end
 
     def eval_var(expr, env)
@@ -180,6 +189,17 @@ module Clarke
       Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
     end
 
+    def eval_class_def(expr, env)
+      functions = {}
+      expr.functions.each { |e| functions[e.name.to_sym] = eval_expr(e, env) }
+      env[expr.name] = Clarke::Runtime::Class.new(expr.name, functions)
+    end
+
+    def eval_fun_def(expr, env)
+      Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
+    end
+
+    # TODO: turn this into a visitor
     def eval_expr(expr, env)
       case expr
       when Clarke::AST::IntegerLiteral
@@ -208,6 +228,10 @@ module Clarke
         eval_op_seq(expr, env)
       when Clarke::AST::LambdaDef
         eval_lambda_def(expr, env)
+      when Clarke::AST::ClassDef
+        eval_class_def(expr, env)
+      when Clarke::AST::FunDef
+        eval_fun_def(expr, env)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end
@@ -224,7 +248,7 @@ module Clarke
       if val.is_a?(klass)
         val
       else
-        raise Clarke::Language::TypeError.new(val, klass, expr)
+        raise Clarke::Language::TypeError.new(val, [klass], expr)
       end
     end
 

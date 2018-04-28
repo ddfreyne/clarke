@@ -1,0 +1,6 @@
+class Donkey {
+  fun name() { "george" }
+  fun vocalize() { "eeh-aah" }
+}
+
+print(Donkey().name())

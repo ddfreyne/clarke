@@ -157,6 +157,30 @@ module Clarke
       end
     end
 
+    FunDef = Struct.new(:name, :argument_names, :body, :context) do
+      include Printable
+
+      def ast_name
+        'FunDef'
+      end
+
+      def ast_children
+        [name, argument_names, body]
+      end
+    end
+
+    ClassDef = Struct.new(:name, :functions, :context) do
+      include Printable
+
+      def ast_name
+        'ClassDef'
+      end
+
+      def ast_children
+        [name, functions]
+      end
+    end
+
     Op = Struct.new(:name, :context) do
       include Printable
 

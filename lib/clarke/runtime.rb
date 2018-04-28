@@ -29,17 +29,32 @@ module Clarke
       '<Null>'
     end
 
-    Object = Struct.new(:props) do
+    Class = Struct.new(:name, :functions) do
       def describe
-        'object'
+        'class'
       end
 
       def self.describe
-        'object'
+        'class'
       end
 
       def clarke_to_string
-        '<object>'
+        '<Class>'
+      end
+    end
+
+    # TODO: remove props?
+    Instance = Struct.new(:props, :klass) do
+      def describe
+        'instance'
+      end
+
+      def self.describe
+        'instance'
+      end
+
+      def clarke_to_string
+        '<Instance>'
       end
     end
 

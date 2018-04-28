@@ -71,15 +71,15 @@ module Clarke
     class TypeError < Error
       attr_reader :val, :klass
 
-      def initialize(val, klass, expr)
+      def initialize(val, classes, expr)
         super(expr)
 
         @val = val
-        @klass = klass
+        @classes = classes
       end
 
       def message
-        "expected #{@klass.describe}, but got #{@val.describe}"
+        "expected #{@classes.map(&:describe).join(' or ')}, but got #{@val.describe}"
       end
     end
 

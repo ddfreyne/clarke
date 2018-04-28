@@ -80,6 +80,7 @@ module Clarke
     RESERVED_WORD =
       describe(
         alt(
+          string('class'),
           string('else'),
           string('false'),
           string('fun'),
@@ -275,6 +276,35 @@ module Clarke
         ARROW_LAMBDA_DEF,
       )
 
+    FUN_DEF =
+      seq(
+        string('fun').ignore,
+        WS1.ignore,
+        IDENTIFIER,
+        PARAM_LIST,
+        WS0.ignore,
+        BLOCK,
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::FunDef.new(data[0], data[1], data[2], context).tap { |x| STDOUT.puts x.inspect }
+      end
+
+    CLASS_DEF =
+      seq(
+        string('class').ignore,
+        WS1.ignore,
+        IDENTIFIER,
+        WS1.ignore,
+        char('{').ignore,
+        WS0.ignore,
+        intersperse(FUN_DEF, WS0).select_even,
+        WS0.ignore,
+        char('}').ignore,
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::ClassDef.new(data[0], data[1], context)
+      end
+
     OPERATOR =
       alt(
         char('^'),
@@ -317,6 +347,7 @@ module Clarke
         TRUE,
         VAR_DECL,
         VAR_REF,
+        CLASS_DEF,
       )
 
     EXPR =

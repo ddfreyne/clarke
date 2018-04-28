@@ -36,6 +36,23 @@ module Clarke
         end
       end
 
+      def visit_class_def(expr)
+        current_scope << expr.name
+
+        push do
+          super
+        end
+      end
+
+      def visit_fun_def(expr)
+        current_scope << expr.name
+
+        push do
+          expr.argument_names.each { |n| current_scope << n }
+          super
+        end
+      end
+
       private
 
       def push
