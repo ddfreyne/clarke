@@ -1,9 +1,9 @@
 class Donkey {
-  fun name() { "george" }
+  fun firstName() { "george" }
   fun vocalize() { "eeh-aah" }
 }
 
-print(Donkey().name())
-let name = Donkey().name
-print(name)
-print(name())
+print(Donkey().firstName())
+let firstName = Donkey().firstName
+print(firstName)
+print(firstName())
