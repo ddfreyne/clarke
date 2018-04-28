@@ -22,7 +22,7 @@ module Clarke
 
     # Run
     evaluator = Clarke::Evaluator.new(local_depths)
-    evaluator.eval_exprs(exprs)
+    evaluator.visit_exprs(exprs)
   end
 end
 
@@ -30,10 +30,10 @@ require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
 require_relative 'clarke/language'
 require_relative 'clarke/runtime'
-require_relative 'clarke/evaluator'
+require_relative 'clarke/util'
 
 require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
-require_relative 'clarke/util'
+require_relative 'clarke/evaluator'
 
 require_relative 'clarke/passes'

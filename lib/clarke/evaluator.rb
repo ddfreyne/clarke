@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  class Evaluator
+  class Evaluator < Clarke::Visitor
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
         %w[a],
@@ -33,7 +33,7 @@ module Clarke
           array.each do |elem|
             new_env =
               fn.env.merge(Hash[fn.argument_names.zip([elem])])
-            ev.eval_block(fn.body, new_env)
+            ev.visit_block(fn.body, new_env)
           end
           Clarke::Runtime::Null
         end,
@@ -44,8 +44,8 @@ module Clarke
       @local_depths = local_depths
     end
 
-    def eval_function_call(expr, env)
-      base = eval_expr(expr.base, env)
+    def visit_function_call(expr, env)
+      base = visit_expr(expr.base, env)
 
       if base.is_a?(Clarke::Runtime::Function)
         function = base
@@ -57,13 +57,13 @@ module Clarke
           )
         end
 
-        values = expr.arguments.map { |e| eval_expr(e, env) }
+        values = expr.arguments.map { |e| visit_expr(e, env) }
 
         case function.body
         when Clarke::AST::Block
           new_env =
             function.env.merge(Hash[function.argument_names.zip(values)])
-          eval_block(function.body, new_env)
+          visit_block(function.body, new_env)
         when Proc
           function.body.call(self, *values)
         end
@@ -74,8 +74,8 @@ module Clarke
       end
     end
 
-    def eval_get_prop(expr, env)
-      base_value = eval_expr(expr.base, env)
+    def visit_get_prop(expr, env)
+      base_value = visit_expr(expr.base, env)
       name = expr.name.to_sym
 
       unless base_value.is_a?(Clarke::Runtime::Instance)
@@ -84,27 +84,27 @@ module Clarke
 
       if base_value.props.key?(name)
         base_value.props.fetch(name)
-      elsif base_value.klass && base_value.klass.functions.key?(name)
+      elsif base_value.klass&.functions&.key?(name)
         base_value.klass.functions.fetch(name)
       else
         raise Clarke::Language::NameError.new(name, expr)
       end
     end
 
-    def eval_var(expr, env)
+    def visit_var(expr, env)
       depth = @local_depths.fetch(expr)
       env.fetch(expr.name, depth: depth, expr: expr)
     end
 
-    def eval_var_decl(expr, env)
-      value = eval_expr(expr.expr, env)
+    def visit_var_decl(expr, env)
+      value = visit_expr(expr.expr, env)
       env[expr.variable_name] = value
       value
     end
 
-    def eval_assignment(expr, env)
+    def visit_assignment(expr, env)
       if @local_depths.key?(expr)
-        value = eval_expr(expr.expr, env)
+        value = visit_expr(expr.expr, env)
         env.at_depth(@local_depths.fetch(expr))[expr.variable_name] = value
         value
       else
@@ -112,28 +112,28 @@ module Clarke
       end
     end
 
-    def eval_block(expr, env)
-      multi_eval(expr.exprs, env.push)
+    def visit_block(expr, env)
+      multi_visit(expr.exprs, env.push)
     end
 
-    def eval_if(expr, env)
-      res = check_type(eval_expr(expr.cond, env), Clarke::Runtime::Boolean, expr)
+    def visit_if(expr, env)
+      res = check_type(visit_expr(expr.cond, env), Clarke::Runtime::Boolean, expr)
 
       if res.value
-        eval_expr(expr.body_true, env)
+        visit_expr(expr.body_true, env)
       else
-        eval_expr(expr.body_false, env)
+        visit_expr(expr.body_false, env)
       end
     end
 
-    def eval_op_seq(expr, env)
+    def visit_op_seq(expr, env)
       values =
         expr.seq.map do |e|
           case e
           when Clarke::AST::Op
             e
           else
-            eval_expr(e, env)
+            visit_expr(e, env)
           end
         end
 
@@ -185,22 +185,22 @@ module Clarke
       stack.first
     end
 
-    def eval_lambda_def(expr, env)
+    def visit_lambda_def(expr, env)
       Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
     end
 
-    def eval_class_def(expr, env)
+    def visit_class_def(expr, env)
       functions = {}
-      expr.functions.each { |e| functions[e.name.to_sym] = eval_expr(e, env) }
+      expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
       env[expr.name] = Clarke::Runtime::Class.new(expr.name, functions)
     end
 
-    def eval_fun_def(expr, env)
+    def visit_fun_def(expr, env)
       Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
     end
 
     # TODO: turn this into a visitor
-    def eval_expr(expr, env)
+    def visit_expr(expr, env)
       case expr
       when Clarke::AST::IntegerLiteral
         Clarke::Runtime::Integer.new(expr.value)
@@ -211,35 +211,35 @@ module Clarke
       when Clarke::AST::StringLiteral
         Clarke::Runtime::String.new(expr.value)
       when Clarke::AST::FunctionCall
-        eval_function_call(expr, env)
+        visit_function_call(expr, env)
       when Clarke::AST::GetProp
-        eval_get_prop(expr, env)
+        visit_get_prop(expr, env)
       when Clarke::AST::Var
-        eval_var(expr, env)
+        visit_var(expr, env)
       when Clarke::AST::VarDecl
-        eval_var_decl(expr, env)
+        visit_var_decl(expr, env)
       when Clarke::AST::Assignment
-        eval_assignment(expr, env)
+        visit_assignment(expr, env)
       when Clarke::AST::Block
-        eval_block(expr, env)
+        visit_block(expr, env)
       when Clarke::AST::If
-        eval_if(expr, env)
+        visit_if(expr, env)
       when Clarke::AST::OpSeq
-        eval_op_seq(expr, env)
+        visit_op_seq(expr, env)
       when Clarke::AST::LambdaDef
-        eval_lambda_def(expr, env)
+        visit_lambda_def(expr, env)
       when Clarke::AST::ClassDef
-        eval_class_def(expr, env)
+        visit_class_def(expr, env)
       when Clarke::AST::FunDef
-        eval_fun_def(expr, env)
+        visit_fun_def(expr, env)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end
     end
 
-    def eval_exprs(exprs)
+    def visit_exprs(exprs)
       env = Clarke::Util::Env.new(contents: INITIAL_ENV).push
-      multi_eval(exprs, env)
+      multi_visit(exprs, env)
     end
 
     private
@@ -252,9 +252,9 @@ module Clarke
       end
     end
 
-    def multi_eval(exprs, env)
+    def multi_visit(exprs, env)
       exprs.reduce(0) do |_, expr|
-        eval_expr(expr, env)
+        visit_expr(expr, env)
       end
     end
   end

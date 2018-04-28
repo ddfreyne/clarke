@@ -4,3 +4,6 @@ class Donkey {
 }
 
 print(Donkey().name())
+let name = Donkey().name
+print(name)
+print(name())
