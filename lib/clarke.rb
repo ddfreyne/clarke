@@ -23,6 +23,8 @@ module Clarke
     # Run
     evaluator = Clarke::Evaluator.new(local_depths)
     evaluator.visit_exprs(exprs)
+  rescue Clarke::Language::Error => e
+    puts e.fancy_message
   end
 end
 

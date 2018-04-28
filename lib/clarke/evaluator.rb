@@ -90,7 +90,7 @@ module Clarke
 
         instance
       else
-        raise Clarke::Language::TypeError.new(base, [Clarke::Runtime::Function, Clarke::Runtime::Class], expr)
+        raise Clarke::Language::TypeError.new(base, [Clarke::Runtime::Function, Clarke::Runtime::Class], expr.base)
       end
     end
 
