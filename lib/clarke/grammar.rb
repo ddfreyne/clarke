@@ -229,10 +229,8 @@ module Clarke
         Clarke::AST::If.new(data[0], data[1], data[2], context)
       end
 
-    FUN_LAMBDA_DEF =
+    PARAM_LIST =
       seq(
-        string('fun').ignore,
-        WS1.ignore,
         char('(').ignore,
         opt(
           intersperse(
@@ -245,6 +243,13 @@ module Clarke
           ).select_even,
         ).map { |d| d || [] },
         char(')').ignore,
+      ).compact.first
+
+    FUN_LAMBDA_DEF =
+      seq(
+        string('fun').ignore,
+        WS1.ignore,
+        PARAM_LIST,
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
@@ -254,18 +259,7 @@ module Clarke
 
     ARROW_LAMBDA_DEF =
       seq(
-        char('(').ignore,
-        opt(
-          intersperse(
-            seq(
-              WS0.ignore,
-              VAR_NAME,
-              WS0.ignore,
-            ).compact.first,
-            char(',').ignore,
-          ).select_even,
-        ).map { |d| d || [] },
-        char(')').ignore,
+        PARAM_LIST,
         WS0.ignore,
         string('=>').ignore,
         WS0.ignore,
