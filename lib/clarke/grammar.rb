@@ -286,7 +286,7 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FunDef.new(data[0], data[1], data[2], context).tap { |x| STDOUT.puts x.inspect }
+        Clarke::AST::FunDef.new(data[0], data[1], data[2], context)
       end
 
     CLASS_DEF =

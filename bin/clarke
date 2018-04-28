@@ -27,8 +27,5 @@ args = {
 case args.fetch(:cmd)
 when 'interpret'
   code = File.read(args.fetch(:filename))
-  Clarke.run(code, verbose: options[:verbose]) do |error|
-    warn error.to_s
-    exit 1
-  end
+  Clarke.run(code, verbose: options[:verbose])
 end
