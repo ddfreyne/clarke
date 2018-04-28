@@ -171,7 +171,7 @@ module Clarke
         end
       end
 
-    SCOPE =
+    BLOCK =
       seq(
         char('{').ignore,
         WS0.ignore,
@@ -180,7 +180,7 @@ module Clarke
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Scope.new(data, context)
+        Clarke::AST::Block.new(data, context)
       end
 
     ASSIGNMENT =
@@ -219,11 +219,11 @@ module Clarke
         WS0.ignore,
         char(')').ignore,
         WS0.ignore,
-        SCOPE,
+        BLOCK,
         WS0.ignore,
         string('else').ignore,
         WS0.ignore,
-        SCOPE,
+        BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::If.new(data[0], data[1], data[2], context)
@@ -246,7 +246,7 @@ module Clarke
         ).map { |d| d || [] },
         char(')').ignore,
         WS0.ignore,
-        SCOPE,
+        BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::LambdaDef.new(data[0], data[1], context)
@@ -272,7 +272,7 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Scope.new([data[1]]), context)
+        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Block.new([data[1]]), context)
       end
 
     LAMBDA_DEF =
@@ -318,7 +318,7 @@ module Clarke
         LAMBDA_DEF,
         NUMBER,
         GROUPED_EXPR,
-        SCOPE,
+        BLOCK,
         STRING,
         TRUE,
         VAR_DECL,

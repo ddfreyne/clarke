@@ -8,7 +8,7 @@ module Clarke
         @scopes = [Set.new(global_names), Set.new]
       end
 
-      def transform_scope(expr)
+      def transform_block(expr)
         push do
           super
         end

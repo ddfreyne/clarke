@@ -70,8 +70,8 @@ module Clarke
       )
     end
 
-    def transform_scope(expr)
-      Clarke::AST::Scope.new(
+    def transform_block(expr)
+      Clarke::AST::Block.new(
         expr.exprs.map { |e| transform_expr(e) },
         expr.context,
       )
@@ -111,8 +111,8 @@ module Clarke
         transform_op(expr)
       when Clarke::AST::OpSeq
         transform_op_seq(expr)
-      when Clarke::AST::Scope
-        transform_scope(expr)
+      when Clarke::AST::Block
+        transform_block(expr)
       when Clarke::AST::StringLiteral
         transform_string(expr)
       when Clarke::AST::TrueLiteral

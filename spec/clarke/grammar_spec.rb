@@ -180,7 +180,7 @@ describe 'Clarke' do
     expect('a = 4').to fail_with(Clarke::Language::NameError)
   end
 
-  it 'handles scope' do
+  it 'handles block' do
     expect("let a = 1\n{let a = 2}").to evaluate_to(Clarke::Runtime::Integer.new(2))
     expect("let a = 1\n{let a = 2}\na").to evaluate_to(Clarke::Runtime::Integer.new(1))
     expect("{let a = 2}\na").to fail_with(Clarke::Language::NameError)

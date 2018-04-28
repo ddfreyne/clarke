@@ -181,11 +181,11 @@ module Clarke
       end
     end
 
-    Scope = Struct.new(:exprs, :context) do
+    Block = Struct.new(:exprs, :context) do
       include Printable
 
       def ast_name
-        'Scope'
+        'Block'
       end
 
       def ast_children

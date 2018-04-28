@@ -33,7 +33,7 @@ module Clarke
           array.each do |elem|
             new_env =
               fn.env.merge(Hash[fn.argument_names.zip([elem])])
-            ev.eval_scope(fn.body, new_env)
+            ev.eval_block(fn.body, new_env)
           end
           Clarke::Runtime::Null
         end,
@@ -58,10 +58,10 @@ module Clarke
       values = expr.arguments.map { |e| eval_expr(e, env) }
 
       case function.body
-      when Clarke::AST::Scope
+      when Clarke::AST::Block
         new_env =
           function.env.merge(Hash[function.argument_names.zip(values)])
-        eval_scope(function.body, new_env)
+        eval_block(function.body, new_env)
       when Proc
         function.body.call(self, *values)
       end
@@ -103,7 +103,7 @@ module Clarke
       end
     end
 
-    def eval_scope(expr, env)
+    def eval_block(expr, env)
       multi_eval(expr.exprs, env.push)
     end
 
@@ -200,8 +200,8 @@ module Clarke
         eval_var_decl(expr, env)
       when Clarke::AST::Assignment
         eval_assignment(expr, env)
-      when Clarke::AST::Scope
-        eval_scope(expr, env)
+      when Clarke::AST::Block
+        eval_block(expr, env)
       when Clarke::AST::If
         eval_if(expr, env)
       when Clarke::AST::OpSeq
