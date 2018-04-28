@@ -344,6 +344,12 @@ module Clarke
         LINE_BREAK,
       ).select_even
 
-    PROGRAM = seq(WS0.ignore, STATEMENTS, WS0.ignore, eof.ignore).compact.first
+    PROGRAM =
+      seq(
+        WS0.ignore,
+        STATEMENTS,
+        WS0.ignore,
+        eof.ignore,
+      ).compact.first
   end
 end
