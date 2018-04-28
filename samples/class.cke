@@ -1,9 +1,20 @@
-class Donkey {
-  fun firstName() { "george" }
-  fun vocalize() { "eeh-aah" }
+class Person {
+  fun init(firstName, lastName) {
+    this._firstName = firstName
+    this._lastName = lastName
+  }
+
+  fun firstName() { this._firstName }
+  fun lastName() { this._lastName }
 }
 
-print(Donkey().firstName())
-let firstName = Donkey().firstName
-print(firstName)
+let person = Person("Denis", "Defreyne")
+
+print(person.firstName())
+print(person.lastName())
+
+let firstName = person.firstName
 print(firstName())
+
+print(person.firstName)
+print(person.lastName)
