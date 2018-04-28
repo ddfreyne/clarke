@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Transformers
+  module Passes
     class BuildScopes < Clarke::Visitor
       def initialize(global_names, local_depths)
         @local_depths = local_depths

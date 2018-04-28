@@ -10,12 +10,12 @@ module Clarke
     exprs = res.data
 
     # Simplify
-    exprs = Clarke::Transformers::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
     # Transform
     global_names = Clarke::Evaluator::INITIAL_ENV.keys
     local_depths = {}
-    Clarke::Transformers::BuildScopes.new(global_names, local_depths).visit_exprs(exprs)
+    Clarke::Passes::BuildScopes.new(global_names, local_depths).visit_exprs(exprs)
 
     # Debug
     exprs.each { |e| p e } if verbose
@@ -31,8 +31,9 @@ require_relative 'clarke/ast'
 require_relative 'clarke/language'
 require_relative 'clarke/runtime'
 require_relative 'clarke/evaluator'
+
 require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
-require_relative 'clarke/transformer_stack'
-require_relative 'clarke/transformers'
 require_relative 'clarke/util'
+
+require_relative 'clarke/passes'
