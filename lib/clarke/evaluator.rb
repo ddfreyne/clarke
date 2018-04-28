@@ -49,6 +49,7 @@ module Clarke
 
       if base.is_a?(Clarke::Runtime::Function)
         function = base
+
         if expr.arguments.count != function.argument_names.size
           raise Clarke::Language::ArgumentCountError.new(
             expected: function.argument_names.size,
@@ -68,7 +69,26 @@ module Clarke
           function.body.call(self, *values)
         end
       elsif base.is_a?(Clarke::Runtime::Class)
-        Clarke::Runtime::Instance.new({}, base)
+        instance = Clarke::Runtime::Instance.new({}, base)
+
+        # TODO: verify arg count
+
+        init = base.functions[:init]
+        if init
+          values = expr.arguments.map { |e| visit_expr(e, env) }
+          function = init.bind(instance)
+
+          case function.body
+          when Clarke::AST::Block
+            new_env =
+              function.env.merge(Hash[function.argument_names.zip(values)])
+            visit_block(function.body, new_env)
+          when Proc
+            function.body.call(self, *values)
+          end
+        end
+
+        instance
       else
         raise Clarke::Language::TypeError.new(base, [Clarke::Runtime::Function, Clarke::Runtime::Class], expr)
       end
@@ -85,7 +105,7 @@ module Clarke
       if base_value.props.key?(name)
         base_value.props.fetch(name)
       elsif base_value.klass&.functions&.key?(name)
-        base_value.klass.functions.fetch(name)
+        base_value.klass.functions.fetch(name).bind(base_value)
       else
         raise Clarke::Language::NameError.new(name, expr)
       end
@@ -199,6 +219,16 @@ module Clarke
       Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
     end
 
+    def visit_set_prop(expr, env)
+      base_value = visit_expr(expr.base, env)
+
+      unless base_value.is_a?(Clarke::Runtime::Instance)
+        raise Clarke::Language::NameError.new(expr.name, expr)
+      end
+
+      base_value.props[expr.name.to_sym] = visit_expr(expr.value, env)
+    end
+
     # TODO: turn this into a visitor
     def visit_expr(expr, env)
       case expr
@@ -232,6 +262,8 @@ module Clarke
         visit_class_def(expr, env)
       when Clarke::AST::FunDef
         visit_fun_def(expr, env)
+      when Clarke::AST::SetProp
+        visit_set_prop(expr, env)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end

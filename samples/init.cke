@@ -1,0 +1,9 @@
+class Donkey {
+  fun init() { this.fn = "Denis" }
+  fun firstName() { this.fn }
+}
+
+let donkey = Donkey()
+print(donkey.fn)
+print(donkey.firstName())
+print(donkey.firstName)

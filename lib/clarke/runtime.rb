@@ -14,6 +14,12 @@ module Clarke
       def clarke_to_string
         '<function>'
       end
+
+      def bind(instance)
+        new_env = env.push
+        new_env['this'] = instance
+        Function.new(argument_names, body, new_env)
+      end
     end
 
     Null = Object.new

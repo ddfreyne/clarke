@@ -104,6 +104,14 @@ module Clarke
       )
     end
 
+    def visit_set_prop(expr)
+      Clarke::AST::SetProp.new(
+        visit_expr(expr.base),
+        expr.name,
+        visit_expr(expr.value),
+      )
+    end
+
     def visit_expr(expr)
       case expr
       when Clarke::AST::VarDecl
@@ -138,6 +146,8 @@ module Clarke
         visit_class_def(expr)
       when Clarke::AST::FunDef
         visit_fun_def(expr)
+      when Clarke::AST::SetProp
+        visit_set_prop(expr)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end

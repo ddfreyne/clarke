@@ -40,6 +40,7 @@ module Clarke
         current_scope << expr.name
 
         push do
+          current_scope << 'this'
           super
         end
       end

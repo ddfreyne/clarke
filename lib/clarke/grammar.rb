@@ -176,7 +176,7 @@ module Clarke
       seq(
         char('{').ignore,
         WS0.ignore,
-        intersperse(lazy { EXPR }, WS1).select_even,
+        intersperse(lazy { STATEMENT }, WS1).select_even,
         WS0.ignore,
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|
@@ -363,9 +363,29 @@ module Clarke
         Clarke::AST::OpSeq.new(data, context)
       end
 
+    SET_PROP =
+      seq(
+        VAR_REF, # TODO: support more complex setters
+        char('.').ignore,
+        IDENTIFIER,
+        WS0.ignore,
+        char('=').ignore,
+        WS0.ignore,
+        EXPR,
+      ).compact.map do |data, success, old_pos|
+        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::SetProp.new(data[0], data[1], data[2], context)
+      end
+
+    STATEMENT =
+      alt(
+        SET_PROP,
+        EXPR,
+      )
+
     STATEMENTS =
       intersperse(
-        EXPR,
+        STATEMENT,
         LINE_BREAK,
       ).select_even
 

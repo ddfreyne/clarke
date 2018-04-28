@@ -109,6 +109,18 @@ module Clarke
       end
     end
 
+    SetProp = Struct.new(:base, :name, :value, :context) do
+      include Printable
+
+      def ast_name
+        'SetProp'
+      end
+
+      def ast_children
+        [base, name, value]
+      end
+    end
+
     FunctionCall = Struct.new(:base, :arguments, :context) do
       include Printable
 

@@ -79,6 +79,12 @@ module Clarke
       nil
     end
 
+    def visit_set_prop(expr)
+      visit_expr(expr.base)
+      visit_expr(expr.value)
+      nil
+    end
+
     def visit_expr(expr)
       case expr
       when Clarke::AST::VarDecl
@@ -113,6 +119,8 @@ module Clarke
         visit_class_def(expr)
       when Clarke::AST::FunDef
         visit_fun_def(expr)
+      when Clarke::AST::SetProp
+        visit_set_prop(expr)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end
