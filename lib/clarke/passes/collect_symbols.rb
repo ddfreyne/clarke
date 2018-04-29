@@ -50,7 +50,6 @@ module Clarke
         @scope = Clarke::Util::SymbolTable.new
 
         initial_env.each do |name, _thing|
-          # TODO: use thing… but for what?
           define(VarSym.new(name))
         end
       end
