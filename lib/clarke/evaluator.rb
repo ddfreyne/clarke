@@ -7,39 +7,41 @@ module Clarke
         parameters: %w[a],
         body: lambda do |_ev, _env, a|
           puts(a.clarke_to_string)
-          Clarke::Runtime::Null
+          Clarke::Runtime::Null.instance
         end,
         env: Clarke::Util::Env.new,
       ),
       'Array' => Clarke::Runtime::Class.new(
-        'Array',
-        init: Clarke::Runtime::Function.new(
-          parameters: %w[],
-          body: lambda do |_ev, env|
-            env.fetch('this', depth: 0, expr: nil).props[:contents] = []
-          end,
-          env: Clarke::Util::Env.new,
-        ),
-        add: Clarke::Runtime::Function.new(
-          parameters: %w[elem],
-          body: lambda do |_ev, env, elem|
-            env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
-            elem
-          end,
-          env: Clarke::Util::Env.new,
-        ),
-        each: Clarke::Runtime::Function.new(
-          parameters: %w[fn],
-          body: lambda do |ev, env, fn|
-            env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
-              new_env =
-                fn.env.merge(Hash[fn.parameters.zip([elem])])
-              ev.visit_block(fn.body, new_env)
-            end
-            Clarke::Runtime::Null
-          end,
-          env: Clarke::Util::Env.new,
-        ),
+        name: 'Array',
+        functions: {
+          init: Clarke::Runtime::Function.new(
+            parameters: %w[],
+            body: lambda do |_ev, env|
+              env.fetch('this', depth: 0, expr: nil).props[:contents] = []
+            end,
+            env: Clarke::Util::Env.new,
+          ),
+          add: Clarke::Runtime::Function.new(
+            parameters: %w[elem],
+            body: lambda do |_ev, env, elem|
+              env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
+              elem
+            end,
+            env: Clarke::Util::Env.new,
+          ),
+          each: Clarke::Runtime::Function.new(
+            parameters: %w[fn],
+            body: lambda do |ev, env, fn|
+              env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
+                new_env =
+                  fn.env.merge(Hash[fn.parameters.zip([elem])])
+                ev.visit_block(fn.body, new_env)
+              end
+              Clarke::Runtime::Null.instance
+            end,
+            env: Clarke::Util::Env.new,
+          ),
+        },
       ),
     }.freeze
 
@@ -64,7 +66,7 @@ module Clarke
 
         function.call(values, self)
       elsif base.is_a?(Clarke::Runtime::Class)
-        instance = Clarke::Runtime::Instance.new({}, base)
+        instance = Clarke::Runtime::Instance.new(props: {}, klass: base)
 
         # TODO: verify arg count
 
@@ -202,7 +204,7 @@ module Clarke
     def visit_class_def(expr, env)
       functions = {}
       expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
-      env[expr.name] = Clarke::Runtime::Class.new(expr.name, functions)
+      env[expr.name] = Clarke::Runtime::Class.new(name: expr.name, functions: functions)
     end
 
     def visit_fun_def(expr, env)
@@ -227,13 +229,13 @@ module Clarke
     def visit_expr(expr, env)
       case expr
       when Clarke::AST::IntegerLiteral
-        Clarke::Runtime::Integer.new(expr.value)
+        Clarke::Runtime::Integer.new(value: expr.value)
       when Clarke::AST::TrueLiteral
         Clarke::Runtime::True
       when Clarke::AST::FalseLiteral
         Clarke::Runtime::False
       when Clarke::AST::StringLiteral
-        Clarke::Runtime::String.new(expr.value)
+        Clarke::Runtime::String.new(value: expr.value)
       when Clarke::AST::FunctionCall
         visit_function_call(expr, env)
       when Clarke::AST::GetProp

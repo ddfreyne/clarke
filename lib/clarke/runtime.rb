@@ -41,20 +41,26 @@ module Clarke
       end
     end
 
-    Null = Object.new
-    def Null.describe
-      'null'
+    class Null < Dry::Struct
+      include Singleton
+
+      def describe
+        'null'
+      end
+
+      def clarke_to_string
+        'null'
+      end
+
+      def inspect
+        '<Null>'
+      end
     end
 
-    def Null.clarke_to_string
-      'null'
-    end
+    class Class < Dry::Struct
+      attribute :name, Dry::Types::Any
+      attribute :functions, Dry::Types::Any
 
-    def Null.inspect
-      '<Null>'
-    end
-
-    Class = Struct.new(:name, :functions) do
       def describe
         'class'
       end
@@ -69,7 +75,10 @@ module Clarke
     end
 
     # TODO: remove props?
-    Instance = Struct.new(:props, :klass) do
+    class Instance < Dry::Struct
+      attribute :props, Dry::Types::Any
+      attribute :klass, Dry::Types::Any
+
       def describe
         'instance'
       end
@@ -83,7 +92,9 @@ module Clarke
       end
     end
 
-    String = Struct.new(:value) do
+    class String < Dry::Struct
+      attribute :value, Dry::Types::Any
+
       def describe
         'string'
       end
@@ -97,7 +108,9 @@ module Clarke
       end
     end
 
-    Integer = Struct.new(:value) do
+    class Integer < Dry::Struct
+      attribute :value, Dry::Types::Any
+
       def describe
         'integer'
       end
@@ -111,69 +124,49 @@ module Clarke
       end
 
       def add(other)
-        Integer.new(value + other.value)
+        self.class.new(value: value + other.value)
       end
 
       def subtract(other)
-        Integer.new(value - other.value)
+        self.class.new(value: value - other.value)
       end
 
       def multiply(other)
-        Integer.new(value * other.value)
+        self.class.new(value: value * other.value)
       end
 
       def divide(other)
-        Integer.new(value / other.value)
+        self.class.new(value: value / other.value)
       end
 
       def exponentiate(other)
-        Integer.new(value**other.value)
+        self.class.new(value: value**other.value)
       end
 
       def eq(other)
-        Boolean.new(value == other.value)
+        Boolean.new(value: value == other.value)
       end
 
       def gt(other)
-        Boolean.new(value > other.value)
+        Boolean.new(value: value > other.value)
       end
 
       def lt(other)
-        Boolean.new(value < other.value)
+        Boolean.new(value: value < other.value)
       end
 
       def gte(other)
-        Boolean.new(value >= other.value)
+        Boolean.new(value: value >= other.value)
       end
 
       def lte(other)
-        Boolean.new(value <= other.value)
+        Boolean.new(value: value <= other.value)
       end
     end
 
-    Array = Struct.new(:values) do
-      def describe
-        'array'
-      end
+    class Boolean < Dry::Struct
+      attribute :value, Dry::Types::Any
 
-      def self.describe
-        'array'
-      end
-
-      def clarke_to_string
-        '[' + values.map(&:clarke_to_string).join(',') + ']'
-      end
-
-      def add(value)
-        values << value
-      end
-
-      def each
-        values.each { |e| yield(e) }
-      end
-    end
-
-    Boolean = Struct.new(:value) do
       def describe
         'boolean'
       end
@@ -199,7 +192,7 @@ module Clarke
       end
     end
 
-    True = Boolean.new(true)
-    False = Boolean.new(false)
+    True = Boolean.new(value: true)
+    False = Boolean.new(value: false)
   end
 end

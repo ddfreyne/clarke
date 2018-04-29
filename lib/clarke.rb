@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'dry-types'
+require 'dry-struct'
+require 'singleton'
+
 module Clarke
   def self.run(code, verbose:)
     # Parse

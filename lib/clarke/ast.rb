@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry-types'
-require 'dry-struct'
-
 module Clarke
   module AST
     module Printable
