@@ -56,6 +56,44 @@ module Clarke
       raise ArgumentError, "Invalid mode: #{mode}"
     end
   end
+
+  def self.transpile_to_ruby(code, verbose:)
+    # Parse
+    res = Clarke::Parser::Grammar::PROGRAM.apply(code)
+    if res.is_a?(DParse::Failure)
+      raise Clarke::Errors::SyntaxError.new(res.pretty_message)
+    end
+    exprs = res.data
+
+    # Simplify
+    exprs = Clarke::Parser::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Parser::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Parser::LiftLetLambdas.new.visit_exprs(exprs)
+
+    # Collect symbols
+    init = Clarke::Interpreter::Init.instance
+    pass = Clarke::Sema::CollectSymbols.new(init.scope)
+    pass.visit_exprs(exprs)
+    global_scope = pass.scope
+
+    # Resolve explicit types
+    pass = Clarke::Sema::ResolveExplicitTypes.new(global_scope)
+    pass.visit_exprs(exprs)
+
+    # Resolve implicit types
+    pass = Clarke::Sema::ResolveImplicitTypes.new(global_scope)
+    pass.visit_exprs(exprs)
+
+    # Typecheck
+    pass = Clarke::Sema::Typecheck.new
+    pass.visit_exprs(exprs)
+
+    # Debug
+    exprs.each { |e| p e } if verbose
+
+    # Run
+    Clarke::Transpilers::Ruby.new(exprs, global_scope).run
+  end
 end
 
 module Clarke
@@ -94,3 +132,10 @@ end
 require_relative 'clarke/interpreter/runtime'
 require_relative 'clarke/interpreter/init'
 require_relative 'clarke/interpreter/evaluator'
+
+module Clarke
+  module Transpilers
+  end
+end
+
+require_relative 'clarke/transpilers/ruby'

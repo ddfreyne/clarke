@@ -1,4 +1,4 @@
-let fib = (a) => {
+let fib = (a: int): int => {
   if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }
 }
 print(fib(0))
