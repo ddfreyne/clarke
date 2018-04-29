@@ -2,6 +2,7 @@
 
 module Clarke
   module Passes
+    # Sets the lookup depth for Var and Assignment expressions.
     class BuildScopes < Clarke::Visitor
       def initialize(global_names, local_depths)
         @local_depths = local_depths

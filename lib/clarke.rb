@@ -16,8 +16,8 @@ module Clarke
     # Simplify
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
-    # Transform
-    global_names = Clarke::Evaluator::INITIAL_ENV.keys
+    # Determine lookup depths
+    global_names = Clarke::Interpreter::Evaluator::INITIAL_ENV.keys
     local_depths = {}
     Clarke::Passes::BuildScopes.new(global_names, local_depths).visit_exprs(exprs)
 
@@ -25,7 +25,7 @@ module Clarke
     exprs.each { |e| p e } if verbose
 
     # Run
-    evaluator = Clarke::Evaluator.new(local_depths)
+    evaluator = Clarke::Interpreter::Evaluator.new(local_depths)
     evaluator.visit_exprs(exprs)
   end
 end
@@ -33,11 +33,23 @@ end
 require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
 require_relative 'clarke/language'
-require_relative 'clarke/runtime'
 require_relative 'clarke/util'
 
 require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
-require_relative 'clarke/evaluator'
 
-require_relative 'clarke/passes'
+module Clarke
+  module Passes
+  end
+end
+
+require_relative 'clarke/passes/build_scopes'
+require_relative 'clarke/passes/simplify_op_seq'
+
+module Clarke
+  module Interpreter
+  end
+end
+
+require_relative 'clarke/interpreter/runtime'
+require_relative 'clarke/interpreter/evaluator'

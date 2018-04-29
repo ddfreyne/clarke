@@ -45,7 +45,7 @@ end
 
 RSpec::Matchers.define :a_clarke_instance_of do |expected|
   match do |input|
-    input.is_a?(Clarke::Runtime::Instance) && input.klass == expected
+    input.is_a?(Clarke::Interpreter::Runtime::Instance) && input.klass == expected
   end
 
   failure_message do |input|
@@ -59,7 +59,7 @@ end
 
 RSpec::Matchers.define :a_clarke_array_containing do |expected|
   match do |input|
-    input.is_a?(Clarke::Runtime::Instance) && input.klass.name == 'Array' && input.props.fetch(:contents) == expected
+    input.is_a?(Clarke::Interpreter::Runtime::Instance) && input.klass.name == 'Array' && input.props.fetch(:contents) == expected
   end
 
   failure_message do |input|
