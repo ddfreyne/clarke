@@ -20,6 +20,17 @@ module Clarke
         new_env['this'] = instance
         Function.new(argument_names, body, new_env)
       end
+
+      def call(arguments, evaluator)
+        case body
+        when Clarke::AST::Block
+          new_env =
+            env.merge(Hash[argument_names.zip(arguments)])
+          evaluator.visit_block(body, new_env)
+        when Proc
+          body.call(evaluator, env, *arguments)
+        end
+      end
     end
 
     Null = Object.new

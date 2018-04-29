@@ -35,7 +35,9 @@ module Clarke
     # Basic components
 
     DIGIT = char_in('0'..'9')
-    LETTER = alt(char_in('a'..'z'), char_in('A'..'Z'))
+    LOWERCASE_LETTER = char_in('a'..'z')
+    UPPERCASE_LETTER = char_in('A'..'Z')
+    LETTER = alt(LOWERCASE_LETTER, UPPERCASE_LETTER)
     UNDERSCORE = char('_')
 
     # Primitives
@@ -91,31 +93,66 @@ module Clarke
         'reserved keyword',
       )
 
-    IDENTIFIER =
+    IDENTIFIER_TAIL =
+      repeat0(
+        alt(
+          LETTER,
+          UNDERSCORE,
+          NUMBER,
+        ),
+      )
+
+    NAME =
       except(
         describe(
           seq(
-            alt(
-              LETTER,
-              UNDERSCORE,
-            ),
-            repeat(
-              alt(
-                LETTER,
-                UNDERSCORE,
-                NUMBER,
-              ),
-            ),
-          ).capture,
-          'identifier',
+            alt(UNDERSCORE, LOWERCASE_LETTER, UPPERCASE_LETTER),
+            IDENTIFIER_TAIL,
+          ),
+          'NAME',
         ),
         RESERVED_WORD,
-      )
+      ).capture
 
-    VAR_NAME = IDENTIFIER
+    VAR_NAME =
+      except(
+        describe(
+          seq(
+            alt(UNDERSCORE, LOWERCASE_LETTER),
+            IDENTIFIER_TAIL,
+          ),
+          'VAR_NAME',
+        ),
+        RESERVED_WORD,
+      ).capture
 
-    VAR_REF =
-      VAR_NAME.map do |data, success, old_pos|
+    FUN_NAME =
+      except(
+        describe(
+          seq(
+            alt(UNDERSCORE, LOWERCASE_LETTER),
+            IDENTIFIER_TAIL,
+          ),
+          'FUN_NAME',
+        ),
+        RESERVED_WORD,
+      ).capture
+
+    CLASS_NAME =
+      except(
+        describe(
+          seq(
+            alt(UNDERSCORE, UPPERCASE_LETTER),
+            IDENTIFIER_TAIL,
+          ),
+          'CLASS_NAME',
+        ),
+        RESERVED_WORD,
+      ).capture
+
+    # TODO: this is now a regular reference (can refer to functions and classes too!)
+    REF =
+      NAME.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Var.new(data, context)
       end
@@ -138,7 +175,7 @@ module Clarke
 
     EXT_BASE =
       alt(
-        VAR_REF,
+        REF,
         lazy { GROUPED_EXPR },
       )
 
@@ -148,7 +185,7 @@ module Clarke
     GET_PROP_EXT =
       seq(
         char('.').ignore,
-        IDENTIFIER,
+        NAME,
       ).compact.first.map { |d| [:prop, d] }
 
     EXT_SEQ =
@@ -280,7 +317,7 @@ module Clarke
       seq(
         string('fun').ignore,
         WS1.ignore,
-        IDENTIFIER,
+        FUN_NAME,
         PARAM_LIST,
         WS0.ignore,
         BLOCK,
@@ -293,7 +330,7 @@ module Clarke
       seq(
         string('class').ignore,
         WS1.ignore,
-        IDENTIFIER,
+        CLASS_NAME,
         WS1.ignore,
         char('{').ignore,
         WS0.ignore,
@@ -346,7 +383,7 @@ module Clarke
         STRING,
         TRUE,
         VAR_DECL,
-        VAR_REF,
+        REF,
         CLASS_DEF,
       )
 
@@ -365,9 +402,9 @@ module Clarke
 
     SET_PROP =
       seq(
-        VAR_REF, # TODO: support more complex setters
+        REF, # TODO: support more complex setters
         char('.').ignore,
-        IDENTIFIER,
+        NAME,
         WS0.ignore,
         char('=').ignore,
         WS0.ignore,

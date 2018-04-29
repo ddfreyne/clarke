@@ -20,11 +20,7 @@ module Clarke
         end
       end
 
-      def fetch(key, depth: nil, expr: nil)
-        unless depth
-          raise "Missing depth when fetching #{key.inspect} (env: #{inspect})"
-        end
-
+      def fetch(key, depth:, expr:)
         if depth.positive?
           @parent.fetch(key, depth: depth - 1, expr: expr)
         elsif depth.zero?

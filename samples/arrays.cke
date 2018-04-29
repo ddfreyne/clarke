@@ -1,18 +1,18 @@
-let arr = array_new()
+let arr = Array()
 print(arr)
 print(print(arr))
 
-array_add(arr, 1)
-array_add(arr, 2)
-array_add(arr, 3)
+arr.add(1)
+arr.add(2)
+arr.add(3)
 print(arr)
 
-array_each(arr, (e) => print(e))
-print(array_each(arr, (e) => print(e)))
+arr.each((e) => print(e))
+print(arr.each((e) => print(e)))
 
 let map = (arr, fn) => {
-    let res = array_new()
-    array_each(arr, (elem) => array_add(res, fn(elem)))
+    let res = Array()
+    arr.each((elem) => res.add(fn(elem)))
     res
 }
 print(map(arr, (e) => e * 2))

@@ -5,38 +5,40 @@ module Clarke
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
         %w[a],
-        lambda do |_ev, a|
+        lambda do |_ev, _env, a|
           puts(a.clarke_to_string)
           Clarke::Runtime::Null
         end,
       ),
-      'Array' => Clarke::Runtime::Instance.new(
-        new: Clarke::Runtime::Function.new(
+      'Array' => Clarke::Runtime::Class.new(
+        'Array',
+        init: Clarke::Runtime::Function.new(
           %w[],
-          ->(_ev) { Clarke::Runtime::Array.new([]) },
+          lambda do |_ev, env|
+            env.fetch('this', depth: 0, expr: nil).props[:contents] = []
+          end,
+          Clarke::Util::Env.new,
         ),
-      ),
-      'array_new' => Clarke::Runtime::Function.new(
-        %w[],
-        ->(_ev) { Clarke::Runtime::Array.new([]) },
-      ),
-      'array_add' => Clarke::Runtime::Function.new(
-        %w[a e],
-        lambda do |_ev, a, e|
-          a.add(e)
-          a
-        end,
-      ),
-      'array_each' => Clarke::Runtime::Function.new(
-        %w[a fn],
-        lambda do |ev, array, fn|
-          array.each do |elem|
-            new_env =
-              fn.env.merge(Hash[fn.argument_names.zip([elem])])
-            ev.visit_block(fn.body, new_env)
-          end
-          Clarke::Runtime::Null
-        end,
+        add: Clarke::Runtime::Function.new(
+          %w[elem],
+          lambda do |_ev, env, elem|
+            env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
+            elem
+          end,
+          Clarke::Util::Env.new,
+        ),
+        each: Clarke::Runtime::Function.new(
+          %w[fn],
+          lambda do |ev, env, fn|
+            env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
+              new_env =
+                fn.env.merge(Hash[fn.argument_names.zip([elem])])
+              ev.visit_block(fn.body, new_env)
+            end
+            Clarke::Runtime::Null
+          end,
+          Clarke::Util::Env.new,
+        ),
       ),
     }.freeze
 
@@ -46,6 +48,7 @@ module Clarke
 
     def visit_function_call(expr, env)
       base = visit_expr(expr.base, env)
+      values = expr.arguments.map { |e| visit_expr(e, env) }
 
       if base.is_a?(Clarke::Runtime::Function)
         function = base
@@ -58,16 +61,7 @@ module Clarke
           )
         end
 
-        values = expr.arguments.map { |e| visit_expr(e, env) }
-
-        case function.body
-        when Clarke::AST::Block
-          new_env =
-            function.env.merge(Hash[function.argument_names.zip(values)])
-          visit_block(function.body, new_env)
-        when Proc
-          function.body.call(self, *values)
-        end
+        function.call(values, self)
       elsif base.is_a?(Clarke::Runtime::Class)
         instance = Clarke::Runtime::Instance.new({}, base)
 
@@ -75,17 +69,8 @@ module Clarke
 
         init = base.functions[:init]
         if init
-          values = expr.arguments.map { |e| visit_expr(e, env) }
           function = init.bind(instance)
-
-          case function.body
-          when Clarke::AST::Block
-            new_env =
-              function.env.merge(Hash[function.argument_names.zip(values)])
-            visit_block(function.body, new_env)
-          when Proc
-            function.body.call(self, *values)
-          end
+          function.call(values, self)
         end
 
         instance

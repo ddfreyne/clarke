@@ -141,10 +141,6 @@ describe 'Clarke' do
     expect('(((1)))').to evaluate_to(Clarke::Runtime::Integer.new(1))
   end
 
-  it 'handles properties' do
-    expect('Array.new()').to evaluate_to(Clarke::Runtime::Array.new([]))
-  end
-
   it 'errors on wrong function counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
@@ -207,6 +203,11 @@ describe 'Clarke' do
     expect('a').to fail_with(Clarke::Language::NameError)
   end
 
+  it 'can’t create functions with uppercase name' do
+    expect("class A {\n  fun b() { true }\n}").not_to fail_with(Clarke::Language::SyntaxError)
+    expect("class A {\n  fun B() { true }\n}").to fail_with(Clarke::Language::SyntaxError)
+  end
+
   it 'raises TypeError when appropriate' do
     expect("let x = 1\nx()").to fail_with(Clarke::Language::TypeError)
     expect("let x = true\nx()").to fail_with(Clarke::Language::TypeError)
@@ -226,15 +227,27 @@ describe 'Clarke' do
   end
 
   it 'handles arrays' do
-    expect('let x = array_new()')
-      .to evaluate_to(Clarke::Runtime::Array.new([]))
-    expect("let x = array_new()\narray_add(x, 1)")
-      .to evaluate_to(Clarke::Runtime::Array.new([Clarke::Runtime::Integer.new(1)]))
-    expect("let x = array_new()\narray_add(x, 1)\nx")
-      .to evaluate_to(Clarke::Runtime::Array.new([Clarke::Runtime::Integer.new(1)]))
-    expect("let x = array_new()\narray_add(x, 1)\narray_each(x, (a) => print(a))")
+    array_class = Clarke::Evaluator::INITIAL_ENV.fetch('Array')
+
+    expect('Array()')
+      .to evaluate_to(a_clarke_instance_of(array_class))
+
+    expect("let x = Array()\nx.add(1)")
+      .to evaluate_to(Clarke::Runtime::Integer.new(1))
+
+    expect('let x = Array()')
+      .to evaluate_to(a_clarke_array_containing([]))
+
+    expect("let x = Array()\nx.add(1)")
+      .to evaluate_to(Clarke::Runtime::Integer.new(1))
+
+    expect("let x = Array()\nx.add(1)\nx")
+      .to evaluate_to(a_clarke_array_containing([Clarke::Runtime::Integer.new(1)]))
+
+    expect("let x = Array()\nx.add(1)\nx.each((a) => print(a))")
       .to evaluate_to(Clarke::Runtime::Null)
-    expect { run("let x = array_new()\narray_add(x, 1)\narray_each(x, (a) => print(a))") }
+
+    expect { run("let x = Array()\nx.add(1)\nx.each((a) => print(a))") }
       .to output("1\n").to_stdout
   end
 end
