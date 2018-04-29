@@ -40,6 +40,8 @@ module Clarke
       end
 
       def fancy_message
+        return message if @expr.nil?
+
         ctx = @expr.context
 
         lines = []

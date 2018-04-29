@@ -7,6 +7,7 @@ module Clarke
         attribute :parameters, Dry::Types::Any
         attribute :body, Dry::Types::Any
         attribute :env, Dry::Types::Any
+        attribute :scope, Dry::Types::Any
 
         def describe
           'function'
@@ -21,23 +22,35 @@ module Clarke
         end
 
         def bind(instance)
+          # FIXME: make expr not required?
+          this_sym = scope.resolve('this', nil)
+
           new_env = env.push
           new_env['this'] = instance
+          new_env[this_sym] = instance
+
+          if body.respond_to?(:scope)
+            new_scope = body.scope.define(this_sym)
+            body.replace_scope(new_scope)
+          end
+
           Function.new(
             parameters: parameters,
             body:       body,
             env:        new_env,
+            scope:      scope.define(this_sym), # TODO: remove
           )
         end
 
-        def call(arguments, evaluator)
+        def call(arguments, evaluator, expr)
           case body
           when Clarke::AST::Block
-            new_env =
-              env.merge(Hash[parameters.zip(arguments)])
+            pa_syms = parameters.map { |pa| body.scope.resolve(pa, expr) }
+            new_env = env.merge(Hash[parameters.zip(arguments)])
+            new_env = new_env.merge(Hash[pa_syms.zip(arguments)])
             evaluator.visit_block(body, new_env)
           when Proc
-            body.call(evaluator, env, *arguments)
+            body.call(evaluator, env, scope, expr, *arguments)
           end
         end
       end

@@ -7,7 +7,7 @@ require_relative '../lib/clarke'
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = 'usage: clarke interpret [options] [filename]'
+  opts.banner = 'usage: clarke [command] [options] [filename]'
 
   opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
     options[:verbose] = v
@@ -15,7 +15,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if ARGV.size != 2
-  warn 'usage: clarke interpret [filename]'
+  warn 'usage: clarke [command] [filename]'
   exit 1
 end
 
@@ -32,4 +32,14 @@ when 'interpret'
   rescue Clarke::Language::Error => e
     puts e.fancy_message
   end
+when 'transpile-to-ruby'
+  code = File.read(args.fetch(:filename))
+  begin
+    Clarke.transpile_to_ruby(code, verbose: options[:verbose])
+  rescue Clarke::Language::Error => e
+    puts e.fancy_message
+  end
+else
+  warn 'unknown command: ' + args.fetch(:cmd)
+  exit 1
 end

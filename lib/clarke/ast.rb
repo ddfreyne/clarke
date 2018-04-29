@@ -7,7 +7,7 @@ module Clarke
         to_s
       end
 
-      def to_s
+      def to_s(short: false)
         children_lines = ast_children.map(&:to_s).join("\n").lines
 
         res = +''
@@ -16,6 +16,8 @@ module Clarke
         elsif children_lines.size == 1 && !ast_children[0].respond_to?(:ast_children)
           res << ' '
           res << children_lines.first
+        elsif short
+          res << ' …'
         else
           res << "\n"
           res << children_lines.map { |l| '  ' + l }.join('')
@@ -41,9 +43,18 @@ module Clarke
       include Dry::Types.module
     end
 
+    module WithScope
+      attr_accessor :scope
+
+      def replace_scope(scope)
+        self.scope = scope
+      end
+    end
+
     class FalseLiteral < Dry::Struct
       attribute :context, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -58,6 +69,7 @@ module Clarke
     class TrueLiteral < Dry::Struct
       attribute :context, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -73,6 +85,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :value, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -89,6 +102,7 @@ module Clarke
       attribute :variable_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -105,6 +119,7 @@ module Clarke
       attribute :variable_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -121,6 +136,7 @@ module Clarke
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -138,6 +154,7 @@ module Clarke
       attribute :name, Dry::Types::Any
       attribute :value, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -153,7 +170,9 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :base, Dry::Types::Any
       attribute :arguments, Dry::Types::Any
+      attr_accessor :base_sym
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -171,6 +190,7 @@ module Clarke
       attribute :body_true, Dry::Types::Any
       attribute :body_false, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -186,6 +206,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :value, Types::Strict::Int
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -202,6 +223,7 @@ module Clarke
       attribute :parameters, Types::Strict::Array.of(String)
       attribute :body, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -219,6 +241,7 @@ module Clarke
       attribute :parameters, Dry::Types::Any
       attribute :body, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -235,6 +258,7 @@ module Clarke
       attribute :name, Dry::Types::Any
       attribute :functions, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -250,6 +274,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -265,6 +290,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :seq, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -280,6 +306,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :exprs, Dry::Types::Any
 
+      include WithScope
       include Printable
 
       def ast_name
@@ -294,7 +321,9 @@ module Clarke
     class Var < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Types::Strict::String
+      attr_accessor :sym
 
+      include WithScope
       include Printable
 
       def ast_name

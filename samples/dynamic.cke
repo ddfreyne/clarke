@@ -4,6 +4,8 @@ let a = "global"
   let show = () => print(a)
 
   show()
+  print(a)
   let a = "block"
   show()
+  print(a)
 }

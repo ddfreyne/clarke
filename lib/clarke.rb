@@ -16,16 +16,17 @@ module Clarke
     # Simplify
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
-    # Determine lookup depths
-    global_names = Clarke::Interpreter::Evaluator::INITIAL_ENV.keys
-    local_depths = {}
-    Clarke::Passes::BuildScopes.new(global_names, local_depths).visit_exprs(exprs)
+    # Collect symbols
+    initial_env = Clarke::Interpreter::Evaluator::INITIAL_ENV
+    pass = Clarke::Passes::CollectSymbols.new(initial_env)
+    pass.visit_exprs(exprs)
+    global_scope = pass.scope
 
     # Debug
     exprs.each { |e| p e } if verbose
 
     # Run
-    evaluator = Clarke::Interpreter::Evaluator.new(local_depths)
+    evaluator = Clarke::Interpreter::Evaluator.new(global_scope)
     evaluator.visit_exprs(exprs)
   end
 end
@@ -37,6 +38,7 @@ end
 
 require_relative 'clarke/util/env'
 require_relative 'clarke/util/shunting_yard'
+require_relative 'clarke/util/symbol_table'
 
 require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
@@ -50,7 +52,7 @@ module Clarke
   end
 end
 
-require_relative 'clarke/passes/build_scopes'
+require_relative 'clarke/passes/collect_symbols'
 require_relative 'clarke/passes/simplify_op_seq'
 
 module Clarke

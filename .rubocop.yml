@@ -21,6 +21,10 @@ Style/TrailingCommaInHashLiteral:
 Layout/IndentArray:
   EnforcedStyle: consistent
 
+# .positive? is ambiguous as it’s unclear whether it means > 0 or ≥ 0
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
 
 
 # ----- DISABLED (opinionated) -----

@@ -6,48 +6,66 @@ module Clarke
       INITIAL_ENV = {
         'print' => Clarke::Interpreter::Runtime::Function.new(
           parameters: %w[a],
-          body: lambda do |_ev, _env, a|
+          body: lambda do |_ev, _env, _scope, _expr, a|
             puts(a.clarke_to_string)
             Clarke::Interpreter::Runtime::Null.instance
           end,
           env: Clarke::Util::Env.new,
+          scope: Clarke::Util::SymbolTable.new,
         ),
         'Array' => Clarke::Interpreter::Runtime::Class.new(
           name: 'Array',
           functions: {
             init: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[],
-              body: lambda do |_ev, env|
-                env.fetch('this', depth: 0, expr: nil).props[:contents] = []
+              body: lambda do |_ev, env, scope, expr|
+                this_sym = scope.resolve('this', expr)
+                this = env.fetch(this_sym, depth: -1, expr: expr)
+                this.props[:contents] = []
               end,
               env: Clarke::Util::Env.new,
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
             ),
             add: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[elem],
-              body: lambda do |_ev, env, elem|
-                env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
+              body: lambda do |_ev, env, scope, expr, elem|
+                this_sym = scope.resolve('this', expr)
+                this = env.fetch(this_sym, depth: -1, expr: expr)
+                this.props[:contents] << elem
                 elem
               end,
               env: Clarke::Util::Env.new,
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
             ),
             each: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[fn],
-              body: lambda do |ev, env, fn|
-                env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
+              body: lambda do |ev, env, scope, expr, fn|
+                this_sym = scope.resolve('this', expr)
+                this = env.fetch(this_sym, depth: -1, expr: expr)
+
+                param_syms = fn.parameters.map do |e|
+                  fn.body.scope.resolve(e, fn.body)
+                end
+
+                this.props[:contents].each do |elem|
                   new_env =
-                    fn.env.merge(Hash[fn.parameters.zip([elem])])
+                    fn
+                    .env
+                    .merge(Hash[param_syms.zip([elem])])
+                    .merge(Hash[fn.parameters.zip([elem])])
                   ev.visit_block(fn.body, new_env)
                 end
                 Clarke::Interpreter::Runtime::Null.instance
               end,
               env: Clarke::Util::Env.new,
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
             ),
           },
         ),
       }.freeze
 
-      def initialize(local_depths)
-        @local_depths = local_depths
+      def initialize(global_scope)
+        @global_scope = global_scope
       end
 
       def visit_function_call(expr, env)
@@ -65,7 +83,7 @@ module Clarke
             )
           end
 
-          function.call(values, self)
+          function.call(values, self, expr)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
           instance = Clarke::Interpreter::Runtime::Instance.new(props: {}, klass: base)
 
@@ -74,7 +92,7 @@ module Clarke
           init = base.functions[:init]
           if init
             function = init.bind(instance)
-            function.call(values, self)
+            function.call(values, self, expr)
           end
 
           instance
@@ -101,24 +119,23 @@ module Clarke
       end
 
       def visit_var(expr, env)
-        depth = @local_depths.fetch(expr)
-        env.fetch(expr.name, depth: depth, expr: expr)
+        sym = expr.scope.resolve(expr.name, expr)
+        env.fetch(sym, depth: -1, expr: expr)
       end
 
       def visit_var_decl(expr, env)
         value = visit_expr(expr.expr, env)
-        env[expr.variable_name] = value
+        sym = expr.scope.resolve(expr.variable_name, expr)
+        env[sym] = value
         value
       end
 
       def visit_assignment(expr, env)
-        if @local_depths.key?(expr)
-          value = visit_expr(expr.expr, env)
-          env.at_depth(@local_depths.fetch(expr))[expr.variable_name] = value
-          value
-        else
-          raise Clarke::Language::NameError.new(expr.variable_name, expr)
-        end
+        sym = expr.scope.resolve(expr.variable_name, expr)
+
+        value = visit_expr(expr.expr, env)
+        env[sym] = value
+        value
       end
 
       def visit_block(expr, env)
@@ -199,13 +216,15 @@ module Clarke
           parameters: expr.parameters,
           body: expr.body,
           env: env,
+          scope: expr.scope,
         )
       end
 
       def visit_class_def(expr, env)
         functions = {}
         expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
-        env[expr.name] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
+        sym = expr.scope.resolve(expr.name, expr)
+        env[sym] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
       end
 
       def visit_fun_def(expr, env)
@@ -213,6 +232,7 @@ module Clarke
           parameters: expr.parameters,
           body: expr.body,
           env: env,
+          scope: expr.body.scope,
         )
       end
 
@@ -267,7 +287,15 @@ module Clarke
       end
 
       def visit_exprs(exprs)
-        env = Clarke::Util::Env.new(contents: INITIAL_ENV).push
+        env = Clarke::Util::Env.new
+
+        INITIAL_ENV.each_pair do |name, val|
+          sym = @global_scope.resolve(name, nil)
+          env[name] = val
+          env[sym] = val
+        end
+
+        env = env.push
         multi_visit(exprs, env)
       end
 

@@ -13,7 +13,7 @@ module Clarke
       end
 
       def at_depth(depth)
-        if depth.zero?
+        if depth == 0
           self
         else
           @parent.at_depth(depth - 1)
@@ -21,15 +21,30 @@ module Clarke
       end
 
       def fetch(key, depth:, expr:)
-        if depth.positive?
+        if depth > 0
           @parent.fetch(key, depth: depth - 1, expr: expr)
-        elsif depth.zero?
+        elsif depth == 0
           @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
+        elsif depth < 0 # special haxx
+          if @contents.key?(key)
+            @contents.fetch(key)
+          elsif @parent
+            @parent.fetch(key, depth: -1, expr: expr)
+          else
+            raise Clarke::Language::NameError.new(key, expr)
+          end
         end
       end
 
       def []=(key, value)
-        @contents[key] = value
+        if key.is_a?(String) || key.is_a?(Symbol)
+          @contents[key] = value
+        elsif @parent
+          # FIXME: haxx
+          @parent[key] = value
+        else
+          @contents[key] = value
+        end
       end
 
       def merge(hash)
@@ -43,11 +58,15 @@ module Clarke
       end
 
       def inspect
-        "<Env keys=#{@contents.keys} parent=#{@parent.inspect}>"
+        "<Env #{@contents.keys}\n#{_indent(@parent.inspect)}>"
       end
 
       def to_s
         inspect
+      end
+
+      def _indent(lines)
+        lines.each_line.map { |l| '  ' + l }.join('')
       end
     end
   end
