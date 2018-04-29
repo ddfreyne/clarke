@@ -2,10 +2,8 @@
 
 module Clarke
   module Passes
-    # Provides each expression with a Scope, containing zero or more Syms.
-    #
-    # To do afterwards: change any variable reference to use a Sym rather than
-    # a string containing the variable name.
+    # After this pass, each expression will have a `scope` (SymbolTable
+    # instance.
     class CollectSymbols < Clarke::Visitor
       attr_reader :scope
 

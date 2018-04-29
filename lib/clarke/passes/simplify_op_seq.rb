@@ -2,6 +2,7 @@
 
 module Clarke
   module Passes
+    # After this pass, some OpSeq nodes might have been removed.
     class SimplifyOpSeq < Clarke::Transformer
       def visit_op_seq(expr)
         if expr.seq.size == 1
