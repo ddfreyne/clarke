@@ -30,10 +30,17 @@ module Clarke
   end
 end
 
+module Clarke
+  module Util
+  end
+end
+
+require_relative 'clarke/util/env'
+require_relative 'clarke/util/shunting_yard'
+
 require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
 require_relative 'clarke/language'
-require_relative 'clarke/util'
 
 require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
