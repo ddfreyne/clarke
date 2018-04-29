@@ -32,6 +32,40 @@ module Clarke
       '||' => :left,
     }.freeze
 
+    class Sym
+      attr_reader :name
+
+      def initialize(name)
+        @name = name
+      end
+
+      def inspect
+        id = num_to_short_string(object_id).reverse.scan(/.{1,4}/).join('-').reverse
+        "<#{self.class.to_s.sub(/^.*::/, '')} #{@name} #{id}>"
+      end
+
+      def to_s
+        inspect
+      end
+
+      NUM_MAPPING = [
+        ('0'..'9'),
+        ('a'..'z'),
+        ('A'..'Z'),
+      ].map(&:to_a).flatten
+
+      def num_to_short_string(num)
+        q, r = num.divmod(NUM_MAPPING.size)
+        (q > 0 ? num_to_short_string(q) : '') + NUM_MAPPING[r]
+      end
+    end
+
+    class VarSym < Sym
+    end
+
+    class ClassSym < Sym
+    end
+
     class Error < StandardError
       attr_reader :expr
 

@@ -7,50 +7,13 @@ module Clarke
     # To do afterwards: change any variable reference to use a Sym rather than
     # a string containing the variable name.
     class CollectSymbols < Clarke::Visitor
-      # TODO: move out
-      class Sym
-        attr_reader :name
-
-        def initialize(name)
-          @name = name
-        end
-
-        def inspect
-          id = num_to_short_string(object_id).reverse.scan(/.{1,4}/).join('-').reverse
-          "<#{self.class.to_s.sub(/^.*::/, '')} #{@name} #{id}>"
-        end
-
-        def to_s
-          inspect
-        end
-
-        NUM_MAPPING = [
-          ('0'..'9'),
-          ('a'..'z'),
-          ('A'..'Z'),
-        ].map(&:to_a).flatten
-
-        def num_to_short_string(num)
-          q, r = num.divmod(NUM_MAPPING.size)
-          (q > 0 ? num_to_short_string(q) : '') + NUM_MAPPING[r]
-        end
-      end
-
-      # TODO: move out
-      class VarSym < Sym
-      end
-
-      # TODO: move out
-      class ClassSym < Sym
-      end
-
       attr_reader :scope
 
       def initialize(initial_env)
         @scope = Clarke::Util::SymbolTable.new
 
         initial_env.each do |name, _thing|
-          define(VarSym.new(name))
+          define(Clarke::Language::VarSym.new(name))
         end
       end
 
@@ -61,7 +24,7 @@ module Clarke
       end
 
       def visit_class_def(expr)
-        define(ClassSym.new(expr.name))
+        define(Clarke::Language::ClassSym.new(expr.name))
 
         push do
           super
@@ -71,10 +34,10 @@ module Clarke
       def visit_fun_def(expr)
         push do
           expr.parameters.each do |param|
-            define(VarSym.new(param))
+            define(Clarke::Language::VarSym.new(param))
           end
 
-          define(VarSym.new('this'))
+          define(Clarke::Language::VarSym.new('this'))
 
           super
         end
@@ -83,7 +46,7 @@ module Clarke
       def visit_lambda_def(expr)
         push do
           expr.parameters.each do |param|
-            define(VarSym.new(param))
+            define(Clarke::Language::VarSym.new(param))
           end
 
           super
@@ -91,7 +54,7 @@ module Clarke
       end
 
       def visit_var_decl(expr)
-        define(VarSym.new(expr.variable_name))
+        define(Clarke::Language::VarSym.new(expr.variable_name))
 
         super
       end

@@ -24,7 +24,7 @@ module Clarke
                 this.props[:contents] = []
               end,
               env: Clarke::Util::Env.new,
-              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
             ),
             add: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[elem],
@@ -35,7 +35,7 @@ module Clarke
                 elem
               end,
               env: Clarke::Util::Env.new,
-              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
             ),
             each: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[fn],
@@ -57,7 +57,7 @@ module Clarke
                 Clarke::Interpreter::Runtime::Null.instance
               end,
               env: Clarke::Util::Env.new,
-              scope: Clarke::Util::SymbolTable.new.define(Clarke::Passes::CollectSymbols::VarSym.new('this')),
+              scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
             ),
           },
         ),
