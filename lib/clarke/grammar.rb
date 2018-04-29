@@ -47,19 +47,19 @@ module Clarke
       .capture
       .map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::IntegerLiteral.new(data.to_i, context)
+        Clarke::AST::IntegerLiteral.new(value: data.to_i, context: context)
       end
 
     TRUE =
       string('true').map do |_data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::TrueLiteral.new(context)
+        Clarke::AST::TrueLiteral.new(context: context)
       end
 
     FALSE =
       string('false').map do |_data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FalseLiteral.new(context)
+        Clarke::AST::FalseLiteral.new(context: context)
       end
 
     STRING =
@@ -74,7 +74,7 @@ module Clarke
         char('"').ignore,
       ).compact.first.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::StringLiteral.new(data.join(''), context)
+        Clarke::AST::StringLiteral.new(value: data.join(''), context: context)
       end
 
     # … Other …
@@ -154,7 +154,7 @@ module Clarke
     REF =
       NAME.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Var.new(data, context)
+        Clarke::AST::Var.new(name: data, context: context)
       end
 
     ARG_LIST =
@@ -202,9 +202,9 @@ module Clarke
         data[1].reduce(data[0]) do |base, ext|
           case ext[0]
           when :call
-            Clarke::AST::FunctionCall.new(base, ext[1], context)
+            Clarke::AST::FunctionCall.new(base: base, arguments: ext[1], context: context)
           when :prop
-            Clarke::AST::GetProp.new(base, ext[1], context)
+            Clarke::AST::GetProp.new(base: base, name: ext[1], context: context)
           end
         end
       end
@@ -218,7 +218,7 @@ module Clarke
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Block.new(data, context)
+        Clarke::AST::Block.new(exprs: data, context: context)
       end
 
     ASSIGNMENT =
@@ -230,7 +230,7 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Assignment.new(data[0], data[1], context)
+        Clarke::AST::Assignment.new(variable_name: data[0], expr: data[1], context: context)
       end
 
     VAR_DECL =
@@ -244,7 +244,7 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::VarDecl.new(data[0], data[1], context)
+        Clarke::AST::VarDecl.new(variable_name: data[0], expr: data[1], context: context)
       end
 
     IF =
@@ -264,7 +264,7 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::If.new(data[0], data[1], data[2], context)
+        Clarke::AST::If.new(cond: data[0], body_true: data[1], body_false: data[2], context: context)
       end
 
     PARAM_LIST =
@@ -292,7 +292,7 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::LambdaDef.new(data[0], data[1], context)
+        Clarke::AST::LambdaDef.new(argument_names: data[0], body: data[1], context: context)
       end
 
     ARROW_LAMBDA_DEF =
@@ -304,7 +304,11 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::LambdaDef.new(data[0], Clarke::AST::Block.new([data[1]]), context)
+        Clarke::AST::LambdaDef.new(
+          argument_names: data[0],
+          body: Clarke::AST::Block.new(exprs: [data[1]], context: context),
+          context: context,
+        )
       end
 
     LAMBDA_DEF =
@@ -323,7 +327,7 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FunDef.new(data[0], data[1], data[2], context)
+        Clarke::AST::FunDef.new(name: data[0], argument_names: data[1], body: data[2], context: context)
       end
 
     CLASS_DEF =
@@ -339,7 +343,7 @@ module Clarke
         char('}').ignore,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::ClassDef.new(data[0], data[1], context)
+        Clarke::AST::ClassDef.new(name: data[0], functions: data[1], context: context)
       end
 
     OPERATOR =
@@ -358,7 +362,7 @@ module Clarke
         string('||'),
       ).capture.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Op.new(data, context)
+        Clarke::AST::Op.new(name: data, context: context)
       end
 
     GROUPED_EXPR =
@@ -397,7 +401,7 @@ module Clarke
         ).compact.first,
       ).map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::OpSeq.new(data, context)
+        Clarke::AST::OpSeq.new(seq: data, context: context)
       end
 
     SET_PROP =
@@ -411,7 +415,7 @@ module Clarke
         EXPR,
       ).compact.map do |data, success, old_pos|
         context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::SetProp.new(data[0], data[1], data[2], context)
+        Clarke::AST::SetProp.new(base: data[0], name: data[1], value: data[2], context: context)
       end
 
     STATEMENT =

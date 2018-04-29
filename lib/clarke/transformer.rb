@@ -4,17 +4,17 @@ module Clarke
   class Transformer
     def visit_assignment(expr)
       Clarke::AST::Assignment.new(
-        expr.variable_name,
-        visit_expr(expr.expr),
-        expr.context,
+        variable_name: expr.variable_name,
+        expr:          visit_expr(expr.expr),
+        context:       expr.context,
       )
     end
 
     def visit_var_decl(expr)
       Clarke::AST::VarDecl.new(
-        expr.variable_name,
-        visit_expr(expr.expr),
-        expr.context,
+        variable_name: expr.variable_name,
+        expr:          visit_expr(expr.expr),
+        context:       expr.context,
       )
     end
 
@@ -24,26 +24,26 @@ module Clarke
 
     def visit_function_call(expr)
       Clarke::AST::FunctionCall.new(
-        visit_expr(expr.base),
-        expr.arguments.map { |a| visit_expr(a) },
-        expr.context,
+        base:      visit_expr(expr.base),
+        arguments: expr.arguments.map { |a| visit_expr(a) },
+        context:   expr.context,
       )
     end
 
     def visit_get_prop(expr)
       Clarke::AST::GetProp.new(
-        visit_expr(expr.base),
-        expr.name,
-        expr.context,
+        base:    visit_expr(expr.base),
+        name:    expr.name,
+        context: expr.context,
       )
     end
 
     def visit_if(expr)
       Clarke::AST::If.new(
-        visit_expr(expr.cond),
-        visit_expr(expr.body_true),
-        visit_expr(expr.body_false),
-        expr.context,
+        cond:       visit_expr(expr.cond),
+        body_true:  visit_expr(expr.body_true),
+        body_false: visit_expr(expr.body_false),
+        context:    expr.context,
       )
     end
 
@@ -53,9 +53,9 @@ module Clarke
 
     def visit_lambda_def(expr)
       Clarke::AST::LambdaDef.new(
-        expr.argument_names,
-        visit_expr(expr.body),
-        expr.context,
+        argument_names: expr.argument_names,
+        body:           visit_expr(expr.body),
+        context:        expr.context,
       )
     end
 
@@ -65,15 +65,15 @@ module Clarke
 
     def visit_op_seq(expr)
       Clarke::AST::OpSeq.new(
-        expr.seq.map { |e| visit_expr(e) },
-        expr.context,
+        seq:     expr.seq.map { |e| visit_expr(e) },
+        context: expr.context,
       )
     end
 
     def visit_block(expr)
       Clarke::AST::Block.new(
-        expr.exprs.map { |e| visit_expr(e) },
-        expr.context,
+        exprs:   expr.exprs.map { |e| visit_expr(e) },
+        context: expr.context,
       )
     end
 
@@ -91,27 +91,27 @@ module Clarke
 
     def visit_class_def(expr)
       Clarke::AST::ClassDef.new(
-        expr.name,
-        expr.functions.map { |e| visit_expr(e) },
-        expr.context,
+        name:      expr.name,
+        functions: expr.functions.map { |e| visit_expr(e) },
+        context:   expr.context,
       )
     end
 
     def visit_fun_def(expr)
       Clarke::AST::FunDef.new(
-        expr.name,
-        expr.argument_names,
-        visit_expr(expr.body),
-        expr.context,
+        name:           expr.name,
+        argument_names: expr.argument_names,
+        body:           visit_expr(expr.body),
+        context:        expr.context,
       )
     end
 
     def visit_set_prop(expr)
       Clarke::AST::SetProp.new(
-        visit_expr(expr.base),
-        expr.name,
-        visit_expr(expr.value),
-        expr.context,
+        base:    visit_expr(expr.base),
+        name:    expr.name,
+        value:   visit_expr(expr.value),
+        context: expr.context,
       )
     end
 

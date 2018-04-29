@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'dry-types'
+require 'dry-struct'
+
 module Clarke
   module AST
     module Printable
@@ -37,7 +40,13 @@ module Clarke
       end
     end
 
-    FalseLiteral = Struct.new(:context) do
+    module Types
+      include Dry::Types.module
+    end
+
+    class FalseLiteral < Dry::Struct
+      attribute :context, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -49,7 +58,9 @@ module Clarke
       end
     end
 
-    TrueLiteral = Struct.new(:context) do
+    class TrueLiteral < Dry::Struct
+      attribute :context, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -61,7 +72,10 @@ module Clarke
       end
     end
 
-    StringLiteral = Struct.new(:value, :context) do
+    class StringLiteral < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :value, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -73,7 +87,11 @@ module Clarke
       end
     end
 
-    Assignment = Struct.new(:variable_name, :expr, :context) do
+    class Assignment < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :variable_name, Dry::Types::Any
+      attribute :expr, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -85,7 +103,11 @@ module Clarke
       end
     end
 
-    VarDecl = Struct.new(:variable_name, :expr, :context) do
+    class VarDecl < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :variable_name, Dry::Types::Any
+      attribute :expr, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -97,7 +119,11 @@ module Clarke
       end
     end
 
-    GetProp = Struct.new(:base, :name, :context) do
+    class GetProp < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :base, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -109,7 +135,12 @@ module Clarke
       end
     end
 
-    SetProp = Struct.new(:base, :name, :value, :context) do
+    class SetProp < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :base, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+      attribute :value, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -121,7 +152,11 @@ module Clarke
       end
     end
 
-    FunctionCall = Struct.new(:base, :arguments, :context) do
+    class FunctionCall < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :base, Dry::Types::Any
+      attribute :arguments, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -133,7 +168,12 @@ module Clarke
       end
     end
 
-    If = Struct.new(:cond, :body_true, :body_false, :context) do
+    class If < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :cond, Dry::Types::Any
+      attribute :body_true, Dry::Types::Any
+      attribute :body_false, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -145,7 +185,10 @@ module Clarke
       end
     end
 
-    IntegerLiteral = Struct.new(:value, :context) do
+    class IntegerLiteral < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :value, Types::Strict::Int
+
       include Printable
 
       def ast_name
@@ -157,7 +200,11 @@ module Clarke
       end
     end
 
-    LambdaDef = Struct.new(:argument_names, :body, :context) do
+    class LambdaDef < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :argument_names, Types::Strict::Array.of(String)
+      attribute :body, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -169,7 +216,12 @@ module Clarke
       end
     end
 
-    FunDef = Struct.new(:name, :argument_names, :body, :context) do
+    class FunDef < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+      attribute :argument_names, Dry::Types::Any
+      attribute :body, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -181,7 +233,11 @@ module Clarke
       end
     end
 
-    ClassDef = Struct.new(:name, :functions, :context) do
+    class ClassDef < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+      attribute :functions, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -193,7 +249,10 @@ module Clarke
       end
     end
 
-    Op = Struct.new(:name, :context) do
+    class Op < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -205,7 +264,10 @@ module Clarke
       end
     end
 
-    OpSeq = Struct.new(:seq, :context) do
+    class OpSeq < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :seq, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -217,7 +279,10 @@ module Clarke
       end
     end
 
-    Block = Struct.new(:exprs, :context) do
+    class Block < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :exprs, Dry::Types::Any
+
       include Printable
 
       def ast_name
@@ -229,7 +294,10 @@ module Clarke
       end
     end
 
-    Var = Struct.new(:name, :context) do
+    class Var < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Types::Strict::String
+
       include Printable
 
       def ast_name
