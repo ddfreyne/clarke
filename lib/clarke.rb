@@ -17,7 +17,7 @@ module Clarke
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
     # Collect symbols
-    initial_env = Clarke::Interpreter::Evaluator::INITIAL_ENV
+    initial_env = Clarke::Interpreter::Init::CONTENTS
     pass = Clarke::Passes::CollectSymbols.new(initial_env)
     pass.visit_exprs(exprs)
     global_scope = pass.scope
@@ -61,4 +61,5 @@ module Clarke
 end
 
 require_relative 'clarke/interpreter/runtime'
+require_relative 'clarke/interpreter/init'
 require_relative 'clarke/interpreter/evaluator'
