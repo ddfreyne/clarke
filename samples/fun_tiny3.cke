@@ -3,10 +3,16 @@ let sum = (a: int, b: int): int => {
 }
 print(sum(2, 3))
 
-let sum2 = fun (ax) { fun (bx) { ax + bx } }
+let sum2 = fun (ax: int) { fun (bx: int) { ax + bx } }
 print(sum2(1)(2))
 
-let fib = (a: int) => {
+let fib = (a: int): int => {
   if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }
 }
-fib(0)
+print(fib(0))
+print(fib(1))
+print(fib(2))
+print(fib(3))
+print(fib(4))
+print(fib(5))
+print(fib(6))
