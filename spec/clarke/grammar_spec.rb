@@ -186,6 +186,14 @@ describe 'Clarke' do
     expect("{let a = 2}\na").to fail_with(Clarke::Language::NameError)
   end
 
+  it 'handles classes without initializer' do
+    expect("class Foo {\n  fun oink() { \"stuff\" }\n}\nFoo().oink()").to evaluate_to(Clarke::Runtime::String.new('stuff'))
+  end
+
+  it 'handles classes with initializer' do
+    expect("class Foo {\n  fun init(a) { this.a = a }\nfun oink() { this.a }\n}\nFoo(\"stuff\").oink()").to evaluate_to(Clarke::Runtime::String.new('stuff'))
+  end
+
   it 'prints things properly' do
     expect { run('print(1)') }.to output("1\n").to_stdout
     expect { run('print(true)') }.to output("true\n").to_stdout
