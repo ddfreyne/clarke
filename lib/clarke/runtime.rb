@@ -2,7 +2,11 @@
 
 module Clarke
   module Runtime
-    Function = Struct.new(:argument_names, :body, :env) do
+    class Function < Dry::Struct
+      attribute :argument_names, Dry::Types::Any
+      attribute :body, Dry::Types::Any
+      attribute :env, Dry::Types::Any
+
       def describe
         'function'
       end
@@ -18,7 +22,11 @@ module Clarke
       def bind(instance)
         new_env = env.push
         new_env['this'] = instance
-        Function.new(argument_names, body, new_env)
+        Function.new(
+          argument_names: argument_names,
+          body:           body,
+          env:            new_env,
+        )
       end
 
       def call(arguments, evaluator)

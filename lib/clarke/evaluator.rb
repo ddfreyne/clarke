@@ -4,32 +4,33 @@ module Clarke
   class Evaluator < Clarke::Visitor
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
-        %w[a],
-        lambda do |_ev, _env, a|
+        argument_names: %w[a],
+        body: lambda do |_ev, _env, a|
           puts(a.clarke_to_string)
           Clarke::Runtime::Null
         end,
+        env: Clarke::Util::Env.new,
       ),
       'Array' => Clarke::Runtime::Class.new(
         'Array',
         init: Clarke::Runtime::Function.new(
-          %w[],
-          lambda do |_ev, env|
+          argument_names: %w[],
+          body: lambda do |_ev, env|
             env.fetch('this', depth: 0, expr: nil).props[:contents] = []
           end,
-          Clarke::Util::Env.new,
+          env: Clarke::Util::Env.new,
         ),
         add: Clarke::Runtime::Function.new(
-          %w[elem],
-          lambda do |_ev, env, elem|
+          argument_names: %w[elem],
+          body: lambda do |_ev, env, elem|
             env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
             elem
           end,
-          Clarke::Util::Env.new,
+          env: Clarke::Util::Env.new,
         ),
         each: Clarke::Runtime::Function.new(
-          %w[fn],
-          lambda do |ev, env, fn|
+          argument_names: %w[fn],
+          body: lambda do |ev, env, fn|
             env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
               new_env =
                 fn.env.merge(Hash[fn.argument_names.zip([elem])])
@@ -37,7 +38,7 @@ module Clarke
             end
             Clarke::Runtime::Null
           end,
-          Clarke::Util::Env.new,
+          env: Clarke::Util::Env.new,
         ),
       ),
     }.freeze
@@ -191,7 +192,11 @@ module Clarke
     end
 
     def visit_lambda_def(expr, env)
-      Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
+      Clarke::Runtime::Function.new(
+        argument_names: expr.argument_names,
+        body: expr.body,
+        env: env,
+      )
     end
 
     def visit_class_def(expr, env)
@@ -201,7 +206,11 @@ module Clarke
     end
 
     def visit_fun_def(expr, env)
-      Clarke::Runtime::Function.new(expr.argument_names, expr.body, env)
+      Clarke::Runtime::Function.new(
+        argument_names: expr.argument_names,
+        body: expr.body,
+        env: env,
+      )
     end
 
     def visit_set_prop(expr, env)
