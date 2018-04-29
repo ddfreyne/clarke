@@ -37,7 +37,7 @@ module Clarke
             parameters: parameters,
             body:       body,
             env:        new_env,
-            scope:      scope.define(this_sym), # TODO: remove
+            scope:      scope,
           )
         end
 
