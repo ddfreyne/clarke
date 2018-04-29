@@ -93,6 +93,7 @@ module Clarke
       Clarke::AST::ClassDef.new(
         expr.name,
         expr.functions.map { |e| visit_expr(e) },
+        expr.context,
       )
     end
 
@@ -101,6 +102,7 @@ module Clarke
         expr.name,
         expr.argument_names,
         visit_expr(expr.body),
+        expr.context,
       )
     end
 
@@ -109,6 +111,7 @@ module Clarke
         visit_expr(expr.base),
         expr.name,
         visit_expr(expr.value),
+        expr.context,
       )
     end
 
