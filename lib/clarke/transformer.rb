@@ -53,7 +53,7 @@ module Clarke
 
     def visit_lambda_def(expr)
       Clarke::AST::LambdaDef.new(
-        argument_names: expr.argument_names,
+        parameters: expr.parameters,
         body:           visit_expr(expr.body),
         context:        expr.context,
       )
@@ -99,10 +99,10 @@ module Clarke
 
     def visit_fun_def(expr)
       Clarke::AST::FunDef.new(
-        name:           expr.name,
-        argument_names: expr.argument_names,
-        body:           visit_expr(expr.body),
-        context:        expr.context,
+        name:       expr.name,
+        parameters: expr.parameters,
+        body:       visit_expr(expr.body),
+        context:    expr.context,
       )
     end
 

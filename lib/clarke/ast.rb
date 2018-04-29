@@ -202,7 +202,7 @@ module Clarke
 
     class LambdaDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :argument_names, Types::Strict::Array.of(String)
+      attribute :parameters, Types::Strict::Array.of(String)
       attribute :body, Dry::Types::Any
 
       include Printable
@@ -212,14 +212,14 @@ module Clarke
       end
 
       def ast_children
-        [argument_names, body]
+        [parameters, body]
       end
     end
 
     class FunDef < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :argument_names, Dry::Types::Any
+      attribute :parameters, Dry::Types::Any
       attribute :body, Dry::Types::Any
 
       include Printable
@@ -229,7 +229,7 @@ module Clarke
       end
 
       def ast_children
-        [name, argument_names, body]
+        [name, parameters, body]
       end
     end
 

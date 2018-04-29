@@ -4,7 +4,7 @@ module Clarke
   class Evaluator < Clarke::Visitor
     INITIAL_ENV = {
       'print' => Clarke::Runtime::Function.new(
-        argument_names: %w[a],
+        parameters: %w[a],
         body: lambda do |_ev, _env, a|
           puts(a.clarke_to_string)
           Clarke::Runtime::Null
@@ -14,14 +14,14 @@ module Clarke
       'Array' => Clarke::Runtime::Class.new(
         'Array',
         init: Clarke::Runtime::Function.new(
-          argument_names: %w[],
+          parameters: %w[],
           body: lambda do |_ev, env|
             env.fetch('this', depth: 0, expr: nil).props[:contents] = []
           end,
           env: Clarke::Util::Env.new,
         ),
         add: Clarke::Runtime::Function.new(
-          argument_names: %w[elem],
+          parameters: %w[elem],
           body: lambda do |_ev, env, elem|
             env.fetch('this', depth: 0, expr: nil).props[:contents] << elem
             elem
@@ -29,11 +29,11 @@ module Clarke
           env: Clarke::Util::Env.new,
         ),
         each: Clarke::Runtime::Function.new(
-          argument_names: %w[fn],
+          parameters: %w[fn],
           body: lambda do |ev, env, fn|
             env.fetch('this', depth: 0, expr: nil).props[:contents].each do |elem|
               new_env =
-                fn.env.merge(Hash[fn.argument_names.zip([elem])])
+                fn.env.merge(Hash[fn.parameters.zip([elem])])
               ev.visit_block(fn.body, new_env)
             end
             Clarke::Runtime::Null
@@ -54,9 +54,9 @@ module Clarke
       if base.is_a?(Clarke::Runtime::Function)
         function = base
 
-        if expr.arguments.count != function.argument_names.size
+        if expr.arguments.count != function.parameters.size
           raise Clarke::Language::ArgumentCountError.new(
-            expected: function.argument_names.size,
+            expected: function.parameters.size,
             actual: expr.arguments.count,
             expr: expr,
           )
@@ -193,7 +193,7 @@ module Clarke
 
     def visit_lambda_def(expr, env)
       Clarke::Runtime::Function.new(
-        argument_names: expr.argument_names,
+        parameters: expr.parameters,
         body: expr.body,
         env: env,
       )
@@ -207,7 +207,7 @@ module Clarke
 
     def visit_fun_def(expr, env)
       Clarke::Runtime::Function.new(
-        argument_names: expr.argument_names,
+        parameters: expr.parameters,
         body: expr.body,
         env: env,
       )

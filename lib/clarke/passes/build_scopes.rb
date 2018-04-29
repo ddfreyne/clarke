@@ -31,7 +31,7 @@ module Clarke
 
       def visit_lambda_def(expr)
         push do
-          expr.argument_names.each { |n| current_scope << n }
+          expr.parameters.each { |n| current_scope << n }
           super
         end
       end
@@ -49,7 +49,7 @@ module Clarke
         current_scope << expr.name
 
         push do
-          expr.argument_names.each { |n| current_scope << n }
+          expr.parameters.each { |n| current_scope << n }
           super
         end
       end

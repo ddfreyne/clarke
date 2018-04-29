@@ -3,7 +3,7 @@
 module Clarke
   module Runtime
     class Function < Dry::Struct
-      attribute :argument_names, Dry::Types::Any
+      attribute :parameters, Dry::Types::Any
       attribute :body, Dry::Types::Any
       attribute :env, Dry::Types::Any
 
@@ -23,9 +23,9 @@ module Clarke
         new_env = env.push
         new_env['this'] = instance
         Function.new(
-          argument_names: argument_names,
-          body:           body,
-          env:            new_env,
+          parameters: parameters,
+          body:       body,
+          env:        new_env,
         )
       end
 
@@ -33,7 +33,7 @@ module Clarke
         case body
         when Clarke::AST::Block
           new_env =
-            env.merge(Hash[argument_names.zip(arguments)])
+            env.merge(Hash[parameters.zip(arguments)])
           evaluator.visit_block(body, new_env)
         when Proc
           body.call(evaluator, env, *arguments)
