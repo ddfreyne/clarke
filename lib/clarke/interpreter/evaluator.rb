@@ -20,7 +20,7 @@ module Clarke
               parameters: %w[],
               body: lambda do |_ev, env, scope, expr|
                 this_sym = scope.resolve('this', expr)
-                this = env.fetch(this_sym, depth: -1, expr: expr)
+                this = env.fetch(this_sym, expr: expr)
                 this.props[:contents] = []
               end,
               env: Clarke::Util::Env.new,
@@ -30,7 +30,7 @@ module Clarke
               parameters: %w[elem],
               body: lambda do |_ev, env, scope, expr, elem|
                 this_sym = scope.resolve('this', expr)
-                this = env.fetch(this_sym, depth: -1, expr: expr)
+                this = env.fetch(this_sym, expr: expr)
                 this.props[:contents] << elem
                 elem
               end,
@@ -41,7 +41,7 @@ module Clarke
               parameters: %w[fn],
               body: lambda do |ev, env, scope, expr, fn|
                 this_sym = scope.resolve('this', expr)
-                this = env.fetch(this_sym, depth: -1, expr: expr)
+                this = env.fetch(this_sym, expr: expr)
 
                 param_syms = fn.parameters.map do |e|
                   fn.body.scope.resolve(e, fn.body)
@@ -52,7 +52,6 @@ module Clarke
                     fn
                     .env
                     .merge(Hash[param_syms.zip([elem])])
-                    .merge(Hash[fn.parameters.zip([elem])])
                   ev.visit_block(fn.body, new_env)
                 end
                 Clarke::Interpreter::Runtime::Null.instance
@@ -120,7 +119,7 @@ module Clarke
 
       def visit_var(expr, env)
         sym = expr.scope.resolve(expr.name, expr)
-        env.fetch(sym, depth: -1, expr: expr)
+        env.fetch(sym, expr: expr)
       end
 
       def visit_var_decl(expr, env)
@@ -291,7 +290,6 @@ module Clarke
 
         INITIAL_ENV.each_pair do |name, val|
           sym = @global_scope.resolve(name, nil)
-          env[name] = val
           env[sym] = val
         end
 

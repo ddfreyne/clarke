@@ -26,7 +26,6 @@ module Clarke
           this_sym = scope.resolve('this', nil)
 
           new_env = env.push
-          new_env['this'] = instance
           new_env[this_sym] = instance
 
           if body.respond_to?(:scope)
@@ -46,8 +45,7 @@ module Clarke
           case body
           when Clarke::AST::Block
             pa_syms = parameters.map { |pa| body.scope.resolve(pa, expr) }
-            new_env = env.merge(Hash[parameters.zip(arguments)])
-            new_env = new_env.merge(Hash[pa_syms.zip(arguments)])
+            new_env = env.merge(Hash[pa_syms.zip(arguments)])
             evaluator.visit_block(body, new_env)
           when Proc
             body.call(evaluator, env, scope, expr, *arguments)

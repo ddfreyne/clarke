@@ -12,35 +12,21 @@ module Clarke
         @contents.key?(key) || (@parent&.key?(key))
       end
 
-      def at_depth(depth)
-        if depth == 0
-          self
+      def fetch(key, expr:)
+        if @contents.key?(key)
+          @contents.fetch(key)
+        elsif @parent
+          @parent.fetch(key, expr: expr)
         else
-          @parent.at_depth(depth - 1)
-        end
-      end
-
-      def fetch(key, depth:, expr:)
-        if depth > 0
-          @parent.fetch(key, depth: depth - 1, expr: expr)
-        elsif depth == 0
-          @contents.fetch(key) { raise Clarke::Language::NameError.new(key, expr) }
-        elsif depth < 0 # special haxx
-          if @contents.key?(key)
-            @contents.fetch(key)
-          elsif @parent
-            @parent.fetch(key, depth: -1, expr: expr)
-          else
-            raise Clarke::Language::NameError.new(key, expr)
-          end
+          raise Clarke::Language::NameError.new(key, expr)
         end
       end
 
       def []=(key, value)
-        if key.is_a?(String) || key.is_a?(Symbol)
-          @contents[key] = value
-        elsif @parent
-          # FIXME: haxx
+        raise ArgumentError if key.is_a?(String) || key.is_a?(Symbol)
+
+        # Set in topmost parent
+        if @parent
           @parent[key] = value
         else
           @contents[key] = value
