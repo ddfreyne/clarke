@@ -7,30 +7,29 @@ module Clarke
         @global_scope = global_scope
       end
 
+      def check_argument_count(function, arguments)
+        if arguments.count != function.parameters.size
+          raise Clarke::Language::ArgumentCountError.new(
+            expected: function.parameters.size,
+            actual: arguments.count,
+          )
+        end
+      end
+
       def visit_function_call(expr, env)
         base = visit_expr(expr.base, env)
         values = expr.arguments.map { |e| visit_expr(e, env) }
 
         if base.is_a?(Clarke::Interpreter::Runtime::Function)
-          function = base
-
-          if expr.arguments.count != function.parameters.size
-            raise Clarke::Language::ArgumentCountError.new(
-              expected: function.parameters.size,
-              actual: expr.arguments.count,
-            )
-          end
-
-          function.call(values, self, expr)
+          check_argument_count(base, values)
+          base.call(values, self, expr)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
           instance = Clarke::Interpreter::Runtime::Instance.new(props: {}, klass: base)
 
-          # TODO: verify arg count
-
           init = base.functions[:init]
           if init
-            function = init.bind(instance)
-            function.call(values, self, expr)
+            check_argument_count(init, values)
+            init.bind(instance).call(values, self, expr)
           end
 
           instance

@@ -141,12 +141,14 @@ describe 'Clarke' do
     expect('(((1)))').to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
   end
 
-  it 'errors on wrong function counts' do
+  it 'errors on wrong argument counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
     expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Language::ArgumentCountError)
+    expect('Array(1)').to fail_with(Clarke::Language::ArgumentCountError)
+    expect('Array(1, 2)').to fail_with(Clarke::Language::ArgumentCountError)
   end
 
   it 'handles complex function calls' do
