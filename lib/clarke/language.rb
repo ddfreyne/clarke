@@ -82,7 +82,7 @@ module Clarke
         lines << "line #{ctx.from.line + 1}: #{message}"
         lines << ''
         lines << (ctx.input.lines[ctx.from.line] || '').rstrip
-        lines << "\e[31m" + ' ' * ctx.from.column + ('~' * (ctx.to.column - ctx.from.column)) + "\e[0m"
+        lines << "\e[31m" + ' ' * ctx.from.column + ('〰' * ((ctx.to.column - ctx.from.column) / 2)) + "\e[0m"
         lines.join("\n")
       end
     end
