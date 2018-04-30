@@ -22,8 +22,7 @@ module Clarke
         end
 
         def bind(instance)
-          # FIXME: make expr not required?
-          this_sym = scope.resolve('this', nil)
+          this_sym = scope.resolve('this')
 
           new_env = env.push
           new_env[this_sym] = instance
@@ -44,7 +43,7 @@ module Clarke
         def call(arguments, evaluator, expr)
           case body
           when Clarke::AST::Block
-            pa_syms = parameters.map { |pa| body.scope.resolve(pa, expr) }
+            pa_syms = parameters.map { |pa| body.scope.resolve(pa) }
             new_env = env.merge(Hash[pa_syms.zip(arguments)])
             evaluator.visit_block(body, new_env)
           when Proc

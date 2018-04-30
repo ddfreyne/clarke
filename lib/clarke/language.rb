@@ -67,9 +67,9 @@ module Clarke
     end
 
     class Error < StandardError
-      attr_reader :expr
+      attr_accessor :expr
 
-      def initialize(expr)
+      def initialize(expr = nil)
         @expr = expr
       end
 
@@ -93,8 +93,8 @@ module Clarke
     class NameError < Error
       attr_reader :name
 
-      def initialize(name, expr)
-        super(expr)
+      def initialize(name)
+        super(nil)
 
         @name = name
       end

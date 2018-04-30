@@ -45,7 +45,7 @@ module Clarke
         name = expr.name.to_sym
 
         unless base_value.is_a?(Clarke::Interpreter::Runtime::Instance)
-          raise Clarke::Language::NameError.new(name, expr)
+          raise Clarke::Language::NameError.new(name)
         end
 
         if base_value.props.key?(name)
@@ -53,24 +53,24 @@ module Clarke
         elsif base_value.klass&.functions&.key?(name)
           base_value.klass.functions.fetch(name).bind(base_value)
         else
-          raise Clarke::Language::NameError.new(name, expr)
+          raise Clarke::Language::NameError.new(name)
         end
       end
 
       def visit_var(expr, env)
-        sym = expr.scope.resolve(expr.name, expr)
+        sym = expr.scope.resolve(expr.name)
         env.fetch(sym, expr: expr)
       end
 
       def visit_var_decl(expr, env)
         value = visit_expr(expr.expr, env)
-        sym = expr.scope.resolve(expr.variable_name, expr)
+        sym = expr.scope.resolve(expr.variable_name)
         env[sym] = value
         value
       end
 
       def visit_assignment(expr, env)
-        sym = expr.scope.resolve(expr.variable_name, expr)
+        sym = expr.scope.resolve(expr.variable_name)
 
         value = visit_expr(expr.expr, env)
         env.containing(sym)[sym] = value
@@ -162,7 +162,7 @@ module Clarke
       def visit_class_def(expr, env)
         functions = {}
         expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
-        sym = expr.scope.resolve(expr.name, expr)
+        sym = expr.scope.resolve(expr.name)
         env[sym] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
       end
 
@@ -179,7 +179,7 @@ module Clarke
         base_value = visit_expr(expr.base, env)
 
         unless base_value.is_a?(Clarke::Interpreter::Runtime::Instance)
-          raise Clarke::Language::NameError.new(expr.name, expr)
+          raise Clarke::Language::NameError.new(expr.name)
         end
 
         base_value.props[expr.name.to_sym] = visit_expr(expr.value, env)
@@ -223,13 +223,16 @@ module Clarke
         else
           raise ArgumentError, "don’t know how to handle #{expr.inspect}"
         end
+      rescue Clarke::Language::Error => e
+        e.expr = expr
+        raise e
       end
 
       def visit_exprs(exprs)
         env = Clarke::Util::Env.new
 
         Clarke::Interpreter::Init::CONTENTS.each_pair do |name, val|
-          sym = @global_scope.resolve(name, nil)
+          sym = @global_scope.resolve(name)
           env[sym] = val
         end
 

@@ -15,13 +15,13 @@ module Clarke
         )
       end
 
-      def resolve(name, expr)
+      def resolve(name)
         if @contents.key?(name)
           @contents.fetch(name)
         elsif @parent
-          @parent.resolve(name, expr)
+          @parent.resolve(name)
         else
-          raise Clarke::Language::NameError.new(name, expr)
+          raise Clarke::Language::NameError.new(name)
         end
       end
 

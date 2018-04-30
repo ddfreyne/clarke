@@ -20,7 +20,7 @@ module Clarke
             init: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[],
               body: lambda do |_ev, env, scope, expr|
-                this_sym = scope.resolve('this', expr)
+                this_sym = scope.resolve('this')
                 this = env.fetch(this_sym, expr: expr)
                 this.props[:contents] = []
               end,
@@ -31,7 +31,7 @@ module Clarke
             add: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[elem],
               body: lambda do |_ev, env, scope, expr, elem|
-                this_sym = scope.resolve('this', expr)
+                this_sym = scope.resolve('this')
                 this = env.fetch(this_sym, expr: expr)
                 this.props[:contents] << elem
                 elem
@@ -43,11 +43,11 @@ module Clarke
             each: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[fn],
               body: lambda do |ev, env, scope, expr, fn|
-                this_sym = scope.resolve('this', expr)
+                this_sym = scope.resolve('this')
                 this = env.fetch(this_sym, expr: expr)
 
                 param_syms = fn.parameters.map do |e|
-                  fn.body.scope.resolve(e, fn.body)
+                  fn.body.scope.resolve(e)
                 end
 
                 this.props[:contents].each do |elem|

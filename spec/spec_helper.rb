@@ -74,8 +74,7 @@ end
 RSpec::Matchers.define :fail_with do |expected|
   match do |input|
     res = error_for(input)
-    @actual = res
-
+    @actual_class = res.class
     res.is_a?(expected)
   end
 
