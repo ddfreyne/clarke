@@ -22,12 +22,26 @@ module Clarke
         end
       end
 
+      def containing(key)
+        if @contents.key?(key)
+          self
+        elsif @parent
+          @parent.containing(key)
+        else
+          nil
+        end
+      end
+
+      def force_set(key, value)
+        @contents[key] = value
+      end
+
       def []=(key, value)
         raise ArgumentError if key.is_a?(String) || key.is_a?(Symbol)
 
-        # Set in topmost parent
-        if @parent
-          @parent[key] = value
+        containing_env = containing(key)
+        if containing_env
+          containing_env.force_set(key, value)
         else
           @contents[key] = value
         end
