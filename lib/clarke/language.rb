@@ -123,8 +123,8 @@ module Clarke
       attr_reader :actual
       attr_reader :expected
 
-      def initialize(actual:, expected:, expr:)
-        super(expr)
+      def initialize(actual:, expected:)
+        super(nil)
 
         @actual = actual
         @expected = expected

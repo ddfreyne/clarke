@@ -18,7 +18,6 @@ module Clarke
             raise Clarke::Language::ArgumentCountError.new(
               expected: function.parameters.size,
               actual: expr.arguments.count,
-              expr: expr,
             )
           end
 
