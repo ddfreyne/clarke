@@ -8,11 +8,11 @@ module Clarke
         @contents = contents
       end
 
-      def fetch(key, expr:)
+      def fetch(key)
         if @contents.key?(key)
           @contents.fetch(key)
         elsif @parent
-          @parent.fetch(key, expr: expr)
+          @parent.fetch(key)
         else
           raise Clarke::Language::NameError.new(key)
         end

@@ -59,7 +59,7 @@ module Clarke
 
       def visit_var(expr, env)
         sym = expr.scope.resolve(expr.name)
-        env.fetch(sym, expr: expr)
+        env.fetch(sym)
       end
 
       def visit_var_decl(expr, env)
