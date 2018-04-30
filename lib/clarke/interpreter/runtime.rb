@@ -26,7 +26,7 @@ module Clarke
           this_sym = scope.resolve('this', nil)
 
           new_env = env.push
-          new_env[this_sym] = instance
+          new_env.set(this_sym, instance)
 
           if body.respond_to?(:scope)
             new_scope = body.scope.define(this_sym)

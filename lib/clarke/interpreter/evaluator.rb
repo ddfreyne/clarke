@@ -65,7 +65,7 @@ module Clarke
       def visit_var_decl(expr, env)
         value = visit_expr(expr.expr, env)
         sym = expr.scope.resolve(expr.variable_name, expr)
-        env[sym] = value
+        env.set(sym, value)
         value
       end
 
@@ -73,7 +73,7 @@ module Clarke
         sym = expr.scope.resolve(expr.variable_name, expr)
 
         value = visit_expr(expr.expr, env)
-        env[sym] = value
+        env.containing(sym).set(sym, value)
         value
       end
 
@@ -163,7 +163,10 @@ module Clarke
         functions = {}
         expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
         sym = expr.scope.resolve(expr.name, expr)
-        env[sym] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
+        env.set(
+          sym,
+          Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions),
+        )
       end
 
       def visit_fun_def(expr, env)
@@ -230,7 +233,7 @@ module Clarke
 
         Clarke::Interpreter::Init::CONTENTS.each_pair do |name, val|
           sym = @global_scope.resolve(name, nil)
-          env[sym] = val
+          env.set(sym, val)
         end
 
         env = env.push

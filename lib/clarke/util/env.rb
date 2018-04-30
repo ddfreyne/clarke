@@ -8,10 +8,6 @@ module Clarke
         @contents = contents
       end
 
-      def key?(key)
-        @contents.key?(key) || (@parent&.key?(key))
-      end
-
       def fetch(key, expr:)
         if @contents.key?(key)
           @contents.fetch(key)
@@ -32,24 +28,13 @@ module Clarke
         end
       end
 
-      def force_set(key, value)
+      def set(key, value)
         @contents[key] = value
-      end
-
-      def []=(key, value)
-        raise ArgumentError if key.is_a?(String) || key.is_a?(Symbol)
-
-        containing_env = containing(key)
-        if containing_env
-          containing_env.force_set(key, value)
-        else
-          @contents[key] = value
-        end
       end
 
       def merge(hash)
         pushed = push
-        hash.each { |k, v| pushed[k] = v }
+        hash.each { |k, v| pushed.set(k, v) }
         pushed
       end
 
