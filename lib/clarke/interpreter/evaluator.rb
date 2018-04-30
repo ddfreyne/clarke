@@ -222,7 +222,7 @@ module Clarke
           raise ArgumentError, "don’t know how to handle #{expr.inspect}"
         end
       rescue Clarke::Language::Error => e
-        e.expr = expr
+        e.expr = expr unless e.expr
         raise e
       end
 
