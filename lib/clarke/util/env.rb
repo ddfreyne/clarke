@@ -33,9 +33,9 @@ module Clarke
       end
 
       def merge(hash)
-        pushed = push
-        hash.each { |k, v| pushed[k] = v }
-        pushed
+        push.tap do |new_env|
+          hash.each { |k, v| new_env[k] = v }
+        end
       end
 
       def push
