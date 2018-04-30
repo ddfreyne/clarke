@@ -28,13 +28,13 @@ module Clarke
         end
       end
 
-      def set(key, value)
+      def []=(key, value)
         @contents[key] = value
       end
 
       def merge(hash)
         pushed = push
-        hash.each { |k, v| pushed.set(k, v) }
+        hash.each { |k, v| pushed[k] = v }
         pushed
       end
 
