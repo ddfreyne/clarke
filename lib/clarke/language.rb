@@ -10,23 +10,12 @@ module Clarke
       end
 
       def inspect
-        id = num_to_short_string(object_id).reverse.scan(/.{1,4}/).join('-').reverse
+        id = Clarke::Util::Num2String.call(object_id)
         "<#{self.class.to_s.sub(/^.*::/, '')} #{@name} #{id}>"
       end
 
       def to_s
         inspect
-      end
-
-      NUM_MAPPING = [
-        ('0'..'9'),
-        ('a'..'z'),
-        ('A'..'Z'),
-      ].map(&:to_a).flatten
-
-      def num_to_short_string(num)
-        q, r = num.divmod(NUM_MAPPING.size)
-        (q > 0 ? num_to_short_string(q) : '') + NUM_MAPPING[r]
       end
     end
 
