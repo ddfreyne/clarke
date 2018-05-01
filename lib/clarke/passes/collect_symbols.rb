@@ -30,6 +30,8 @@ module Clarke
       end
 
       def visit_fun_def(expr)
+        define(Clarke::Language::FunSym.new(expr.name))
+
         push do
           expr.parameters.each do |param|
             define(Clarke::Language::VarSym.new(param))

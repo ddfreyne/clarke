@@ -1,2 +1,4 @@
 let x = fun (a,b) { a + b }
-x(2, 3)
+fun y(a,b) { a + b }
+print(x(2, 3))
+print(y(2, 3))

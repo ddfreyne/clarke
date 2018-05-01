@@ -25,6 +25,9 @@ module Clarke
     class ClassSym < Sym
     end
 
+    class FunSym < Sym
+    end
+
     class Error < StandardError
       attr_accessor :expr
 

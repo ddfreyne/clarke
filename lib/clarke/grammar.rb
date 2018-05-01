@@ -390,6 +390,7 @@ module Clarke
         VAR_DECL,
         REF,
         CLASS_DEF,
+        FUN_DEF,
       )
 
     EXPR =

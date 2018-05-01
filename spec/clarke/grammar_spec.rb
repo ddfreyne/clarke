@@ -151,6 +151,10 @@ describe 'Clarke' do
     expect('Array(1, 2)').to fail_with(Clarke::Language::ArgumentCountError)
   end
 
+  it 'handles non-anonymous function definitions' do
+    expect("fun sum(a, b) { a + b }\nsum(1, 2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
+  end
+
   it 'handles complex function calls' do
     expect("let sum = fun (a) { fun (b) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
     expect("let sum = (a) => (b) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))

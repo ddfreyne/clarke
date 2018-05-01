@@ -147,19 +147,28 @@ module Clarke
       end
 
       def visit_class_def(expr, env)
+        fun_env = env.push
+
         functions = {}
-        expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, env) }
+        expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, fun_env) }
+
         sym = expr.scope.resolve(expr.name)
         env[sym] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
       end
 
       def visit_fun_def(expr, env)
-        Clarke::Interpreter::Runtime::Fun.new(
-          parameters: expr.parameters,
-          body: expr.body,
-          env: env,
-          scope: expr.body.scope,
-        )
+        fun =
+          Clarke::Interpreter::Runtime::Fun.new(
+            parameters: expr.parameters,
+            body: expr.body,
+            env: env,
+            scope: expr.body.scope,
+          )
+
+        sym = expr.scope.resolve(expr.name)
+        env[sym] = fun
+
+        fun
       end
 
       def visit_set_prop(expr, env)
