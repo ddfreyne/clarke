@@ -60,7 +60,7 @@ module Clarke
         env.fetch(sym)
       end
 
-      def visit_var_decl(expr, env)
+      def visit_var_def(expr, env)
         value = visit_expr(expr.expr, env)
         sym = expr.scope.resolve(expr.variable_name)
         env[sym] = value
@@ -189,8 +189,8 @@ module Clarke
           visit_get_prop(expr, env)
         when Clarke::AST::Var
           visit_var(expr, env)
-        when Clarke::AST::VarDecl
-          visit_var_decl(expr, env)
+        when Clarke::AST::VarDef
+          visit_var_def(expr, env)
         when Clarke::AST::Assignment
           visit_assignment(expr, env)
         when Clarke::AST::Block

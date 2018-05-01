@@ -102,7 +102,7 @@ module Clarke
       end
     end
 
-    class VarDecl < Dry::Struct
+    class VarDef < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :variable_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
@@ -111,7 +111,7 @@ module Clarke
       include Printable
 
       def ast_name
-        'VarDecl'
+        'VarDef'
       end
 
       def ast_children

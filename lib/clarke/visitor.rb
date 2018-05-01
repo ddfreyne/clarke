@@ -7,7 +7,7 @@ module Clarke
       nil
     end
 
-    def visit_var_decl(expr)
+    def visit_var_def(expr)
       visit_expr(expr.expr)
       nil
     end
@@ -159,8 +159,8 @@ module Clarke
 
     def visit_expr(expr)
       case expr
-      when Clarke::AST::VarDecl
-        visit_var_decl(expr)
+      when Clarke::AST::VarDef
+        visit_var_def(expr)
       when Clarke::AST::Assignment
         visit_assignment(expr)
       when Clarke::AST::FalseLiteral

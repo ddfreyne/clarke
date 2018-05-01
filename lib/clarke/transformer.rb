@@ -10,8 +10,8 @@ module Clarke
       )
     end
 
-    def visit_var_decl(expr)
-      Clarke::AST::VarDecl.new(
+    def visit_var_def(expr)
+      Clarke::AST::VarDef.new(
         variable_name: expr.variable_name,
         expr:          visit_expr(expr.expr),
         context:       expr.context,
@@ -213,8 +213,8 @@ module Clarke
 
     def visit_expr(expr)
       case expr
-      when Clarke::AST::VarDecl
-        visit_var_decl(expr)
+      when Clarke::AST::VarDef
+        visit_var_def(expr)
       when Clarke::AST::Assignment
         visit_assignment(expr)
       when Clarke::AST::FalseLiteral

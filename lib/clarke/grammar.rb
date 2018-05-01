@@ -244,7 +244,7 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::VarDecl.new(variable_name: data[0], expr: data[1], context: context)
+        Clarke::AST::VarDef.new(variable_name: data[0], expr: data[1], context: context)
       end
 
     IF =

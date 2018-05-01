@@ -83,6 +83,8 @@ if (b > 0) {
 ## Naming
 
 * `fun`: function
+* `var`: variable
+* `def`: definition
 
 ## Ideas
 
