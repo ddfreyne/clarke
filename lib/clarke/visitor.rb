@@ -16,7 +16,7 @@ module Clarke
       nil
     end
 
-    def visit_function_call(expr)
+    def visit_fun_call(expr)
       expr.arguments.map { |a| visit_expr(a) }
       visit_expr(expr.base)
       nil
@@ -166,7 +166,7 @@ module Clarke
       when Clarke::AST::FalseLit
         visit_false_lit(expr)
       when Clarke::AST::FunCall
-        visit_function_call(expr)
+        visit_fun_call(expr)
       when Clarke::AST::GetProp
         visit_get_prop(expr)
       when Clarke::AST::If

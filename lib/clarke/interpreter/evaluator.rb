@@ -16,7 +16,7 @@ module Clarke
         end
       end
 
-      def visit_function_call(expr, env)
+      def visit_fun_call(expr, env)
         base = visit_expr(expr.base, env)
         values = expr.arguments.map { |e| visit_expr(e, env) }
 
@@ -184,7 +184,7 @@ module Clarke
         when Clarke::AST::StringLit
           Clarke::Interpreter::Runtime::String.new(value: expr.value)
         when Clarke::AST::FunCall
-          visit_function_call(expr, env)
+          visit_fun_call(expr, env)
         when Clarke::AST::GetProp
           visit_get_prop(expr, env)
         when Clarke::AST::Ref

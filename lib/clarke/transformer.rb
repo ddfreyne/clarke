@@ -22,7 +22,7 @@ module Clarke
       expr
     end
 
-    def visit_function_call(expr)
+    def visit_fun_call(expr)
       Clarke::AST::FunCall.new(
         base:      visit_expr(expr.base),
         arguments: expr.arguments.map { |a| visit_expr(a) },
@@ -220,7 +220,7 @@ module Clarke
       when Clarke::AST::FalseLit
         visit_false_lit(expr)
       when Clarke::AST::FunCall
-        visit_function_call(expr)
+        visit_fun_call(expr)
       when Clarke::AST::GetProp
         visit_get_prop(expr)
       when Clarke::AST::If
