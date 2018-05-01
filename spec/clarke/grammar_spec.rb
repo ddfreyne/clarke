@@ -206,6 +206,10 @@ describe 'Clarke' do
     expect("class Foo {\n  fun init(a) { this.a = a }\nfun oink() { this.a }\n}\nFoo(\"stuff\").oink()").to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
   end
 
+  it 'handles empty classes' do
+    expect('class Foo {}').to evaluate_to(instance_of(Clarke::Interpreter::Runtime::Class))
+  end
+
   it 'prints things properly' do
     expect { run('print(1)') }.to output("1\n").to_stdout
     expect { run('print(true)') }.to output("true\n").to_stdout

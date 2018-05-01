@@ -337,12 +337,14 @@ module Clarke
         WS1.ignore,
         char('{').ignore,
         WS0.ignore,
-        intersperse(FUN_DEF, WS0).select_even,
+        opt(
+          intersperse(FUN_DEF, WS0).select_even,
+        ),
         WS0.ignore,
         char('}').ignore,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::ClassDef.new(name: data[0], functions: data[1], context: context)
+        Clarke::AST::ClassDef.new(name: data[0], functions: data[1] || [], context: context)
       end
 
     OPERATOR =
