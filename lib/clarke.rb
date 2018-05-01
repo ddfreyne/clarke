@@ -15,6 +15,7 @@ module Clarke
 
     # Simplify
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
     # Collect symbols
     initial_env = Clarke::Interpreter::Init::CONTENTS

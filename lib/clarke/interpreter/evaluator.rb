@@ -89,63 +89,52 @@ module Clarke
         end
       end
 
-      def visit_op_seq(expr, env)
-        values =
-          expr.seq.map do |e|
-            case e
-            when Clarke::AST::Op
-              e
-            else
-              visit_expr(e, env)
-            end
-          end
+      def visit_op_add(expr, env)
+        visit_expr(expr.lhs, env).add(visit_expr(expr.rhs, env))
+      end
 
-        shunting_yard = Clarke::Util::ShuntingYard.new(
-          Clarke::Language::PRECEDENCES,
-          Clarke::Language::ASSOCIATIVITIES,
-        )
-        rpn_seq = shunting_yard.run(values)
-        stack = []
-        rpn_seq.each do |e|
-          case e
-          when Clarke::AST::Op
-            operands = stack.pop(2)
+      def visit_op_subtract(expr, env)
+        visit_expr(expr.lhs, env).subtract(visit_expr(expr.rhs, env))
+      end
 
-            stack <<
-              case e.name
-              when '+'
-                operands.reduce(:add)
-              when '-'
-                operands.reduce(:subtract)
-              when '*'
-                operands.reduce(:multiply)
-              when '/'
-                operands.reduce(:divide)
-              when '^'
-                operands.reduce(:exponentiate)
-              when '=='
-                operands.reduce(:eq)
-              when '>'
-                operands.reduce(:gt)
-              when '<'
-                operands.reduce(:lt)
-              when '>='
-                operands.reduce(:gte)
-              when '<='
-                operands.reduce(:lte)
-              when '&&'
-                operands[0].and(operands[1])
-              when '||'
-                operands[0].or(operands[1])
-              else
-                raise "unknown operator: #{e}"
-              end
-          else
-            stack << e
-          end
-        end
+      def visit_op_multiply(expr, env)
+        visit_expr(expr.lhs, env).multiply(visit_expr(expr.rhs, env))
+      end
 
-        stack.first
+      def visit_op_divide(expr, env)
+        visit_expr(expr.lhs, env).divide(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_exponentiate(expr, env)
+        visit_expr(expr.lhs, env).exponentiate(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_eq(expr, env)
+        visit_expr(expr.lhs, env).eq(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_gt(expr, env)
+        visit_expr(expr.lhs, env).gt(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_lt(expr, env)
+        visit_expr(expr.lhs, env).lt(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_gte(expr, env)
+        visit_expr(expr.lhs, env).gte(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_lte(expr, env)
+        visit_expr(expr.lhs, env).lte(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_and(expr, env)
+        visit_expr(expr.lhs, env).and(visit_expr(expr.rhs, env))
+      end
+
+      def visit_op_or(expr, env)
+        visit_expr(expr.lhs, env).or(visit_expr(expr.rhs, env))
       end
 
       def visit_lambda_def(expr, env)
@@ -208,8 +197,30 @@ module Clarke
           visit_block(expr, env)
         when Clarke::AST::If
           visit_if(expr, env)
-        when Clarke::AST::OpSeq
-          visit_op_seq(expr, env)
+        when Clarke::AST::OpAdd
+          visit_op_add(expr, env)
+        when Clarke::AST::OpSubtract
+          visit_op_subtract(expr, env)
+        when Clarke::AST::OpMultiply
+          visit_op_multiply(expr, env)
+        when Clarke::AST::OpDivide
+          visit_op_divide(expr, env)
+        when Clarke::AST::OpExponentiate
+          visit_op_exponentiate(expr, env)
+        when Clarke::AST::OpEq
+          visit_op_eq(expr, env)
+        when Clarke::AST::OpGt
+          visit_op_gt(expr, env)
+        when Clarke::AST::OpLt
+          visit_op_lt(expr, env)
+        when Clarke::AST::OpGte
+          visit_op_gte(expr, env)
+        when Clarke::AST::OpLte
+          visit_op_lte(expr, env)
+        when Clarke::AST::OpAnd
+          visit_op_and(expr, env)
+        when Clarke::AST::OpOr
+          visit_op_or(expr, env)
         when Clarke::AST::LambdaDef
           visit_lambda_def(expr, env)
         when Clarke::AST::ClassDef

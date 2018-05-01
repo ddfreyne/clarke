@@ -286,6 +286,95 @@ module Clarke
       end
     end
 
+    class BinOp < ::Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :lhs, Dry::Types::Any
+      attribute :rhs, Dry::Types::Any
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'BinOp'
+      end
+
+      def ast_children
+        [lhs, rhs]
+      end
+    end
+
+    class OpAdd < BinOp
+      def ast_name
+        'OpAdd'
+      end
+    end
+
+    class OpSubtract < BinOp
+      def ast_name
+        'OpSubtract'
+      end
+    end
+
+    class OpMultiply < BinOp
+      def ast_name
+        'OpMultiply'
+      end
+    end
+
+    class OpDivide < BinOp
+      def ast_name
+        'OpDivide'
+      end
+    end
+
+    class OpExponentiate < BinOp
+      def ast_name
+        'OpExponentiate'
+      end
+    end
+
+    class OpEq < BinOp
+      def ast_name
+        'OpEq'
+      end
+    end
+
+    class OpGt < BinOp
+      def ast_name
+        'OpGt'
+      end
+    end
+
+    class OpLt < BinOp
+      def ast_name
+        'OpLt'
+      end
+    end
+
+    class OpGte < BinOp
+      def ast_name
+        'OpGte'
+      end
+    end
+
+    class OpLte < BinOp
+      def ast_name
+        'OpLte'
+      end
+    end
+
+    class OpAnd < BinOp
+      def ast_name
+        'OpAnd'
+      end
+    end
+
+    class OpOr < BinOp
+      def ast_name
+        'OpOr'
+      end
+    end
+
     class OpSeq < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :seq, Dry::Types::Any

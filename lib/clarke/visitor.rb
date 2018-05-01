@@ -52,6 +52,66 @@ module Clarke
       nil
     end
 
+    def visit_op_add(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_subtract(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_multiply(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_divide(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_exponentiate(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_eq(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_gt(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_lt(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_gte(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_lte(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_and(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
+    def visit_op_or(expr)
+      visit_expr(expr.lhs)
+      visit_expr(expr.rhs)
+    end
+
     def visit_block(expr)
       expr.exprs.map { |e| visit_expr(e) }
       nil
@@ -107,6 +167,30 @@ module Clarke
         visit_op(expr)
       when Clarke::AST::OpSeq
         visit_op_seq(expr)
+      when Clarke::AST::OpAdd
+        visit_op_add(expr)
+      when Clarke::AST::OpSubtract
+        visit_op_subtract(expr)
+      when Clarke::AST::OpMultiply
+        visit_op_multiply(expr)
+      when Clarke::AST::OpDivide
+        visit_op_divide(expr)
+      when Clarke::AST::OpExponentiate
+        visit_op_exponentiate(expr)
+      when Clarke::AST::OpEq
+        visit_op_eq(expr)
+      when Clarke::AST::OpGt
+        visit_op_gt(expr)
+      when Clarke::AST::OpLt
+        visit_op_lt(expr)
+      when Clarke::AST::OpGte
+        visit_op_gte(expr)
+      when Clarke::AST::OpLte
+        visit_op_lte(expr)
+      when Clarke::AST::OpAnd
+        visit_op_and(expr)
+      when Clarke::AST::OpOr
+        visit_op_or(expr)
       when Clarke::AST::Block
         visit_block(expr)
       when Clarke::AST::StringLiteral

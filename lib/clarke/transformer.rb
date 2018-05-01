@@ -115,6 +115,102 @@ module Clarke
       )
     end
 
+    def visit_op_add(expr)
+      Clarke::AST::OpAdd.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_subtract(expr)
+      Clarke::AST::OpSubtract.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_multiply(expr)
+      Clarke::AST::OpMultiply.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_divide(expr)
+      Clarke::AST::OpDivide.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_exponentiate(expr)
+      Clarke::AST::OpExponentiate.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_eq(expr)
+      Clarke::AST::OpEq.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_gt(expr)
+      Clarke::AST::OpGt.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_lt(expr)
+      Clarke::AST::OpLt.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_gte(expr)
+      Clarke::AST::OpGte.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_lte(expr)
+      Clarke::AST::OpLte.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_and(expr)
+      Clarke::AST::OpAnd.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
+    def visit_op_or(expr)
+      Clarke::AST::OpOr.new(
+        lhs: visit_expr(expr.lhs),
+        rhs: visit_expr(expr.rhs),
+        context: expr.context,
+      )
+    end
+
     def visit_expr(expr)
       case expr
       when Clarke::AST::VarDecl
@@ -137,6 +233,30 @@ module Clarke
         visit_op(expr)
       when Clarke::AST::OpSeq
         visit_op_seq(expr)
+      when Clarke::AST::OpAdd
+        visit_op_add(expr)
+      when Clarke::AST::OpSubtract
+        visit_op_subtract(expr)
+      when Clarke::AST::OpMultiply
+        visit_op_multiply(expr)
+      when Clarke::AST::OpDivide
+        visit_op_divide(expr)
+      when Clarke::AST::OpExponentiate
+        visit_op_exponentiate(expr)
+      when Clarke::AST::OpEq
+        visit_op_eq(expr)
+      when Clarke::AST::OpGt
+        visit_op_gt(expr)
+      when Clarke::AST::OpLt
+        visit_op_lt(expr)
+      when Clarke::AST::OpGte
+        visit_op_gte(expr)
+      when Clarke::AST::OpLte
+        visit_op_lte(expr)
+      when Clarke::AST::OpAnd
+        visit_op_and(expr)
+      when Clarke::AST::OpOr
+        visit_op_or(expr)
       when Clarke::AST::Block
         visit_block(expr)
       when Clarke::AST::StringLiteral
