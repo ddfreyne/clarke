@@ -24,7 +24,7 @@ module Clarke
           check_argument_count(base, values)
           base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
-          instance = Clarke::Interpreter::Runtime::Instance.new(props: {}, klass: base)
+          instance = Clarke::Interpreter::Runtime::Instance.new(internal_state: {}, env: Clarke::Util::Env.new, klass: base)
 
           init_sym = base.scope.resolve('init', nil)
           init_fun = init_sym && base.env.fetch(init_sym)
@@ -47,18 +47,12 @@ module Clarke
           raise Clarke::Language::NameError.new(name)
         end
 
-        if base.props.key?(name)
-          # TODO: fetch props via env too
-          base.props.fetch(name)
+        prop_sym = base.klass.scope.resolve(name)
+        instance_env = base.env.containing(prop_sym)
+        if instance_env
+          instance_env.fetch(prop_sym)
         else
-          prop_sym = base.klass.scope.resolve(name, nil)
-          prop = prop_sym && base.klass.env.fetch_member(prop_sym)
-
-          if prop
-            prop.bind(base)
-          else
-            raise Clarke::Language::NameError.new(name)
-          end
+          base.klass.env.fetch_member(prop_sym).bind(base)
         end
       end
 
@@ -177,9 +171,9 @@ module Clarke
 
         sym = expr.scope.resolve(expr.name)
         env[sym] = fun
-
-        fun
       end
+
+      def visit_prop_decl(_expr, _env); end
 
       def visit_set_prop(expr, env)
         base_value = visit_expr(expr.base, env)
@@ -188,7 +182,13 @@ module Clarke
           raise Clarke::Language::NameError.new(expr.name)
         end
 
-        base_value.props[expr.name.to_sym] = visit_expr(expr.value, env)
+        instance = base_value
+        klass = instance.klass
+
+        value = visit_expr(expr.value, env)
+
+        sym = klass.scope.resolve(expr.name)
+        instance.env[sym] = value
       end
 
       # TODO: turn this into a visitor
@@ -240,6 +240,8 @@ module Clarke
           visit_op_and(expr, env)
         when Clarke::AST::OpOr
           visit_op_or(expr, env)
+        when Clarke::AST::PropDecl
+          visit_prop_decl(expr, env)
         when Clarke::AST::LambdaDef
           visit_lambda_def(expr, env)
         when Clarke::AST::ClassDef

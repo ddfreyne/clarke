@@ -379,6 +379,22 @@ module Clarke
       end
     end
 
+    class PropDecl < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'PropDecl'
+      end
+
+      def ast_children
+        [name]
+      end
+    end
+
     class Block < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :exprs, Dry::Types::Any

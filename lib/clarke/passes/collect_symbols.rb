@@ -59,6 +59,10 @@ module Clarke
         super
       end
 
+      def visit_prop_decl(expr)
+        define(Clarke::Language::PropSym.new(expr.name))
+      end
+
       def visit_expr(expr)
         super
         expr.scope ||= @scope

@@ -329,6 +329,22 @@ module Clarke
         Clarke::AST::FunDef.new(name: data[0], parameters: data[1], body: data[2], context: context)
       end
 
+    PROP_DECL =
+      seq(
+        string('prop').ignore,
+        WS1.ignore,
+        VAR_NAME,
+      ).compact.first.map do |data, success, old_pos|
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
+        Clarke::AST::PropDecl.new(name: data, context: context)
+      end
+
+    CLASS_BODY_STMT =
+      alt(
+        FUN_DEF,
+        PROP_DECL,
+      )
+
     CLASS_DEF =
       seq(
         string('class').ignore,
@@ -338,7 +354,10 @@ module Clarke
         char('{').ignore,
         WS0.ignore,
         opt(
-          intersperse(FUN_DEF, WS0).select_even,
+          intersperse(
+            CLASS_BODY_STMT,
+            WS0,
+          ).select_even,
         ),
         WS0.ignore,
         char('}').ignore,

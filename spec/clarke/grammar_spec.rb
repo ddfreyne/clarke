@@ -212,7 +212,14 @@ describe 'Clarke' do
   end
 
   it 'handles classes with initializer' do
-    expect("class Foo {\n  fun init(a) { this.a = a }\nfun oink() { this.a }\n}\nFoo(\"stuff\").oink()").to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
+      class Foo {
+        prop a
+        fun init(a) { this.a = a }
+        fun oink() { this.a }
+      }
+      Foo("stuff").oink()
+    CODE
   end
 
   it 'handles empty classes' do
@@ -229,6 +236,27 @@ describe 'Clarke' do
           2
         }
       }
+    CODE
+  end
+
+  it 'can set defined props' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
+      class Foo {
+        prop a
+      }
+      let f = Foo()
+      f.a = 123
+      f.a
+    CODE
+  end
+
+  it 'cannot set defined props' do
+    expect(<<~CODE).to fail_with(Clarke::Language::NameError)
+      class Foo {
+      }
+      let f = Foo()
+      f.a = 123
+      f.a
     CODE
   end
 

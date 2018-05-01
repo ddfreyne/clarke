@@ -22,7 +22,7 @@ module Clarke
             body: lambda do |_ev, env, scope|
               this_sym = scope.resolve('this')
               this = env.fetch(this_sym)
-              this.props[:contents] = []
+              this.internal_state[:contents] = []
             end,
           )
 
@@ -33,7 +33,7 @@ module Clarke
             body: lambda do |_ev, env, scope, elem|
               this_sym = scope.resolve('this')
               this = env.fetch(this_sym)
-              this.props[:contents] << elem
+              this.internal_state[:contents] << elem
               elem
             end,
           )
@@ -50,7 +50,7 @@ module Clarke
                 fn.body.scope.resolve(e)
               end
 
-              this.props[:contents].each do |elem|
+              this.internal_state[:contents].each do |elem|
                 new_env =
                   fn
                   .env

@@ -1,0 +1,7 @@
+class Foo {
+}
+
+let f = Foo()
+
+f.a = 123
+print(f.a)

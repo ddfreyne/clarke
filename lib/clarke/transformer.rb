@@ -211,6 +211,10 @@ module Clarke
       )
     end
 
+    def visit_prop_decl(expr)
+      expr
+    end
+
     def visit_expr(expr)
       case expr
       when Clarke::AST::VarDef
@@ -257,6 +261,8 @@ module Clarke
         visit_op_and(expr)
       when Clarke::AST::OpOr
         visit_op_or(expr)
+      when Clarke::AST::PropDecl
+        visit_prop_decl(expr)
       when Clarke::AST::Block
         visit_block(expr)
       when Clarke::AST::StringLit

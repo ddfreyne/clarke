@@ -85,9 +85,10 @@ module Clarke
         end
       end
 
-      # TODO: remove props?
+      # TODO: remove props (used for internal state only)
       class Instance < Dry::Struct
-        attribute :props, Dry::Types::Any
+        attribute :internal_state, Dry::Types::Any
+        attribute :env, Dry::Types::Any
         attribute :klass, Dry::Types::Any
 
         def describe

@@ -59,7 +59,7 @@ end
 
 RSpec::Matchers.define :a_clarke_array_containing do |expected|
   match do |input|
-    input.is_a?(Clarke::Interpreter::Runtime::Instance) && input.klass.name == 'Array' && input.props.fetch(:contents) == expected
+    input.is_a?(Clarke::Interpreter::Runtime::Instance) && input.klass.name == 'Array' && input.internal_state.fetch(:contents) == expected
   end
 
   failure_message do |input|
@@ -74,7 +74,7 @@ end
 RSpec::Matchers.define :fail_with do |expected|
   match do |input|
     res = error_for(input)
-    @actual_class = res.class
+    @actual = res
     res.is_a?(expected)
   end
 
@@ -86,18 +86,18 @@ RSpec::Matchers.define :fail_with do |expected|
   end
 
   failure_message do |input|
-    if actual
-      "expected #{input.inspect} to fail, but with #{expected} rather than #{@actual_class}"
+    if @actual
+      "expected #{input.inspect} to fail, but with #{expected} rather than #{@actual.inspect}"
     else
       "expected #{input.inspect} to fail with #{expected}, but it didn’t"
     end
   end
 
   failure_message_when_negated do |input|
-    if actual
+    if @actual
       "expected #{input.inspect} not to fail with #{expected}, but it did"
     else
-      "expected #{input.inspect} not to fail, but with #{expected} rather than #{@actual_class}"
+      "expected #{input.inspect} not to fail, but with #{expected} rather than #{@actual.inspect}"
     end
   end
 end

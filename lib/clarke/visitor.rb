@@ -124,6 +124,10 @@ module Clarke
       nil
     end
 
+    def visit_prop_decl(_expr)
+      nil
+    end
+
     def visit_block(expr)
       expr.exprs.map { |e| visit_expr(e) }
       nil
@@ -203,6 +207,8 @@ module Clarke
         visit_op_and(expr)
       when Clarke::AST::OpOr
         visit_op_or(expr)
+      when Clarke::AST::PropDecl
+        visit_prop_decl(expr)
       when Clarke::AST::Block
         visit_block(expr)
       when Clarke::AST::StringLit
