@@ -2,3 +2,12 @@ let x = fun (a,b) { a + b }
 fun y(a,b) { a + b }
 print(x(2, 3))
 print(y(2, 3))
+
+let agg = 0
+let add1 = fun (a) { agg = agg + a }
+fun add2(a) { agg = agg + a }
+print(agg)
+add1(1)
+print(agg)
+add2(2)
+print(agg)
