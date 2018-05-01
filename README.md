@@ -93,6 +93,8 @@ if (b > 0) {
 In no particular order:
 
 * Comments
+* Isolated scoping
+  * e.g. `iso fun a() { … }` which cannot access outer env
 * More primitive types
   * Chars
   * Floats
