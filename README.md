@@ -86,6 +86,7 @@ if (b > 0) {
 * `var`: variable
 * `def`: definition
 * `lit`: literal
+* `ref`: reference
 
 ## Ideas
 

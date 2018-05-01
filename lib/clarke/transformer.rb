@@ -85,7 +85,7 @@ module Clarke
       expr
     end
 
-    def visit_var(expr)
+    def visit_ref(expr)
       expr
     end
 
@@ -263,8 +263,8 @@ module Clarke
         visit_string_lit(expr)
       when Clarke::AST::TrueLit
         visit_true_lit(expr)
-      when Clarke::AST::Var
-        visit_var(expr)
+      when Clarke::AST::Ref
+        visit_ref(expr)
       when Clarke::AST::ClassDef
         visit_class_def(expr)
       when Clarke::AST::FunDef

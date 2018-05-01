@@ -395,7 +395,7 @@ module Clarke
       end
     end
 
-    class Var < Dry::Struct
+    class Ref < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Types::Strict::String
       attr_accessor :sym
@@ -404,7 +404,7 @@ module Clarke
       include Printable
 
       def ast_name
-        'Var'
+        'Ref'
       end
 
       def ast_children

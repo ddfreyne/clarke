@@ -150,11 +150,10 @@ module Clarke
         RESERVED_WORD,
       ).capture
 
-    # TODO: this is now a regular reference (can refer to functions and classes too!)
     REF =
       NAME.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::Var.new(name: data, context: context)
+        Clarke::AST::Ref.new(name: data, context: context)
       end
 
     ARG_LIST =

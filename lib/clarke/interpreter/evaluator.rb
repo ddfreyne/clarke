@@ -55,7 +55,7 @@ module Clarke
         end
       end
 
-      def visit_var(expr, env)
+      def visit_ref(expr, env)
         sym = expr.scope.resolve(expr.name)
         env.fetch(sym)
       end
@@ -187,8 +187,8 @@ module Clarke
           visit_function_call(expr, env)
         when Clarke::AST::GetProp
           visit_get_prop(expr, env)
-        when Clarke::AST::Var
-          visit_var(expr, env)
+        when Clarke::AST::Ref
+          visit_ref(expr, env)
         when Clarke::AST::VarDef
           visit_var_def(expr, env)
         when Clarke::AST::Assignment
