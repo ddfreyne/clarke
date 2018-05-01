@@ -46,19 +46,19 @@ module Clarke
       repeat1(DIGIT)
       .capture
       .map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::IntegerLiteral.new(value: data.to_i, context: context)
       end
 
     TRUE =
       string('true').map do |_data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::TrueLiteral.new(context: context)
       end
 
     FALSE =
       string('false').map do |_data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::FalseLiteral.new(context: context)
       end
 
@@ -73,7 +73,7 @@ module Clarke
         ),
         char('"').ignore,
       ).compact.first.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::StringLiteral.new(value: data.join(''), context: context)
       end
 
@@ -153,7 +153,7 @@ module Clarke
     # TODO: this is now a regular reference (can refer to functions and classes too!)
     REF =
       NAME.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Var.new(name: data, context: context)
       end
 
@@ -198,7 +198,7 @@ module Clarke
           ),
         ),
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         data[1].reduce(data[0]) do |base, ext|
           case ext[0]
           when :call
@@ -217,7 +217,7 @@ module Clarke
         WS0.ignore,
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Block.new(exprs: data, context: context)
       end
 
@@ -229,7 +229,7 @@ module Clarke
         WS0.ignore,
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Assignment.new(variable_name: data[0], expr: data[1], context: context)
       end
 
@@ -243,7 +243,7 @@ module Clarke
         WS0.ignore,
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::VarDecl.new(variable_name: data[0], expr: data[1], context: context)
       end
 
@@ -263,7 +263,7 @@ module Clarke
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::If.new(cond: data[0], body_true: data[1], body_false: data[2], context: context)
       end
 
@@ -291,7 +291,7 @@ module Clarke
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::LambdaDef.new(parameters: data[0], body: data[1], context: context)
       end
 
@@ -303,7 +303,7 @@ module Clarke
         WS0.ignore,
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::LambdaDef.new(
           parameters: data[0],
           body: Clarke::AST::Block.new(exprs: [data[1]], context: context),
@@ -326,7 +326,7 @@ module Clarke
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::FunDef.new(name: data[0], parameters: data[1], body: data[2], context: context)
       end
 
@@ -342,7 +342,7 @@ module Clarke
         WS0.ignore,
         char('}').ignore,
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::ClassDef.new(name: data[0], functions: data[1], context: context)
       end
 
@@ -361,7 +361,7 @@ module Clarke
         string('&&'),
         string('||'),
       ).capture.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::Op.new(name: data, context: context)
       end
 
@@ -400,7 +400,7 @@ module Clarke
           WS0.ignore,
         ).compact.first,
       ).map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::OpSeq.new(seq: data, context: context)
       end
 
@@ -414,7 +414,7 @@ module Clarke
         WS0.ignore,
         EXPR,
       ).compact.map do |data, success, old_pos|
-        context = Clarke::AST::Context.new(input: success.input, from: old_pos, to: success.pos)
+        context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
         Clarke::AST::SetProp.new(base: data[0], name: data[1], value: data[2], context: context)
       end
 

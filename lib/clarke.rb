@@ -38,6 +38,7 @@ module Clarke
 end
 
 require_relative 'clarke/util/env'
+require_relative 'clarke/util/context'
 require_relative 'clarke/util/shunting_yard'
 require_relative 'clarke/util/symbol_table'
 
