@@ -6,7 +6,7 @@ module Clarke
       attr_reader :name
 
       def initialize(name)
-        @name = name
+        @name = name.to_s
       end
 
       def inspect
@@ -26,6 +26,9 @@ module Clarke
     end
 
     class FunSym < Sym
+    end
+
+    class PropSym < Sym
     end
 
     class Error < StandardError

@@ -256,7 +256,7 @@ describe 'Clarke' do
   end
 
   it 'handles arrays' do
-    array_class = Clarke::Interpreter::Init::CONTENTS.fetch('Array')
+    array_class = Clarke::Interpreter::Init.generate.fetch('Array')
 
     expect('Array()')
       .to evaluate_to(a_clarke_instance_of(array_class))

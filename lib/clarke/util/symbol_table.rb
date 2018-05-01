@@ -3,6 +3,8 @@
 module Clarke
   module Util
     class SymbolTable
+      UNDEFINED = Object.new
+
       def initialize(contents: {}, parent: nil)
         @contents = contents
         @parent = parent
@@ -11,17 +13,21 @@ module Clarke
       def define(sym)
         self.class.new(
           parent: @parent,
-          contents: @contents.merge(sym.name => sym),
+          contents: @contents.merge(sym.name.to_s => sym),
         )
       end
 
-      def resolve(name)
+      def resolve(name, fallback = UNDEFINED)
+        name = name.to_s
+
         if @contents.key?(name)
           @contents.fetch(name)
         elsif @parent
-          @parent.resolve(name)
-        else
+          @parent.resolve(name, fallback)
+        elsif UNDEFINED.equal?(fallback)
           raise Clarke::Language::NameError.new(name)
+        else
+          fallback
         end
       end
 

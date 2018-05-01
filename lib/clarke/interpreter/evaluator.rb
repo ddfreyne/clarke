@@ -26,10 +26,11 @@ module Clarke
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
           instance = Clarke::Interpreter::Runtime::Instance.new(props: {}, klass: base)
 
-          init = base.functions[:init]
-          if init
-            check_argument_count(init, values)
-            init.bind(instance).call(values, self)
+          init_sym = base.scope.resolve('init', nil)
+          init_fun = init_sym && base.env.fetch(init_sym)
+          if init_fun
+            check_argument_count(init_fun, values)
+            init_fun.bind(instance).call(values, self)
           end
 
           instance
@@ -39,19 +40,25 @@ module Clarke
       end
 
       def visit_get_prop(expr, env)
-        base_value = visit_expr(expr.base, env)
+        base = visit_expr(expr.base, env)
         name = expr.name.to_sym
 
-        unless base_value.is_a?(Clarke::Interpreter::Runtime::Instance)
+        unless base.is_a?(Clarke::Interpreter::Runtime::Instance)
           raise Clarke::Language::NameError.new(name)
         end
 
-        if base_value.props.key?(name)
-          base_value.props.fetch(name)
-        elsif base_value.klass&.functions&.key?(name)
-          base_value.klass.functions.fetch(name).bind(base_value)
+        if base.props.key?(name)
+          # TODO: fetch props via env too
+          base.props.fetch(name)
         else
-          raise Clarke::Language::NameError.new(name)
+          prop_sym = base.klass.scope.resolve(name, nil)
+          prop = prop_sym && base.klass.env.fetch(prop_sym)
+
+          if prop
+            prop.bind(base)
+          else
+            raise Clarke::Language::NameError.new(name)
+          end
         end
       end
 
@@ -147,13 +154,16 @@ module Clarke
       end
 
       def visit_class_def(expr, env)
-        fun_env = env.push
+        this_sym = expr.scope.resolve('this')
 
-        functions = {}
-        expr.functions.each { |e| functions[e.name.to_sym] = visit_expr(e, fun_env) }
+        inner_env = env.push
+        klass = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: {}, env: inner_env, scope: expr.scope)
+        inner_env[this_sym] = klass
+
+        expr.functions.each { |e| visit_expr(e, inner_env) }
 
         sym = expr.scope.resolve(expr.name)
-        env[sym] = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: functions)
+        env[sym] = klass
       end
 
       def visit_fun_def(expr, env)
@@ -162,7 +172,7 @@ module Clarke
             parameters: expr.parameters,
             body: expr.body,
             env: env,
-            scope: expr.body.scope,
+            scope: expr.scope,
           )
 
         sym = expr.scope.resolve(expr.name)
@@ -249,7 +259,7 @@ module Clarke
       def visit_exprs(exprs)
         env = Clarke::Util::Env.new
 
-        Clarke::Interpreter::Init::CONTENTS.each_pair do |name, val|
+        Clarke::Interpreter::Init.generate.each_pair do |name, val|
           sym = @global_scope.resolve(name)
           env[sym] = val
         end

@@ -25,7 +25,9 @@ module Clarke
         define(Clarke::Language::ClassSym.new(expr.name))
 
         push do
+          define(Clarke::Language::VarSym.new('this'))
           super
+          update_scope(expr)
         end
       end
 
@@ -37,7 +39,11 @@ module Clarke
             define(Clarke::Language::VarSym.new(param))
           end
 
+          # FIXME: Only define `this` when inside a class or instance or so
+          # FIXME: Don’t define this again… it’ll be the same as the one in class_def
           define(Clarke::Language::VarSym.new('this'))
+
+          update_scope(expr)
 
           super
         end
@@ -61,10 +67,14 @@ module Clarke
 
       def visit_expr(expr)
         super
-        expr.scope = @scope
+        expr.scope ||= @scope
       end
 
       private
+
+      def update_scope(expr)
+        expr.scope = @scope
+      end
 
       def define(sym)
         @scope = @scope.define(sym)

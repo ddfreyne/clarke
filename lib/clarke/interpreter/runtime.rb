@@ -71,6 +71,8 @@ module Clarke
       class Class < Dry::Struct
         attribute :name, Dry::Types::Any
         attribute :functions, Dry::Types::Any
+        attribute :env, Dry::Types::Any
+        attribute :scope, Dry::Types::Any
 
         def describe
           'class'
@@ -82,6 +84,10 @@ module Clarke
 
         def clarke_to_string
           "<Class #{name}>"
+        end
+
+        def with_new_scope(new_scope)
+          self.class.new(name: name, functions: functions, env: env, scope: new_scope)
         end
       end
 
