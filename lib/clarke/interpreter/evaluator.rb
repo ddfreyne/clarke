@@ -51,6 +51,7 @@ module Clarke
           # TODO: fetch props via env too
           base.props.fetch(name)
         else
+          # FIXME: make sure to only fetch members -- not super-env stuff
           prop_sym = base.klass.scope.resolve(name, nil)
           prop = prop_sym && base.klass.env.fetch(prop_sym)
 
