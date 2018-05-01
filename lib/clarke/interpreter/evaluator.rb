@@ -22,14 +22,14 @@ module Clarke
 
         if base.is_a?(Clarke::Interpreter::Runtime::Function)
           check_argument_count(base, values)
-          base.call(values, self, expr)
+          base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
           instance = Clarke::Interpreter::Runtime::Instance.new(props: {}, klass: base)
 
           init = base.functions[:init]
           if init
             check_argument_count(init, values)
-            init.bind(instance).call(values, self, expr)
+            init.bind(instance).call(values, self)
           end
 
           instance

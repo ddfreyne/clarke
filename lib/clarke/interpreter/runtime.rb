@@ -40,14 +40,14 @@ module Clarke
           )
         end
 
-        def call(arguments, evaluator, expr)
+        def call(arguments, evaluator)
           case body
           when Clarke::AST::Block
             pa_syms = parameters.map { |pa| body.scope.resolve(pa) }
             new_env = env.merge(Hash[pa_syms.zip(arguments)])
             evaluator.visit_block(body, new_env)
           when Proc
-            body.call(evaluator, env, scope, expr, *arguments)
+            body.call(evaluator, env, scope, *arguments)
           end
         end
       end

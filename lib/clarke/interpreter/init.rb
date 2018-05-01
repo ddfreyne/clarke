@@ -6,7 +6,7 @@ module Clarke
       CONTENTS = {
         'print' => Clarke::Interpreter::Runtime::Function.new(
           parameters: %w[a],
-          body: lambda do |_ev, _env, _scope, _expr, a|
+          body: lambda do |_ev, _env, _scope, a|
             puts(a.clarke_to_string)
             Clarke::Interpreter::Runtime::Null.instance
           end,
@@ -19,7 +19,7 @@ module Clarke
           functions: {
             init: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[],
-              body: lambda do |_ev, env, scope, _expr|
+              body: lambda do |_ev, env, scope|
                 this_sym = scope.resolve('this')
                 this = env.fetch(this_sym)
                 this.props[:contents] = []
@@ -30,7 +30,7 @@ module Clarke
 
             add: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[elem],
-              body: lambda do |_ev, env, scope, _expr, elem|
+              body: lambda do |_ev, env, scope, elem|
                 this_sym = scope.resolve('this')
                 this = env.fetch(this_sym)
                 this.props[:contents] << elem
@@ -42,7 +42,7 @@ module Clarke
 
             each: Clarke::Interpreter::Runtime::Function.new(
               parameters: %w[fn],
-              body: lambda do |ev, env, scope, _expr, fn|
+              body: lambda do |ev, env, scope, fn|
                 this_sym = scope.resolve('this')
                 this = env.fetch(this_sym)
 
