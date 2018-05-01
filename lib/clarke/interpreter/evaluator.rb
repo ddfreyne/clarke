@@ -20,7 +20,7 @@ module Clarke
         base = visit_expr(expr.base, env)
         values = expr.arguments.map { |e| visit_expr(e, env) }
 
-        if base.is_a?(Clarke::Interpreter::Runtime::Function)
+        if base.is_a?(Clarke::Interpreter::Runtime::Fun)
           check_argument_count(base, values)
           base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
@@ -34,7 +34,7 @@ module Clarke
 
           instance
         else
-          raise Clarke::Language::TypeError.new(base, [Clarke::Interpreter::Runtime::Function, Clarke::Interpreter::Runtime::Class], expr.base)
+          raise Clarke::Language::TypeError.new(base, [Clarke::Interpreter::Runtime::Fun, Clarke::Interpreter::Runtime::Class], expr.base)
         end
       end
 
@@ -138,7 +138,7 @@ module Clarke
       end
 
       def visit_lambda_def(expr, env)
-        Clarke::Interpreter::Runtime::Function.new(
+        Clarke::Interpreter::Runtime::Fun.new(
           parameters: expr.parameters,
           body: expr.body,
           env: env,
@@ -154,7 +154,7 @@ module Clarke
       end
 
       def visit_fun_def(expr, env)
-        Clarke::Interpreter::Runtime::Function.new(
+        Clarke::Interpreter::Runtime::Fun.new(
           parameters: expr.parameters,
           body: expr.body,
           env: env,
@@ -183,7 +183,7 @@ module Clarke
           Clarke::Interpreter::Runtime::False
         when Clarke::AST::StringLiteral
           Clarke::Interpreter::Runtime::String.new(value: expr.value)
-        when Clarke::AST::FunctionCall
+        when Clarke::AST::FunCall
           visit_function_call(expr, env)
         when Clarke::AST::GetProp
           visit_get_prop(expr, env)

@@ -80,6 +80,10 @@ if (b > 0) {
 }
 ```
 
+## Naming
+
+* `fun`: function
+
 ## Ideas
 
 In no particular order:

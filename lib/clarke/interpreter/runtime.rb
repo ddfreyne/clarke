@@ -3,7 +3,7 @@
 module Clarke
   module Interpreter
     module Runtime
-      class Function < Dry::Struct
+      class Fun < Dry::Struct
         attribute :parameters, Dry::Types::Any
         attribute :body, Dry::Types::Any
         attribute :env, Dry::Types::Any
@@ -32,7 +32,7 @@ module Clarke
             body.replace_scope(new_scope)
           end
 
-          Function.new(
+          Fun.new(
             parameters: parameters,
             body:       body,
             env:        new_env,

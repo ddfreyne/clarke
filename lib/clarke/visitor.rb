@@ -165,7 +165,7 @@ module Clarke
         visit_assignment(expr)
       when Clarke::AST::FalseLiteral
         visit_false(expr)
-      when Clarke::AST::FunctionCall
+      when Clarke::AST::FunCall
         visit_function_call(expr)
       when Clarke::AST::GetProp
         visit_get_prop(expr)

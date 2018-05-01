@@ -202,7 +202,7 @@ module Clarke
         data[1].reduce(data[0]) do |base, ext|
           case ext[0]
           when :call
-            Clarke::AST::FunctionCall.new(base: base, arguments: ext[1], context: context)
+            Clarke::AST::FunCall.new(base: base, arguments: ext[1], context: context)
           when :prop
             Clarke::AST::GetProp.new(base: base, name: ext[1], context: context)
           end

@@ -4,7 +4,7 @@ module Clarke
   module Interpreter
     class Init
       CONTENTS = {
-        'print' => Clarke::Interpreter::Runtime::Function.new(
+        'print' => Clarke::Interpreter::Runtime::Fun.new(
           parameters: %w[a],
           body: lambda do |_ev, _env, _scope, a|
             puts(a.clarke_to_string)
@@ -17,7 +17,7 @@ module Clarke
         'Array' => Clarke::Interpreter::Runtime::Class.new(
           name: 'Array',
           functions: {
-            init: Clarke::Interpreter::Runtime::Function.new(
+            init: Clarke::Interpreter::Runtime::Fun.new(
               parameters: %w[],
               body: lambda do |_ev, env, scope|
                 this_sym = scope.resolve('this')
@@ -28,7 +28,7 @@ module Clarke
               scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
             ),
 
-            add: Clarke::Interpreter::Runtime::Function.new(
+            add: Clarke::Interpreter::Runtime::Fun.new(
               parameters: %w[elem],
               body: lambda do |_ev, env, scope, elem|
                 this_sym = scope.resolve('this')
@@ -40,7 +40,7 @@ module Clarke
               scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
             ),
 
-            each: Clarke::Interpreter::Runtime::Function.new(
+            each: Clarke::Interpreter::Runtime::Fun.new(
               parameters: %w[fn],
               body: lambda do |ev, env, scope, fn|
                 this_sym = scope.resolve('this')

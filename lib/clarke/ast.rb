@@ -154,7 +154,7 @@ module Clarke
       end
     end
 
-    class FunctionCall < Dry::Struct
+    class FunCall < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :base, Dry::Types::Any
       attribute :arguments, Dry::Types::Any
@@ -164,7 +164,7 @@ module Clarke
       include Printable
 
       def ast_name
-        'FunctionCall'
+        'FunCall'
       end
 
       def ast_children
