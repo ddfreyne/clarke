@@ -4,6 +4,36 @@ module Clarke
   module Passes
     # Replaces OpSeq nodes with binary Op* nodes.
     class SimplifyOpSeq < Clarke::Transformer
+      PRECEDENCES = {
+        '^' => 3,
+        '*' => 2,
+        '/' => 2,
+        '+' => 1,
+        '-' => 1,
+        '&&' => 0,
+        '||' => 0,
+        '==' => 0,
+        '>'  => 0,
+        '<'  => 0,
+        '>=' => 0,
+        '<=' => 0,
+      }.freeze
+
+      ASSOCIATIVITIES = {
+        '^' => :right,
+        '*' => :left,
+        '/' => :left,
+        '+' => :left,
+        '-' => :left,
+        '==' => :left,
+        '>'  => :left,
+        '<'  => :left,
+        '>=' => :left,
+        '<=' => :left,
+        '&&' => :left,
+        '||' => :left,
+      }.freeze
+
       def visit_op_seq(expr)
         if expr.seq.size == 1
           visit_expr(expr.seq.first)
@@ -19,9 +49,10 @@ module Clarke
             end
 
           shunting_yard = Clarke::Util::ShuntingYard.new(
-            Clarke::Language::PRECEDENCES,
-            Clarke::Language::ASSOCIATIVITIES,
+            PRECEDENCES,
+            ASSOCIATIVITIES,
           )
+
           rpn_seq = shunting_yard.run(values)
           stack = []
           rpn_seq.each do |e|
