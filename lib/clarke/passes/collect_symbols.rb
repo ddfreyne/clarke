@@ -3,7 +3,7 @@
 module Clarke
   module Passes
     # After this pass, each expression will have a `scope` (SymbolTable
-    # instance.
+    # instance).
     class CollectSymbols < Clarke::Visitor
       attr_reader :scope
 

@@ -55,61 +55,73 @@ module Clarke
     def visit_op_add(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_subtract(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_multiply(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_divide(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_exponentiate(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_eq(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_gt(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_lt(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_gte(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_lte(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_and(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_op_or(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
     end
 
     def visit_block(expr)
