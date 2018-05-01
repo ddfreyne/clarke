@@ -81,7 +81,7 @@ module Clarke
         end
 
         def clarke_to_string
-          '<Class>'
+          "<Class #{name}>"
         end
       end
 
@@ -99,7 +99,7 @@ module Clarke
         end
 
         def clarke_to_string
-          '<Instance>'
+          "<Instance class=#{klass.name}>"
         end
       end
 

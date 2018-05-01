@@ -178,6 +178,11 @@ describe 'Clarke' do
     expect("let a = 6\n{ let a = 7 }\na").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 6))
   end
 
+  it 'stringifies things nicely' do
+    expect { run("class Person {\n}\nprint(Person)") }.to output("<Class Person>\n").to_stdout
+    expect { run("class Person {\n}\nprint(Person())") }.to output("<Instance class=Person>\n").to_stdout
+  end
+
   it 'can shadow recursively' do
     expect("let sum = (a, b) => {\n  if (a > 0) { sum(a - 1, b + 1) } else { b }\n}\nsum(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
     expect("let fib = (a) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(0)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 0))
