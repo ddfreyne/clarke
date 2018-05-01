@@ -12,7 +12,7 @@ module Clarke
       nil
     end
 
-    def visit_false(_expr)
+    def visit_false_lit(_expr)
       nil
     end
 
@@ -34,7 +34,7 @@ module Clarke
       nil
     end
 
-    def visit_integer_literal(_expr)
+    def visit_integer_lit(_expr)
       nil
     end
 
@@ -129,11 +129,11 @@ module Clarke
       nil
     end
 
-    def visit_string(_expr)
+    def visit_string_lit(_expr)
       nil
     end
 
-    def visit_true(_expr)
+    def visit_true_lit(_expr)
       nil
     end
 
@@ -163,16 +163,16 @@ module Clarke
         visit_var_def(expr)
       when Clarke::AST::Assignment
         visit_assignment(expr)
-      when Clarke::AST::FalseLiteral
-        visit_false(expr)
+      when Clarke::AST::FalseLit
+        visit_false_lit(expr)
       when Clarke::AST::FunCall
         visit_function_call(expr)
       when Clarke::AST::GetProp
         visit_get_prop(expr)
       when Clarke::AST::If
         visit_if(expr)
-      when Clarke::AST::IntegerLiteral
-        visit_integer_literal(expr)
+      when Clarke::AST::IntegerLit
+        visit_integer_lit(expr)
       when Clarke::AST::LambdaDef
         visit_lambda_def(expr)
       when Clarke::AST::Op
@@ -205,10 +205,10 @@ module Clarke
         visit_op_or(expr)
       when Clarke::AST::Block
         visit_block(expr)
-      when Clarke::AST::StringLiteral
-        visit_string(expr)
-      when Clarke::AST::TrueLiteral
-        visit_true(expr)
+      when Clarke::AST::StringLit
+        visit_string_lit(expr)
+      when Clarke::AST::TrueLit
+        visit_true_lit(expr)
       when Clarke::AST::Var
         visit_var(expr)
       when Clarke::AST::ClassDef

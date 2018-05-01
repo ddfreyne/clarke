@@ -175,13 +175,13 @@ module Clarke
       # TODO: turn this into a visitor
       def visit_expr(expr, env)
         case expr
-        when Clarke::AST::IntegerLiteral
+        when Clarke::AST::IntegerLit
           Clarke::Interpreter::Runtime::Integer.new(value: expr.value)
-        when Clarke::AST::TrueLiteral
+        when Clarke::AST::TrueLit
           Clarke::Interpreter::Runtime::True
-        when Clarke::AST::FalseLiteral
+        when Clarke::AST::FalseLit
           Clarke::Interpreter::Runtime::False
-        when Clarke::AST::StringLiteral
+        when Clarke::AST::StringLit
           Clarke::Interpreter::Runtime::String.new(value: expr.value)
         when Clarke::AST::FunCall
           visit_function_call(expr, env)

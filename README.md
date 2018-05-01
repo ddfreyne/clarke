@@ -85,6 +85,7 @@ if (b > 0) {
 * `fun`: function
 * `var`: variable
 * `def`: definition
+* `lit`: literal
 
 ## Ideas
 

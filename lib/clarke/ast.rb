@@ -39,14 +39,14 @@ module Clarke
       end
     end
 
-    class FalseLiteral < Dry::Struct
+    class FalseLit < Dry::Struct
       attribute :context, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'FalseLiteral'
+        'FalseLit'
       end
 
       def ast_children
@@ -54,14 +54,14 @@ module Clarke
       end
     end
 
-    class TrueLiteral < Dry::Struct
+    class TrueLit < Dry::Struct
       attribute :context, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'TrueLiteral'
+        'TrueLit'
       end
 
       def ast_children
@@ -69,7 +69,7 @@ module Clarke
       end
     end
 
-    class StringLiteral < Dry::Struct
+    class StringLit < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :value, Dry::Types::Any
 
@@ -190,7 +190,7 @@ module Clarke
       end
     end
 
-    class IntegerLiteral < Dry::Struct
+    class IntegerLit < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :value, Types::Strict::Int
 
@@ -198,7 +198,7 @@ module Clarke
       include Printable
 
       def ast_name
-        'IntegerLiteral'
+        'IntegerLit'
       end
 
       def ast_children

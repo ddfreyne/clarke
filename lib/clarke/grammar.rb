@@ -47,19 +47,19 @@ module Clarke
       .capture
       .map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::IntegerLiteral.new(value: data.to_i, context: context)
+        Clarke::AST::IntegerLit.new(value: data.to_i, context: context)
       end
 
     TRUE =
       string('true').map do |_data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::TrueLiteral.new(context: context)
+        Clarke::AST::TrueLit.new(context: context)
       end
 
     FALSE =
       string('false').map do |_data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FalseLiteral.new(context: context)
+        Clarke::AST::FalseLit.new(context: context)
       end
 
     STRING =
@@ -74,7 +74,7 @@ module Clarke
         char('"').ignore,
       ).compact.first.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::StringLiteral.new(value: data.join(''), context: context)
+        Clarke::AST::StringLit.new(value: data.join(''), context: context)
       end
 
     # … Other …
