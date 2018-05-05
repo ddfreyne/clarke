@@ -36,6 +36,8 @@ module Clarke
           end
 
           super
+
+          update_scope(expr)
         end
       end
 
@@ -46,6 +48,8 @@ module Clarke
           end
 
           super
+
+          update_scope(expr)
         end
       end
 

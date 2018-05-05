@@ -145,6 +145,7 @@ module Clarke
       attribute :params, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
+      attr_accessor :params_syms
 
       def ast_name
         'FunDef'

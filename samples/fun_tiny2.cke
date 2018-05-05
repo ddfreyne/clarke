@@ -1,0 +1,2 @@
+let plus_one = (x: int) => x + true
+print(plus_one(2))

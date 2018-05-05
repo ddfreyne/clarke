@@ -26,6 +26,16 @@ module Clarke
     class SyntaxError < StandardError
     end
 
+    class GenericError < Error
+      attr_reader :message
+
+      def initialize(message, expr: nil)
+        super(expr)
+
+        @message = message
+      end
+    end
+
     class NameError < Error
       attr_reader :name
 

@@ -23,7 +23,7 @@ module Clarke
       end
 
       def to_s
-        inspect
+        @name
       end
     end
 

@@ -83,13 +83,16 @@ module Clarke
       describe(
         alt(
           string('any'),
+          string('bool'),
           string('class'),
           string('else'),
           string('false'),
           string('fun'),
           string('if'),
+          string('int'),
           string('let'),
           string('true'),
+          string('void'),
         ),
         'reserved keyword',
       )
@@ -154,6 +157,9 @@ module Clarke
     TYPE_NAME = alt(
       CLASS_NAME,
       string('any').capture,
+      string('bool').capture,
+      string('int').capture,
+      string('void').capture,
     )
 
     REF =
