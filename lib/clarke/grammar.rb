@@ -153,7 +153,7 @@ module Clarke
 
     TYPE_NAME = alt(
       CLASS_NAME,
-      string('any'),
+      string('any').capture,
     )
 
     REF =
@@ -285,10 +285,10 @@ module Clarke
                   char(':').ignore,
                   WS1.ignore,
                   TYPE_NAME,
-                ).compact,
+                ).compact.first,
               ),
               WS0.ignore,
-            ).compact.map { |data| Clarke::AST::NameAndType.new(name: data[0], type: data.fetch(1, 'any')) },
+            ).compact.map { |data| Clarke::AST::NameAndType.new(name: data[0], type_name: data.fetch(1, 'any')) },
             char(',').ignore,
           ).select_even,
         ).map { |d| d || [] },

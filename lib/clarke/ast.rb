@@ -40,8 +40,9 @@ module Clarke
     end
 
     class NameAndType < Dry::Struct
-      attribute :name, Types::String
-      attribute :type, Types::String
+      attribute :name, Types::Strict::String
+      attribute :type_name, Types::Strict::String
+      attr_accessor :type_sym
     end
 
     class FalseLit < Dry::Struct

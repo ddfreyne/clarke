@@ -89,6 +89,7 @@ module Clarke
         @scope = Clarke::Util::SymbolTable.new
         @scope = @scope.define(Clarke::Sym::Var.new('print'))
         @scope = @scope.define(Clarke::Sym::Class.new('Array'))
+        @scope = @scope.define(Clarke::Sym::BuiltinType.new('any'))
 
         @envish = {
           @scope.resolve('print') => print,

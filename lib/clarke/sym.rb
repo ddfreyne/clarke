@@ -19,6 +19,9 @@ module Clarke
       end
     end
 
+    class BuiltinType < Base
+    end
+
     class Var < Base
     end
 

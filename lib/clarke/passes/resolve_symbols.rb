@@ -25,6 +25,9 @@ module Clarke
 
       def visit_fun_def(expr)
         expr.name_sym = expr.scope.resolve(expr.name)
+        expr.params.each do |param|
+          param.type_sym = expr.scope.resolve(param.type_name)
+        end
         super
       end
     end
