@@ -45,51 +45,7 @@ module Clarke
       attr_accessor :type_sym
     end
 
-    class FalseLit < Dry::Struct
-      attribute :context, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
-      def ast_name
-        'FalseLit'
-      end
-
-      def ast_children
-        []
-      end
-    end
-
-    class TrueLit < Dry::Struct
-      attribute :context, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
-      def ast_name
-        'TrueLit'
-      end
-
-      def ast_children
-        []
-      end
-    end
-
-    class StringLit < Dry::Struct
-      attribute :context, Dry::Types::Any
-      attribute :value, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
-      def ast_name
-        'String'
-      end
-
-      def ast_children
-        [value]
-      end
-    end
+    ###
 
     class Assignment < Dry::Struct
       attribute :context, Dry::Types::Any
@@ -109,56 +65,69 @@ module Clarke
       end
     end
 
-    class VarDef < Dry::Struct
+    class BinOp < ::Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :var_name, Dry::Types::Any
-      attribute :expr, Dry::Types::Any
-      attr_accessor :var_name_sym
+      attribute :lhs, Dry::Types::Any
+      attribute :rhs, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'VarDef'
+        'BinOp'
       end
 
       def ast_children
-        [var_name, expr]
+        [lhs, rhs]
       end
     end
 
-    class GetProp < Dry::Struct
+    class Block < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :base, Dry::Types::Any
-      attribute :name, Dry::Types::Any
+      attribute :exprs, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'GetProp'
+        'Block'
       end
 
       def ast_children
-        [base, name]
+        [*exprs]
       end
     end
 
-    class SetProp < Dry::Struct
+    class ClassDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :value, Dry::Types::Any
+      attribute :members, Dry::Types::Any
+      attr_accessor :name_sym
 
       include WithScope
       include Printable
 
       def ast_name
-        'SetProp'
+        'ClassDef'
       end
 
       def ast_children
-        [base, name, value]
+        [name, members]
+      end
+    end
+
+    class FalseLit < Dry::Struct
+      attribute :context, Dry::Types::Any
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'FalseLit'
+      end
+
+      def ast_children
+        []
       end
     end
 
@@ -177,6 +146,42 @@ module Clarke
 
       def ast_children
         [base, *arguments]
+      end
+    end
+
+    class FunDef < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+      attribute :params, Types::Strict::Array.of(NameAndType)
+      attribute :body, Dry::Types::Any
+      attr_accessor :name_sym
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'FunDef'
+      end
+
+      def ast_children
+        [name, params, body]
+      end
+    end
+
+    class GetProp < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :base, Dry::Types::Any
+      attribute :name, Dry::Types::Any
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'GetProp'
+      end
+
+      def ast_children
+        [base, name]
       end
     end
 
@@ -231,40 +236,52 @@ module Clarke
       end
     end
 
-    class FunDef < Dry::Struct
+    class SetProp < Dry::Struct
       attribute :context, Dry::Types::Any
+      attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :params, Types::Strict::Array.of(NameAndType)
-      attribute :body, Dry::Types::Any
-      attr_accessor :name_sym
+      attribute :value, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'FunDef'
+        'SetProp'
       end
 
       def ast_children
-        [name, params, body]
+        [base, name, value]
       end
     end
 
-    class ClassDef < Dry::Struct
+    class StringLit < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :name, Dry::Types::Any
-      attribute :members, Dry::Types::Any
-      attr_accessor :name_sym
+      attribute :value, Dry::Types::Any
 
       include WithScope
       include Printable
 
       def ast_name
-        'ClassDef'
+        'String'
       end
 
       def ast_children
-        [name, members]
+        [value]
+      end
+    end
+
+    class TrueLit < Dry::Struct
+      attribute :context, Dry::Types::Any
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'TrueLit'
+      end
+
+      def ast_children
+        []
       end
     end
 
@@ -281,23 +298,6 @@ module Clarke
 
       def ast_children
         [name]
-      end
-    end
-
-    class BinOp < ::Dry::Struct
-      attribute :context, Dry::Types::Any
-      attribute :lhs, Dry::Types::Any
-      attribute :rhs, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
-      def ast_name
-        'BinOp'
-      end
-
-      def ast_children
-        [lhs, rhs]
       end
     end
 
@@ -405,22 +405,6 @@ module Clarke
       end
     end
 
-    class Block < Dry::Struct
-      attribute :context, Dry::Types::Any
-      attribute :exprs, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
-      def ast_name
-        'Block'
-      end
-
-      def ast_children
-        [*exprs]
-      end
-    end
-
     class Ref < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Types::Strict::String
@@ -435,6 +419,24 @@ module Clarke
 
       def ast_children
         [name]
+      end
+    end
+
+    class VarDef < Dry::Struct
+      attribute :context, Dry::Types::Any
+      attribute :var_name, Dry::Types::Any
+      attribute :expr, Dry::Types::Any
+      attr_accessor :var_name_sym
+
+      include WithScope
+      include Printable
+
+      def ast_name
+        'VarDef'
+      end
+
+      def ast_children
+        [var_name, expr]
       end
     end
   end
