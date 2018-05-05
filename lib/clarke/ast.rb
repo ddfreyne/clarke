@@ -143,6 +143,7 @@ module Clarke
     class FunDef < AbstractNode
       attribute :name, Dry::Types::Any
       attribute :params, Types::Strict::Array.of(NameAndType)
+      attribute :ret_type_name, Types::Strict::String
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
       attr_accessor :params_syms
@@ -197,6 +198,7 @@ module Clarke
 
     class LambdaDef < AbstractNode
       attribute :params, Types::Strict::Array.of(NameAndType)
+      attribute :ret_type_name, Types::Strict::String
       attribute :body, Dry::Types::Any
 
       def ast_name

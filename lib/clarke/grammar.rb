@@ -318,8 +318,12 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        # TODO: use data[1] for type
-        Clarke::AST::LambdaDef.new(params: data[0], body: data[2], context: context)
+        Clarke::AST::LambdaDef.new(
+          params: data[0],
+          ret_type_name: data[1],
+          body: data[2],
+          context: context,
+        )
       end
 
     ARROW_LAMBDA_DEF =
@@ -332,9 +336,9 @@ module Clarke
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        # TODO: use data[1] for type
         Clarke::AST::LambdaDef.new(
           params: data[0],
+          ret_type_name: data[1],
           body: Clarke::AST::Block.new(exprs: [data[2]], context: context),
           context: context,
         )
@@ -357,8 +361,13 @@ module Clarke
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        # TODO: use data[2] for type
-        Clarke::AST::FunDef.new(name: data[0], params: data[1], body: data[3], context: context)
+        Clarke::AST::FunDef.new(
+          name: data[0],
+          params: data[1],
+          ret_type_name: data[2],
+          body: data[3],
+          context: context,
+        )
       end
 
     PROP_DECL =
