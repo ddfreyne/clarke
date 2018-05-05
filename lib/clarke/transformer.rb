@@ -10,11 +10,18 @@ module Clarke
       )
     end
 
-    def visit_var_def(expr)
-      Clarke::AST::VarDef.new(
-        var_name: expr.var_name,
-        expr:     visit_expr(expr.expr),
-        context:  expr.context,
+    def visit_block(expr)
+      Clarke::AST::Block.new(
+        exprs:   expr.exprs.map { |e| visit_expr(e) },
+        context: expr.context,
+      )
+    end
+
+    def visit_class_def(expr)
+      Clarke::AST::ClassDef.new(
+        name:    expr.name,
+        members: expr.members.map { |e| visit_expr(e) },
+        context: expr.context,
       )
     end
 
@@ -27,6 +34,15 @@ module Clarke
         base:      visit_expr(expr.base),
         arguments: expr.arguments.map { |a| visit_expr(a) },
         context:   expr.context,
+      )
+    end
+
+    def visit_fun_def(expr)
+      Clarke::AST::FunDef.new(
+        name:       expr.name,
+        params: expr.params,
+        body:       visit_expr(expr.body),
+        context:    expr.context,
       )
     end
 
@@ -66,51 +82,6 @@ module Clarke
     def visit_op_seq(expr)
       Clarke::AST::OpSeq.new(
         seq:     expr.seq.map { |e| visit_expr(e) },
-        context: expr.context,
-      )
-    end
-
-    def visit_block(expr)
-      Clarke::AST::Block.new(
-        exprs:   expr.exprs.map { |e| visit_expr(e) },
-        context: expr.context,
-      )
-    end
-
-    def visit_string_lit(expr)
-      expr
-    end
-
-    def visit_true_lit(expr)
-      expr
-    end
-
-    def visit_ref(expr)
-      expr
-    end
-
-    def visit_class_def(expr)
-      Clarke::AST::ClassDef.new(
-        name:    expr.name,
-        members: expr.members.map { |e| visit_expr(e) },
-        context: expr.context,
-      )
-    end
-
-    def visit_fun_def(expr)
-      Clarke::AST::FunDef.new(
-        name:       expr.name,
-        params: expr.params,
-        body:       visit_expr(expr.body),
-        context:    expr.context,
-      )
-    end
-
-    def visit_set_prop(expr)
-      Clarke::AST::SetProp.new(
-        base:    visit_expr(expr.base),
-        name:    expr.name,
-        value:   visit_expr(expr.value),
         context: expr.context,
       )
     end
@@ -213,6 +184,35 @@ module Clarke
 
     def visit_prop_decl(expr)
       expr
+    end
+
+    def visit_ref(expr)
+      expr
+    end
+
+    def visit_set_prop(expr)
+      Clarke::AST::SetProp.new(
+        base:    visit_expr(expr.base),
+        name:    expr.name,
+        value:   visit_expr(expr.value),
+        context: expr.context,
+      )
+    end
+
+    def visit_string_lit(expr)
+      expr
+    end
+
+    def visit_true_lit(expr)
+      expr
+    end
+
+    def visit_var_def(expr)
+      Clarke::AST::VarDef.new(
+        var_name: expr.var_name,
+        expr:     visit_expr(expr.expr),
+        context:  expr.context,
+      )
     end
 
     def visit_expr(expr)
