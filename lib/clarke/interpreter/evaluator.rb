@@ -57,23 +57,16 @@ module Clarke
       end
 
       def visit_ref(expr, env)
-        sym = expr.scope.resolve(expr.name)
-        env.fetch(sym)
+        env.fetch(expr.name_sym)
       end
 
       def visit_var_def(expr, env)
-        value = visit_expr(expr.expr, env)
-        sym = expr.scope.resolve(expr.variable_name)
-        env[sym] = value
-        value
+        env[expr.variable_name_sym] = visit_expr(expr.expr, env)
       end
 
       def visit_assignment(expr, env)
-        sym = expr.scope.resolve(expr.variable_name)
-
-        value = visit_expr(expr.expr, env)
-        env.containing(sym)[sym] = value
-        value
+        sym = expr.variable_name_sym
+        env.containing(sym)[sym] = visit_expr(expr.expr, env)
       end
 
       def visit_block(expr, env)

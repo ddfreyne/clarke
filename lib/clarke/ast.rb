@@ -89,6 +89,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :variable_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
+      attr_accessor :variable_name_sym
 
       include WithScope
       include Printable
@@ -106,6 +107,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :variable_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
+      attr_accessor :variable_name_sym
 
       include WithScope
       include Printable
@@ -414,7 +416,7 @@ module Clarke
     class Ref < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Types::Strict::String
-      attr_accessor :sym
+      attr_accessor :name_sym
 
       include WithScope
       include Printable

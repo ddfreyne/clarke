@@ -23,6 +23,10 @@ module Clarke
     pass.visit_exprs(exprs)
     global_scope = pass.scope
 
+    # Resolve symbols
+    pass = Clarke::Passes::ResolveSymbols.new
+    pass.visit_exprs(exprs)
+
     # Debug
     exprs.each { |e| p e } if verbose
 
@@ -56,6 +60,7 @@ module Clarke
 end
 
 require_relative 'clarke/passes/collect_symbols'
+require_relative 'clarke/passes/resolve_symbols'
 require_relative 'clarke/passes/simplify_op_seq'
 
 module Clarke
