@@ -47,14 +47,17 @@ module Clarke
 
     ###
 
-    class Assignment < Dry::Struct
+    class AbstractNode < Dry::Struct
       attribute :context, Dry::Types::Any
+
+      include Printable
+      include WithScope
+    end
+
+    class Assignment < AbstractNode
       attribute :var_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
       attr_accessor :var_name_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'Assignment'
@@ -65,13 +68,9 @@ module Clarke
       end
     end
 
-    class BinOp < ::Dry::Struct
-      attribute :context, Dry::Types::Any
+    class BinOp < AbstractNode
       attribute :lhs, Dry::Types::Any
       attribute :rhs, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'BinOp'
@@ -82,12 +81,8 @@ module Clarke
       end
     end
 
-    class Block < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class Block < AbstractNode
       attribute :exprs, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'Block'
@@ -98,14 +93,10 @@ module Clarke
       end
     end
 
-    class ClassDef < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class ClassDef < AbstractNode
       attribute :name, Dry::Types::Any
       attribute :members, Dry::Types::Any
       attr_accessor :name_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'ClassDef'
@@ -116,12 +107,7 @@ module Clarke
       end
     end
 
-    class FalseLit < Dry::Struct
-      attribute :context, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
+    class FalseLit < AbstractNode
       def ast_name
         'FalseLit'
       end
@@ -131,14 +117,10 @@ module Clarke
       end
     end
 
-    class FunCall < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class FunCall < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :arguments, Dry::Types::Any
       attr_accessor :base_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'FunCall'
@@ -149,15 +131,11 @@ module Clarke
       end
     end
 
-    class FunDef < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class FunDef < AbstractNode
       attribute :name, Dry::Types::Any
       attribute :params, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'FunDef'
@@ -168,13 +146,9 @@ module Clarke
       end
     end
 
-    class GetProp < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class GetProp < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'GetProp'
@@ -185,14 +159,10 @@ module Clarke
       end
     end
 
-    class If < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class If < AbstractNode
       attribute :cond, Dry::Types::Any
       attribute :body_true, Dry::Types::Any
       attribute :body_false, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'If'
@@ -203,12 +173,8 @@ module Clarke
       end
     end
 
-    class IntegerLit < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class IntegerLit < AbstractNode
       attribute :value, Types::Strict::Integer
-
-      include WithScope
-      include Printable
 
       def ast_name
         'IntegerLit'
@@ -219,13 +185,9 @@ module Clarke
       end
     end
 
-    class LambdaDef < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class LambdaDef < AbstractNode
       attribute :params, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'LambdaDef'
@@ -236,14 +198,10 @@ module Clarke
       end
     end
 
-    class SetProp < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class SetProp < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
       attribute :value, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'SetProp'
@@ -254,12 +212,8 @@ module Clarke
       end
     end
 
-    class StringLit < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class StringLit < AbstractNode
       attribute :value, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'String'
@@ -270,12 +224,7 @@ module Clarke
       end
     end
 
-    class TrueLit < Dry::Struct
-      attribute :context, Dry::Types::Any
-
-      include WithScope
-      include Printable
-
+    class TrueLit < AbstractNode
       def ast_name
         'TrueLit'
       end
@@ -285,12 +234,8 @@ module Clarke
       end
     end
 
-    class Op < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class Op < AbstractNode
       attribute :name, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'Op'
@@ -373,12 +318,8 @@ module Clarke
       end
     end
 
-    class OpSeq < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class OpSeq < AbstractNode
       attribute :seq, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'OpSeq'
@@ -389,12 +330,8 @@ module Clarke
       end
     end
 
-    class PropDecl < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class PropDecl < AbstractNode
       attribute :name, Dry::Types::Any
-
-      include WithScope
-      include Printable
 
       def ast_name
         'PropDecl'
@@ -405,13 +342,9 @@ module Clarke
       end
     end
 
-    class Ref < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class Ref < AbstractNode
       attribute :name, Types::Strict::String
       attr_accessor :name_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'Ref'
@@ -422,14 +355,10 @@ module Clarke
       end
     end
 
-    class VarDef < Dry::Struct
-      attribute :context, Dry::Types::Any
+    class VarDef < AbstractNode
       attribute :var_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
       attr_accessor :var_name_sym
-
-      include WithScope
-      include Printable
 
       def ast_name
         'VarDef'
