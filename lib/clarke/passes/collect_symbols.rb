@@ -39,8 +39,6 @@ module Clarke
             define(Clarke::Language::VarSym.new(param))
           end
 
-          update_scope(expr)
-
           super
         end
       end
