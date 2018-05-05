@@ -30,6 +30,13 @@ module Clarke
         end
         super
       end
+
+      def visit_lambda_def(expr)
+        expr.params.each do |param|
+          param.type_sym = expr.scope.resolve(param.type_name)
+        end
+        super
+      end
     end
   end
 end
