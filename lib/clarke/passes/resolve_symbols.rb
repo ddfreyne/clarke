@@ -29,6 +29,9 @@ module Clarke
         super
 
         expr.name_sym = expr.scope.resolve(expr.name)
+
+        expr.type = @global_scope.resolve('void')
+        assert_typed(expr)
       end
 
       def visit_false_lit(expr)

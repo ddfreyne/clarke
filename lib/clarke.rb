@@ -5,7 +5,7 @@ require 'dry-struct'
 require 'singleton'
 
 module Clarke
-  def self.run(code, verbose:)
+  def self.run(code, mode: :eval, verbose:)
     # Parse
     res = Clarke::Grammar::PROGRAM.apply(code)
     if res.is_a?(DParse::Failure)
@@ -32,13 +32,20 @@ module Clarke
 
     # Generate initial env
     initial_env = Clarke::Util::Env.new
-    Clarke::Interpreter::Init.instance.envish.each_pair do |sym, val|
+    init.envish.each_pair do |sym, val|
       initial_env[sym] = val
     end
 
     # Run
-    evaluator = Clarke::Interpreter::Evaluator.new(global_scope, initial_env)
-    evaluator.visit_exprs(exprs)
+    case mode
+    when :eval
+      evaluator = Clarke::Interpreter::Evaluator.new(global_scope, initial_env)
+      evaluator.visit_exprs(exprs)
+    when :resolve
+      exprs
+    else
+      raise ArgumentError, "Invalid mode: #{mode}"
+    end
   end
 end
 
