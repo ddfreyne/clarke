@@ -280,6 +280,17 @@ module Clarke
         Clarke::AST::If.new(cond: data[0], body_true: data[1], body_false: data[2], context: context)
       end
 
+    TYPE_ANNOTATION =
+      opt(
+        seq(
+          char(':').ignore,
+          WS1.ignore,
+          TYPE_NAME,
+        ).compact.first,
+      ).map do |data|
+        data || 'any'
+      end
+
     PARAM_LIST =
       seq(
         char('(').ignore,
@@ -288,13 +299,7 @@ module Clarke
             seq(
               WS0.ignore,
               VAR_NAME,
-              opt(
-                seq(
-                  char(':').ignore,
-                  WS1.ignore,
-                  TYPE_NAME,
-                ).compact.first,
-              ),
+              TYPE_ANNOTATION,
               WS0.ignore,
             ).compact.map { |data| Clarke::AST::NameAndType.new(name: data[0], type_name: data.fetch(1, 'any')) },
             char(',').ignore,
@@ -308,25 +313,29 @@ module Clarke
         string('fun').ignore,
         WS1.ignore,
         PARAM_LIST,
+        TYPE_ANNOTATION,
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::LambdaDef.new(params: data[0], body: data[1], context: context)
+        # TODO: use data[1] for type
+        Clarke::AST::LambdaDef.new(params: data[0], body: data[2], context: context)
       end
 
     ARROW_LAMBDA_DEF =
       seq(
         PARAM_LIST,
+        TYPE_ANNOTATION,
         WS0.ignore,
         string('=>').ignore,
         WS0.ignore,
         lazy { EXPR },
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
+        # TODO: use data[1] for type
         Clarke::AST::LambdaDef.new(
           params: data[0],
-          body: Clarke::AST::Block.new(exprs: [data[1]], context: context),
+          body: Clarke::AST::Block.new(exprs: [data[2]], context: context),
           context: context,
         )
       end
@@ -343,11 +352,13 @@ module Clarke
         WS1.ignore,
         FUN_NAME,
         PARAM_LIST,
+        TYPE_ANNOTATION,
         WS0.ignore,
         BLOCK,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::FunDef.new(name: data[0], params: data[1], body: data[2], context: context)
+        # TODO: use data[2] for type
+        Clarke::AST::FunDef.new(name: data[0], params: data[1], body: data[3], context: context)
       end
 
     PROP_DECL =

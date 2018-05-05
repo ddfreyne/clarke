@@ -78,9 +78,11 @@ RSpec::Matchers.define :instance_type do |expected|
   end
 end
 
-RSpec::Matchers.define :function_type do |expected|
+RSpec::Matchers.define :function_type do |expected_name, expected_ret_type = nil|
   match do |input|
-    input.is_a?(Clarke::Sym::Fun) && input.name == expected
+    input.is_a?(Clarke::Sym::Fun) &&
+      input.name == expected_name &&
+      (expected_ret_type.nil? || input.ret_type == expected_ret_type)
   end
 
   failure_message do |input|
