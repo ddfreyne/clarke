@@ -66,7 +66,7 @@ module Clarke
 
       def visit_prop_decl(expr)
         sym = Clarke::Sym::Prop.new(expr.name)
-        sym.type = @global_scope.resolve('int') # FIXME: configure
+        sym.type = @global_scope.resolve(expr.type_name)
         define(sym)
       end
 

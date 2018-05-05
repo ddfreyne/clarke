@@ -222,7 +222,7 @@ describe 'Clarke' do
   it 'handles classes with initializer' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
       class Foo {
-        prop a
+        prop a: string
         fun init(a) { this.a = a }
         fun oink() { this.a }
       }
@@ -250,7 +250,7 @@ describe 'Clarke' do
   it 'can set defined props' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
       class Foo {
-        prop a
+        prop a: int
       }
       let f = Foo()
       f.a = 123

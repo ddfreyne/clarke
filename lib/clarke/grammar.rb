@@ -92,6 +92,7 @@ module Clarke
           string('if'),
           string('int'),
           string('let'),
+          string('string'),
           string('true'),
           string('void'),
         ),
@@ -161,6 +162,7 @@ module Clarke
       string('bool').capture,
       string('function').capture, # TODO: remove
       string('int').capture,
+      string('string').capture,
       string('void').capture,
     )
 
@@ -377,9 +379,10 @@ module Clarke
         string('prop').ignore,
         WS1.ignore,
         VAR_NAME,
-      ).compact.first.map do |data, success, old_pos|
+        TYPE_ANNOTATION,
+      ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::PropDecl.new(name: data, context: context)
+        Clarke::AST::PropDecl.new(name: data[0], type_name: data[1], context: context)
       end
 
     CLASS_BODY_STMT =

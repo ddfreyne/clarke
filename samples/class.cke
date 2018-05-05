@@ -1,6 +1,6 @@
 class Person {
-  prop firstName
-  prop lastName
+  prop firstName: string
+  prop lastName: string
 
   fun init(firstName, lastName) {
     this.firstName = firstName
