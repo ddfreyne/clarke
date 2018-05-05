@@ -344,7 +344,7 @@ module Clarke
         char('}').ignore,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::ClassDef.new(name: data[0], functions: data[1] || [], context: context)
+        Clarke::AST::ClassDef.new(name: data[0], members: data[1] || [], context: context)
       end
 
     OPERATOR =

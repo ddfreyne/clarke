@@ -160,7 +160,7 @@ module Clarke
         klass = Clarke::Interpreter::Runtime::Class.new(name: expr.name, env: inner_env, scope: expr.scope)
         inner_env[this_sym] = klass
 
-        expr.functions.each { |e| visit_expr(e, inner_env) }
+        expr.members.each { |e| visit_expr(e, inner_env) }
 
         sym = expr.scope.resolve(expr.name)
         env[sym] = klass

@@ -91,9 +91,9 @@ module Clarke
 
     def visit_class_def(expr)
       Clarke::AST::ClassDef.new(
-        name:      expr.name,
-        functions: expr.functions.map { |e| visit_expr(e) },
-        context:   expr.context,
+        name:    expr.name,
+        members: expr.members.map { |e| visit_expr(e) },
+        context: expr.context,
       )
     end
 

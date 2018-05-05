@@ -244,7 +244,7 @@ module Clarke
     class ClassDef < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :functions, Dry::Types::Any
+      attribute :members, Dry::Types::Any
 
       include WithScope
       include Printable
@@ -254,7 +254,7 @@ module Clarke
       end
 
       def ast_children
-        [name, functions]
+        [name, members]
       end
     end
 

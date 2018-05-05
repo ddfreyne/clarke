@@ -142,7 +142,7 @@ module Clarke
     end
 
     def visit_class_def(expr)
-      expr.functions.each { |e| visit_expr(e) }
+      expr.members.each { |e| visit_expr(e) }
       nil
     end
 
