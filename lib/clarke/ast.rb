@@ -215,7 +215,7 @@ module Clarke
 
     class LambdaDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :parameters, Types::Strict::Array.of(NameAndType)
+      attribute :params, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
 
       include WithScope
@@ -226,14 +226,14 @@ module Clarke
       end
 
       def ast_children
-        [parameters, body]
+        [params, body]
       end
     end
 
     class FunDef < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :parameters, Types::Strict::Array.of(NameAndType)
+      attribute :params, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
 
@@ -245,7 +245,7 @@ module Clarke
       end
 
       def ast_children
-        [name, parameters, body]
+        [name, params, body]
       end
     end
 

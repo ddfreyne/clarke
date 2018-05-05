@@ -12,7 +12,7 @@ module Clarke
         print = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new,
-          parameters: %w[a],
+          params: %w[a],
           body: lambda do |_ev, _env, _scope, a|
             puts(a.clarke_to_string)
             Clarke::Interpreter::Runtime::Null.instance
@@ -22,7 +22,7 @@ module Clarke
         array_init = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
-          parameters: %w[],
+          params: %w[],
           body: lambda do |_ev, env, scope|
             this_sym = scope.resolve('this')
             this = env.fetch(this_sym)
@@ -33,7 +33,7 @@ module Clarke
         array_add = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
-          parameters: %w[elem],
+          params: %w[elem],
           body: lambda do |_ev, env, scope, elem|
             this_sym = scope.resolve('this')
             this = env.fetch(this_sym)
@@ -45,12 +45,12 @@ module Clarke
         array_each = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
-          parameters: %w[fn],
+          params: %w[fn],
           body: lambda do |ev, env, scope, fn|
             this_sym = scope.resolve('this')
             this = env.fetch(this_sym)
 
-            param_syms = fn.parameters.map do |e|
+            param_syms = fn.params.map do |e|
               fn.body.scope.resolve(e)
             end
 

@@ -87,6 +87,7 @@ if (b > 0) {
 * `def`: definition
 * `lit`: literal
 * `ref`: reference
+* `param`: parameter
 
 ## To do
 

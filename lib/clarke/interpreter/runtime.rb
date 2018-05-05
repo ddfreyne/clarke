@@ -4,7 +4,7 @@ module Clarke
   module Interpreter
     module Runtime
       class Fun < Dry::Struct
-        attribute :parameters, Dry::Types::Any
+        attribute :params, Dry::Types::Any
         attribute :body, Dry::Types::Any
         attribute :env, Dry::Types::Any
         attribute :scope, Dry::Types::Any
@@ -28,7 +28,7 @@ module Clarke
           new_env[this_sym] = instance
 
           Fun.new(
-            parameters: parameters,
+            params: params,
             body:       body,
             env:        new_env,
             scope:      scope,
@@ -38,7 +38,7 @@ module Clarke
         def call(arguments, evaluator)
           case body
           when Clarke::AST::Block
-            pa_syms = parameters.map { |pa| body.scope.resolve(pa) }
+            pa_syms = params.map { |pa| body.scope.resolve(pa) }
             new_env = env.merge(Hash[pa_syms.zip(arguments)])
             evaluator.visit_block(body, new_env)
           when Proc

@@ -31,7 +31,7 @@ module Clarke
         define(Clarke::Sym::Fun.new(expr.name))
 
         push do
-          expr.parameters.each do |param|
+          expr.params.each do |param|
             define(Clarke::Sym::Var.new(param.name))
           end
 
@@ -41,7 +41,7 @@ module Clarke
 
       def visit_lambda_def(expr)
         push do
-          expr.parameters.each do |param|
+          expr.params.each do |param|
             define(Clarke::Sym::Var.new(param.name))
           end
 

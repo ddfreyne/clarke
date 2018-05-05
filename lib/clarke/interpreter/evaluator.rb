@@ -9,9 +9,9 @@ module Clarke
       end
 
       def check_argument_count(function, arguments)
-        if arguments.count != function.parameters.size
+        if arguments.count != function.params.size
           raise Clarke::Errors::ArgumentCountError.new(
-            expected: function.parameters.size,
+            expected: function.params.size,
             actual: arguments.count,
           )
         end
@@ -134,7 +134,7 @@ module Clarke
 
       def visit_lambda_def(expr, env)
         Clarke::Interpreter::Runtime::Fun.new(
-          parameters: expr.parameters.map(&:name),
+          params: expr.params.map(&:name),
           body: expr.body,
           env: env,
           scope: expr.scope,
@@ -156,7 +156,7 @@ module Clarke
       def visit_fun_def(expr, env)
         fun =
           Clarke::Interpreter::Runtime::Fun.new(
-            parameters: expr.parameters.map(&:name),
+            params: expr.params.map(&:name),
             body: expr.body,
             env: env,
             scope: expr.scope,
