@@ -43,6 +43,16 @@ module Clarke
       include Type
     end
 
+    class InstanceType
+      include Type
+
+      attr_accessor :klass
+
+      def initialize(klass)
+        @klass = klass
+      end
+    end
+
     class Var < Base
       include HasType
 

@@ -40,22 +40,37 @@ module Clarke
 
       def visit_fun_call(expr)
         super
+        assert_typed(expr.base)
 
-        # TODO: verify callable
         # TODO: verify arg count
-        # TODO: handle klass
+        # TODO: verify arg types
 
-        expr.type = expr.base.type.ret_type
+        case expr.base.type
+        when Clarke::Sym::Class
+          expr.type = Clarke::Sym::InstanceType.new(expr.base.type)
+        when Clarke::Sym::Fun
+          expr.type = expr.base.type.ret_type
+        else
+          raise Clarke::Errors::GenericError.new("unexpected type #{expr.base.type}", expr: expr)
+        end
+
         assert_typed(expr)
       end
 
       def visit_fun_def(expr)
+        expr.params.each do |param|
+          param_sym = expr.scope.resolve(param.name)
+          type_sym = expr.scope.resolve(param.type_name)
+          param.type_sym = type_sym
+          param_sym.type = type_sym
+        end
+
         super
 
         expr.name_sym = expr.scope.resolve(expr.name)
-        expr.params.each do |param|
-          param.type_sym = expr.scope.resolve(param.type_name)
-        end
+        expr.name_sym.ret_type = expr.body.type
+        expr.type = expr.name_sym
+        assert_typed(expr)
       end
 
       def visit_integer_lit(expr)
@@ -89,15 +104,26 @@ module Clarke
           raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
         end
 
+        # TODO: verify that op exists for this type
+
         expr.type = types.first
         assert_typed(expr)
       end
+
+      # TODO: handle other op_
 
       def visit_ref(expr)
         super
 
         expr.name_sym = expr.scope.resolve(expr.name)
         expr.type = expr.name_sym.type
+        assert_typed(expr)
+      end
+
+      def visit_string_lit(expr)
+        super
+
+        expr.type = @global_scope.resolve('string')
         assert_typed(expr)
       end
 

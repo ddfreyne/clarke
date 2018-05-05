@@ -87,16 +87,18 @@ module Clarke
         )
 
         any_type = Clarke::Sym::BuiltinType.new('any')
-        int_type = Clarke::Sym::BuiltinType.new('int')
         bool_type = Clarke::Sym::BuiltinType.new('bool')
+        int_type = Clarke::Sym::BuiltinType.new('int')
+        string_type = Clarke::Sym::BuiltinType.new('string')
         void_type = Clarke::Sym::BuiltinType.new('void')
 
         @scope =
           Clarke::Util::SymbolTable
           .new
           .define(any_type)
-          .define(int_type)
           .define(bool_type)
+          .define(int_type)
+          .define(string_type)
           .define(void_type)
           .define(Clarke::Sym::Fun.new('print', 1, void_type))
           .define(Clarke::Sym::Class.new('Array'))
