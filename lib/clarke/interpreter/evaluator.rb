@@ -36,7 +36,10 @@ module Clarke
 
           instance
         else
-          raise Clarke::Errors::TypeError.new(base, [Clarke::Interpreter::Runtime::Fun, Clarke::Interpreter::Runtime::Class], expr.base)
+          raise Clarke::Errors::GenericError.new(
+            'Can only call functions and classes; this thing is neither',
+            expr: expr.base,
+          )
         end
       end
 

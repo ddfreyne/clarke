@@ -49,7 +49,10 @@ module Clarke
         when Clarke::Sym::Fun
           expr.type = expr.base.type.ret_type
         else
-          raise Clarke::Errors::TypeError.new(expr.base.type, [Clarke::Sym::Class, Clarke::Sym::Fun], expr.base)
+          raise Clarke::Errors::GenericError.new(
+            'Can only call functions and classes; this thing is neither',
+            expr: expr.base,
+          )
         end
       end
 
