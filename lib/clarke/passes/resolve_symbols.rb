@@ -75,6 +75,8 @@ module Clarke
         if ret_type.auto?
           expr.type.ret_type = expr.body.type
         end
+
+        expr.type = @global_scope.resolve('void')
       end
 
       def visit_get_prop(expr)

@@ -42,8 +42,7 @@ describe 'Clarke types' do
   end
 
   it 'resolves named function definitions' do
-    # FIXME: should this be void instead?
-    expect('fun lol() { 1 }').to have_type(function_type('lol', init_scope.resolve('int')))
+    expect('fun lol() { 1 }').to have_type(init_scope.resolve('void'))
   end
 
   it 'resolves function refs' do
