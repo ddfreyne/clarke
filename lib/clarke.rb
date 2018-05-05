@@ -18,8 +18,8 @@ module Clarke
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
 
     # Collect symbols
-    initial_env = Clarke::Interpreter::Init.generate
-    pass = Clarke::Passes::CollectSymbols.new(initial_env)
+    init = Clarke::Interpreter::Init.instance
+    pass = Clarke::Passes::CollectSymbols.new(init.envish)
     pass.visit_exprs(exprs)
     global_scope = pass.scope
 
@@ -30,8 +30,15 @@ module Clarke
     # Debug
     exprs.each { |e| p e } if verbose
 
+    # Generate initial env
+    initial_env = Clarke::Util::Env.new
+    Clarke::Interpreter::Init.instance.envish.each_pair do |name, val|
+      sym = global_scope.resolve(name)
+      initial_env[sym] = val
+    end
+
     # Run
-    evaluator = Clarke::Interpreter::Evaluator.new(global_scope)
+    evaluator = Clarke::Interpreter::Evaluator.new(global_scope, initial_env)
     evaluator.visit_exprs(exprs)
   end
 end

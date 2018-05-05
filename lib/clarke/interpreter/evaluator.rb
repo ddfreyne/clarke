@@ -3,8 +3,9 @@
 module Clarke
   module Interpreter
     class Evaluator < Clarke::Visitor
-      def initialize(global_scope)
+      def initialize(global_scope, initial_env)
         @global_scope = global_scope
+        @initial_env = initial_env
       end
 
       def check_argument_count(function, arguments)
@@ -250,14 +251,7 @@ module Clarke
       end
 
       def visit_exprs(exprs)
-        env = Clarke::Util::Env.new
-
-        Clarke::Interpreter::Init.generate.each_pair do |name, val|
-          sym = @global_scope.resolve(name)
-          env[sym] = val
-        end
-
-        env = env.push
+        env = @initial_env.push
         multi_visit(exprs, env)
       end
 
