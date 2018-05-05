@@ -162,17 +162,11 @@ module Clarke
       def visit_prop_decl(expr)
         super
 
-        # FIXME: name_sym needed?
-        expr.name_sym = expr.scope.resolve(expr.name)
-
         expr.type = @global_scope.resolve('void')
       end
 
       def visit_set_prop(expr)
         super
-
-        # FIXME: name_sym needed?
-        expr.name_sym = expr.base.type.klass.scope.resolve(expr.name)
 
         # FIXME: check type
 

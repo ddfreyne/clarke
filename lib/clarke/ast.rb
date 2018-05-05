@@ -214,7 +214,6 @@ module Clarke
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
       attribute :value, Dry::Types::Any
-      attr_accessor :name_sym
 
       def ast_name
         'SetProp'
@@ -346,7 +345,6 @@ module Clarke
     class PropDecl < AbstractNode
       attribute :name, Dry::Types::Any
       attribute :type_name, Dry::Types::Any
-      attr_accessor :name_sym
 
       def ast_name
         'PropDecl'
