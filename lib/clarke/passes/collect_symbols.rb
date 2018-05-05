@@ -39,10 +39,6 @@ module Clarke
             define(Clarke::Language::VarSym.new(param))
           end
 
-          # FIXME: Only define `this` when inside a class or instance or so
-          # FIXME: Don’t define this again… it’ll be the same as the one in class_def
-          define(Clarke::Language::VarSym.new('this'))
-
           update_scope(expr)
 
           super
