@@ -9,12 +9,12 @@ module Clarke
       end
 
       def visit_var_def(expr)
-        expr.variable_name_sym = expr.scope.resolve(expr.variable_name)
+        expr.var_name_sym = expr.scope.resolve(expr.var_name)
         super
       end
 
       def visit_assignment(expr)
-        expr.variable_name_sym = expr.scope.resolve(expr.variable_name)
+        expr.var_name_sym = expr.scope.resolve(expr.var_name)
         super
       end
     end

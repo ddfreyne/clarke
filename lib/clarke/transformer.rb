@@ -4,7 +4,7 @@ module Clarke
   class Transformer
     def visit_assignment(expr)
       Clarke::AST::Assignment.new(
-        variable_name: expr.variable_name,
+        var_name: expr.var_name,
         expr:          visit_expr(expr.expr),
         context:       expr.context,
       )
@@ -12,7 +12,7 @@ module Clarke
 
     def visit_var_def(expr)
       Clarke::AST::VarDef.new(
-        variable_name: expr.variable_name,
+        var_name: expr.var_name,
         expr:          visit_expr(expr.expr),
         context:       expr.context,
       )

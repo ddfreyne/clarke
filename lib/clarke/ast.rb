@@ -87,9 +87,9 @@ module Clarke
 
     class Assignment < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :variable_name, Dry::Types::Any
+      attribute :var_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
-      attr_accessor :variable_name_sym
+      attr_accessor :var_name_sym
 
       include WithScope
       include Printable
@@ -99,15 +99,15 @@ module Clarke
       end
 
       def ast_children
-        [variable_name, expr]
+        [var_name, expr]
       end
     end
 
     class VarDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :variable_name, Dry::Types::Any
+      attribute :var_name, Dry::Types::Any
       attribute :expr, Dry::Types::Any
-      attr_accessor :variable_name_sym
+      attr_accessor :var_name_sym
 
       include WithScope
       include Printable
@@ -117,7 +117,7 @@ module Clarke
       end
 
       def ast_children
-        [variable_name, expr]
+        [var_name, expr]
       end
     end
 

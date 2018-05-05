@@ -61,11 +61,11 @@ module Clarke
       end
 
       def visit_var_def(expr, env)
-        env[expr.variable_name_sym] = visit_expr(expr.expr, env)
+        env[expr.var_name_sym] = visit_expr(expr.expr, env)
       end
 
       def visit_assignment(expr, env)
-        sym = expr.variable_name_sym
+        sym = expr.var_name_sym
         env.containing(sym)[sym] = visit_expr(expr.expr, env)
       end
 

@@ -54,7 +54,7 @@ module Clarke
       end
 
       def visit_var_def(expr)
-        define(Clarke::Language::VarSym.new(expr.variable_name))
+        define(Clarke::Language::VarSym.new(expr.var_name))
 
         super
       end
