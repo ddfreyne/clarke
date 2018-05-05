@@ -88,6 +88,10 @@ if (b > 0) {
 * `lit`: literal
 * `ref`: reference
 
+## To do
+
+* Allow mutually recursive functions
+
 ## Ideas
 
 In no particular order:
