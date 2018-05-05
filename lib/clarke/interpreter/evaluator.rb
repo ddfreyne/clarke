@@ -266,7 +266,7 @@ module Clarke
       end
 
       def multi_visit(exprs, env)
-        exprs.reduce(0) do |_, expr|
+        exprs.reduce(Clarke::Interpreter::Runtime::Null.instance) do |_, expr|
           visit_expr(expr, env)
         end
       end

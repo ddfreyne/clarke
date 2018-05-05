@@ -226,7 +226,9 @@ module Clarke
       seq(
         char('{').ignore,
         WS0.ignore,
-        intersperse(lazy { STATEMENT }, WS1).select_even,
+        opt(
+          intersperse(lazy { STATEMENT }, WS1).select_even,
+        ).map { |d| d || [] },
         WS0.ignore,
         char('}').ignore,
       ).compact.first.map do |data, success, old_pos|

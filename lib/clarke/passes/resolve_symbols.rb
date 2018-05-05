@@ -19,8 +19,8 @@ module Clarke
       def visit_block(expr)
         super
 
-        # FIXME: handle empty block
-        expr.type = expr.exprs.last.type
+        exprs = expr.exprs
+        expr.type = exprs.any? ? exprs.last.type : @global_scope.resolve('void')
       end
 
       def visit_class_def(expr)

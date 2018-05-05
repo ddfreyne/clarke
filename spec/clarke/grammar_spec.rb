@@ -207,6 +207,14 @@ describe 'Clarke' do
     expect("{let a = 2}\na").to fail_with(Clarke::Errors::NameError)
   end
 
+  it 'handles empty blocks' do
+    expect("let a = {}\na").to evaluate_to(Clarke::Interpreter::Runtime::Null.instance)
+  end
+
+  it 'handles empty functions' do
+    expect("let a = fun () {}\na()").to evaluate_to(Clarke::Interpreter::Runtime::Null.instance)
+  end
+
   it 'handles classes without initializer' do
     expect("class Foo {\n  fun oink() { \"stuff\" }\n}\nFoo().oink()").to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
   end
