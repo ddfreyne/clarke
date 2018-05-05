@@ -219,6 +219,10 @@ describe 'Clarke' do
     expect('class Foo {}').to evaluate_to(instance_of(Clarke::Interpreter::Runtime::Class))
   end
 
+  it 'prevents prop getters from returning non-member data' do
+    expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Language::NameError)
+  end
+
   it 'prints things properly' do
     expect { run('print(1)') }.to output("1\n").to_stdout
     expect { run('print(true)') }.to output("true\n").to_stdout

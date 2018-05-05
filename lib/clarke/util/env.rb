@@ -18,6 +18,14 @@ module Clarke
         end
       end
 
+      def fetch_member(key)
+        if @contents.key?(key)
+          @contents.fetch(key)
+        else
+          raise Clarke::Language::NameError.new(key)
+        end
+      end
+
       def containing(key)
         if @contents.key?(key)
           self
