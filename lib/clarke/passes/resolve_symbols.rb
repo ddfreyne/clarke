@@ -11,7 +11,6 @@ module Clarke
         super
 
         expr.type = expr.expr.type
-        assert_typed(expr)
 
         expr.var_name_sym = expr.scope.resolve(expr.var_name)
         expr.var_name_sym.type = expr.type
@@ -22,7 +21,6 @@ module Clarke
 
         # FIXME: handle empty block
         expr.type = expr.exprs.last.type
-        assert_typed(expr)
       end
 
       def visit_class_def(expr)
@@ -31,19 +29,16 @@ module Clarke
         expr.name_sym = expr.scope.resolve(expr.name)
 
         expr.type = @global_scope.resolve('void')
-        assert_typed(expr)
       end
 
       def visit_false_lit(expr)
         super
 
         expr.type = @global_scope.resolve('bool')
-        assert_typed(expr)
       end
 
       def visit_fun_call(expr)
         super
-        assert_typed(expr.base)
 
         # TODO: verify arg count
         # TODO: verify arg types
@@ -56,8 +51,6 @@ module Clarke
         else
           raise Clarke::Errors::TypeError.new(expr.base.type, [Clarke::Sym::Class, Clarke::Sym::Fun], expr.base)
         end
-
-        assert_typed(expr)
       end
 
       def visit_fun_def(expr)
@@ -68,18 +61,24 @@ module Clarke
           param_sym.type = type_sym
         end
 
+        expr.name_sym = expr.scope.resolve(expr.name)
+
+        expr.name_sym.ret_type = expr.scope.resolve(expr.ret_type_name)
+
         super
 
-        expr.name_sym = expr.scope.resolve(expr.name)
-        expr.name_sym.ret_type = expr.body.type
         expr.type = expr.name_sym
-        assert_typed(expr)
+
+        # If the ret type is any, tighten it
+        # TODO: maybe don’t
+        ret_type = expr.name_sym.ret_type
+        if ret_type.is_a?(Clarke::Sym::BuiltinType) && ret_type.name == 'any'
+          expr.type.ret_type = expr.body.type
+        end
       end
 
       def visit_get_prop(expr)
         super
-
-        assert_typed(expr.base)
 
         klass =
           case expr.base.type
@@ -101,14 +100,12 @@ module Clarke
         else
           raise Clarke::Errors::NameError.new(expr.name)
         end
-        assert_typed(expr)
       end
 
       def visit_integer_lit(expr)
         super
 
         expr.type = @global_scope.resolve('int')
-        assert_typed(expr)
       end
 
       def visit_lambda_def(expr)
@@ -119,11 +116,18 @@ module Clarke
           param_sym.type = type_sym
         end
 
+        ret_type = expr.scope.resolve(expr.ret_type_name)
+        expr.type = Clarke::Sym::Fun.new('(anon)', expr.params.count, ret_type)
+
         super
 
-        expr.type = Clarke::Sym::Fun.new(
-          '(anon)', expr.params.count, expr.body.type)
-        assert_typed(expr)
+        # If the ret type is any, tighten it
+        # TODO: maybe don’t
+        if ret_type.is_a?(Clarke::Sym::BuiltinType) && ret_type.name == 'any'
+          expr.type = Clarke::Sym::Fun.new(
+            '(anon)', expr.params.count, expr.body.type,
+          )
+        end
       end
 
       def visit_op_add(expr)
@@ -131,14 +135,13 @@ module Clarke
 
         types = [expr.lhs, expr.rhs].map(&:type).uniq
         if [expr.lhs, expr.rhs].map(&:type).uniq.size != 1
-          # TODO get a proper exception
+          # TODO: get a proper exception
           raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
         end
 
         # TODO: verify that op exists for this type
 
         expr.type = types.first
-        assert_typed(expr)
       end
 
       def visit_op_multiply(expr)
@@ -146,14 +149,13 @@ module Clarke
 
         types = [expr.lhs, expr.rhs].map(&:type).uniq
         if [expr.lhs, expr.rhs].map(&:type).uniq.size != 1
-          # TODO get a proper exception
+          # TODO: get a proper exception
           raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
         end
 
         # TODO: verify that op exists for this type
 
         expr.type = types.first
-        assert_typed(expr)
       end
 
       # TODO: handle other op_
@@ -163,7 +165,6 @@ module Clarke
 
         expr.name_sym = expr.scope.resolve(expr.name)
         expr.type = expr.name_sym.type
-        assert_typed(expr)
       end
 
       def visit_prop_decl(expr)
@@ -173,7 +174,6 @@ module Clarke
         expr.name_sym = expr.scope.resolve(expr.name)
 
         expr.type = @global_scope.resolve('void')
-        assert_typed(expr)
       end
 
       def visit_set_prop(expr)
@@ -183,39 +183,28 @@ module Clarke
         expr.name_sym = expr.base.type.klass.scope.resolve(expr.name)
 
         expr.type = @global_scope.resolve('void')
-        assert_typed(expr)
       end
 
       def visit_string_lit(expr)
         super
 
         expr.type = @global_scope.resolve('string')
-        assert_typed(expr)
       end
 
       def visit_true_lit(expr)
         super
 
         expr.type = @global_scope.resolve('bool')
-        assert_typed(expr)
       end
 
       def visit_var_def(expr)
         super
 
         expr.var_name_sym = expr.scope.resolve(expr.var_name)
+
         expr.var_name_sym.type = expr.expr.type
 
         expr.type = expr.expr.type
-        assert_typed(expr)
-      end
-
-      def assert_typed(expr)
-        if expr.type.nil?
-          raise Clarke::Errors::GenericError.new("could not type #{expr.inspect}", expr: expr)
-        elsif !expr.type.is_a?(Clarke::Sym::Type)
-          raise Clarke::Errors::GenericError.new("type is not a type #{expr.type.inspect} -- for #{expr.inspect}", expr: expr)
-        end
       end
     end
   end

@@ -16,6 +16,7 @@ module Clarke
     # Simplify
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
     exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Passes::LiftLetLambdas.new.visit_exprs(exprs)
 
     # Collect symbols
     init = Clarke::Interpreter::Init.instance
@@ -76,6 +77,8 @@ end
 require_relative 'clarke/passes/collect_symbols'
 require_relative 'clarke/passes/resolve_symbols'
 require_relative 'clarke/passes/simplify_op_seq'
+require_relative 'clarke/passes/lift_let_lambdas'
+require_relative 'clarke/passes/verify_typed'
 
 module Clarke
   module Interpreter

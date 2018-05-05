@@ -82,12 +82,21 @@ module Clarke
       include Type
 
       attr_reader :param_count
-      attr_accessor :ret_type
+      attr_reader :ret_type
 
       def initialize(name, param_count, ret_type)
         super(name)
 
         @param_count = param_count
+        @ret_type = ret_type
+      end
+
+      def inspect_hash
+        super.merge('#params': param_count, ret_type: ret_type.inspect || '?')
+      end
+
+      def ret_type=(ret_type)
+        raise ArgumentError unless ret_type
         @ret_type = ret_type
       end
     end

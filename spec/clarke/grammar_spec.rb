@@ -188,13 +188,13 @@ describe 'Clarke' do
   end
 
   it 'can shadow recursively' do
-    expect("let sum = (a: int, b: int) => {\n  if (a > 0) { sum(a - 1, b + 1) } else { b }\n}\nsum(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(0)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 0))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(1)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 2))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(4)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
-    expect("let fib = (a: int) => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(5)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
+    expect("let sum = (a: int, b: int): int => {\n  if (a > 0) { sum(a - 1, b + 1) } else { b }\n}\nsum(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(0)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 0))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(1)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 2))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(4)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
+    expect("let fib = (a: int): int => {\n  if (a > 1) { fib(a - 1) + fib(a - 2) } else { a }\n}\nfib(5)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
   end
 
   it 'forbids reassigment of non-declared vars' do
