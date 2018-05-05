@@ -291,9 +291,9 @@ describe 'Clarke' do
   end
 
   it 'raises TypeError when appropriate' do
-    expect("let x = 1\nx()").to fail_with(Clarke::Errors::TypeError)
-    expect("let x = true\nx()").to fail_with(Clarke::Errors::TypeError)
-    expect("let x = false\nx()").to fail_with(Clarke::Errors::TypeError)
+    expect("let x = 1\nx()").to fail_with(Clarke::Errors::NotCallable)
+    expect("let x = true\nx()").to fail_with(Clarke::Errors::NotCallable)
+    expect("let x = false\nx()").to fail_with(Clarke::Errors::NotCallable)
 
     expect('if (0) { 1 } else { 2 }').to fail_with(Clarke::Errors::TypeError)
     expect("let x = fun () { 5 }\nif (x) { 1 } else { 2 }").to fail_with(Clarke::Errors::TypeError)

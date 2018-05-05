@@ -36,6 +36,16 @@ module Clarke
       end
     end
 
+    class NotCallable < GenericError
+      def initialize(expr: nil)
+        super(message, expr: expr)
+      end
+
+      def message
+        'Can only call functions and classes; this thing is neither'
+      end
+    end
+
     class NameError < Error
       attr_reader :name
 
