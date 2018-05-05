@@ -5,16 +5,16 @@ module Clarke
     def visit_assignment(expr)
       Clarke::AST::Assignment.new(
         var_name: expr.var_name,
-        expr:          visit_expr(expr.expr),
-        context:       expr.context,
+        expr:     visit_expr(expr.expr),
+        context:  expr.context,
       )
     end
 
     def visit_var_def(expr)
       Clarke::AST::VarDef.new(
         var_name: expr.var_name,
-        expr:          visit_expr(expr.expr),
-        context:       expr.context,
+        expr:     visit_expr(expr.expr),
+        context:  expr.context,
       )
     end
 
@@ -54,8 +54,8 @@ module Clarke
     def visit_lambda_def(expr)
       Clarke::AST::LambdaDef.new(
         parameters: expr.parameters,
-        body:           visit_expr(expr.body),
-        context:        expr.context,
+        body:       visit_expr(expr.body),
+        context:    expr.context,
       )
     end
 
@@ -117,96 +117,96 @@ module Clarke
 
     def visit_op_add(expr)
       Clarke::AST::OpAdd.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_subtract(expr)
       Clarke::AST::OpSubtract.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_multiply(expr)
       Clarke::AST::OpMultiply.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_divide(expr)
       Clarke::AST::OpDivide.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_exponentiate(expr)
       Clarke::AST::OpExponentiate.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_eq(expr)
       Clarke::AST::OpEq.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_gt(expr)
       Clarke::AST::OpGt.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_lt(expr)
       Clarke::AST::OpLt.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_gte(expr)
       Clarke::AST::OpGte.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_lte(expr)
       Clarke::AST::OpLte.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_and(expr)
       Clarke::AST::OpAnd.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
 
     def visit_op_or(expr)
       Clarke::AST::OpOr.new(
-        lhs: visit_expr(expr.lhs),
-        rhs: visit_expr(expr.rhs),
+        lhs:     visit_expr(expr.lhs),
+        rhs:     visit_expr(expr.rhs),
         context: expr.context,
       )
     end
