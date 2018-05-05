@@ -268,6 +268,16 @@ describe 'Clarke' do
     CODE
   end
 
+  it 'handles getters for props' do
+    expect { run("class Foo {\n  prop a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().a)") }
+      .to output("123\n").to_stdout
+  end
+
+  it 'handles getters for functions' do
+    expect { run("class Foo {\n  prop a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().init)") }
+      .to output("<function>\n").to_stdout
+  end
+
   it 'prevents prop getters from returning non-member data' do
     expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Errors::NameError)
   end

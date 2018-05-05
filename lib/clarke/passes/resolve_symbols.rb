@@ -81,18 +81,11 @@ module Clarke
       def visit_get_prop(expr)
         super
 
-        klass =
-          case expr.base.type
-          when Clarke::Sym::InstanceType
-            expr.base.type.klass
-          when Clarke::Sym::Class
-            # FIXME: this is because expr.base.type.klass is erroneously set to Class rather than InstanceType
-            expr.base.type
-          else
-            raise Clarke::Errors::GenericError.new("can only get props of instances (not #{expr.base.type.inspect})", expr: expr)
-          end
+        unless expr.base.type.is_a?(Clarke::Sym::InstanceType)
+          raise Clarke::Errors::NotGettable.new(expr: expr.base)
+        end
 
-        thing = klass.scope.resolve(expr.name)
+        thing = expr.base.type.klass.scope.resolve(expr.name)
         case thing
         when Clarke::Sym::Fun
           expr.type = thing

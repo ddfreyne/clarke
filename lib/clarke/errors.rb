@@ -46,6 +46,16 @@ module Clarke
       end
     end
 
+    class NotGettable < GenericError
+      def initialize(expr: nil)
+        super(message, expr: expr)
+      end
+
+      def message
+        'Can only get properties from instances; this thing isn’t one'
+      end
+    end
+
     class NameError < Error
       attr_reader :name
 
