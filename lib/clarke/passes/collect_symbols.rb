@@ -18,21 +18,21 @@ module Clarke
       end
 
       def visit_class_def(expr)
-        define(Clarke::Language::ClassSym.new(expr.name))
+        define(Clarke::Sym::Class.new(expr.name))
 
         push do
-          define(Clarke::Language::VarSym.new('this'))
+          define(Clarke::Sym::Var.new('this'))
           super
           update_scope(expr)
         end
       end
 
       def visit_fun_def(expr)
-        define(Clarke::Language::FunSym.new(expr.name))
+        define(Clarke::Sym::Fun.new(expr.name))
 
         push do
           expr.parameters.each do |param|
-            define(Clarke::Language::VarSym.new(param))
+            define(Clarke::Sym::Var.new(param))
           end
 
           super
@@ -42,7 +42,7 @@ module Clarke
       def visit_lambda_def(expr)
         push do
           expr.parameters.each do |param|
-            define(Clarke::Language::VarSym.new(param))
+            define(Clarke::Sym::Var.new(param))
           end
 
           super
@@ -50,13 +50,13 @@ module Clarke
       end
 
       def visit_var_def(expr)
-        define(Clarke::Language::VarSym.new(expr.var_name))
+        define(Clarke::Sym::Var.new(expr.var_name))
 
         super
       end
 
       def visit_prop_decl(expr)
-        define(Clarke::Language::PropSym.new(expr.name))
+        define(Clarke::Sym::Prop.new(expr.name))
       end
 
       def visit_expr(expr)

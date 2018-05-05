@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Language
-    class Sym
+  module Sym
+    class Base
       attr_reader :name
 
       def initialize(name)
@@ -19,16 +19,16 @@ module Clarke
       end
     end
 
-    class VarSym < Sym
+    class Var < Base
     end
 
-    class ClassSym < Sym
+    class Class < Base
     end
 
-    class FunSym < Sym
+    class Fun < Base
     end
 
-    class PropSym < Sym
+    class Prop < Base
     end
   end
 end

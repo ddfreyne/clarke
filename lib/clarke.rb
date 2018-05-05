@@ -55,7 +55,7 @@ require_relative 'clarke/util/symbol_table'
 
 require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
-require_relative 'clarke/language'
+require_relative 'clarke/sym'
 require_relative 'clarke/errors'
 
 require_relative 'clarke/visitor'

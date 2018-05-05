@@ -21,7 +21,7 @@ module Clarke
 
         array_init = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
+          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
           parameters: %w[],
           body: lambda do |_ev, env, scope|
             this_sym = scope.resolve('this')
@@ -32,7 +32,7 @@ module Clarke
 
         array_add = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
+          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
           parameters: %w[elem],
           body: lambda do |_ev, env, scope, elem|
             this_sym = scope.resolve('this')
@@ -44,7 +44,7 @@ module Clarke
 
         array_each = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Language::VarSym.new('this')),
+          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
           parameters: %w[fn],
           body: lambda do |ev, env, scope, fn|
             this_sym = scope.resolve('this')
@@ -68,10 +68,10 @@ module Clarke
         array_class_scope =
           Clarke::Util::SymbolTable
           .new
-          .define(Clarke::Language::VarSym.new('this'))
-          .define(Clarke::Language::VarSym.new('init'))
-          .define(Clarke::Language::VarSym.new('add'))
-          .define(Clarke::Language::VarSym.new('each'))
+          .define(Clarke::Sym::Var.new('this'))
+          .define(Clarke::Sym::Var.new('init'))
+          .define(Clarke::Sym::Var.new('add'))
+          .define(Clarke::Sym::Var.new('each'))
 
         array_class_env =
           Clarke::Util::Env.new.tap do |env|
@@ -87,8 +87,8 @@ module Clarke
         )
 
         @scope = Clarke::Util::SymbolTable.new
-        @scope = @scope.define(Clarke::Language::VarSym.new('print'))
-        @scope = @scope.define(Clarke::Language::ClassSym.new('Array'))
+        @scope = @scope.define(Clarke::Sym::Var.new('print'))
+        @scope = @scope.define(Clarke::Sym::Class.new('Array'))
 
         @envish = {
           @scope.resolve('print') => print,
