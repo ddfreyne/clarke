@@ -14,7 +14,7 @@ module Clarke
         elsif @parent
           @parent.fetch(key)
         else
-          raise Clarke::Language::NameError.new(key)
+          raise Clarke::Errors::NameError.new(key)
         end
       end
 
@@ -22,7 +22,7 @@ module Clarke
         if @contents.key?(key)
           @contents.fetch(key)
         else
-          raise Clarke::Language::NameError.new(key)
+          raise Clarke::Errors::NameError.new(key)
         end
       end
 

@@ -142,13 +142,13 @@ describe 'Clarke' do
   end
 
   it 'errors on wrong argument counts' do
-    expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Language::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Language::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Language::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Language::ArgumentCountError)
-    expect('Array(1)').to fail_with(Clarke::Language::ArgumentCountError)
-    expect('Array(1, 2)').to fail_with(Clarke::Language::ArgumentCountError)
+    expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect('Array(1)').to fail_with(Clarke::Errors::ArgumentCountError)
+    expect('Array(1, 2)').to fail_with(Clarke::Errors::ArgumentCountError)
   end
 
   it 'handles non-anonymous function definitions' do
@@ -198,13 +198,13 @@ describe 'Clarke' do
   end
 
   it 'forbids reassigment of non-declared vars' do
-    expect('a = 4').to fail_with(Clarke::Language::NameError)
+    expect('a = 4').to fail_with(Clarke::Errors::NameError)
   end
 
   it 'handles block' do
     expect("let a = 1\n{let a = 2}").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 2))
     expect("let a = 1\n{let a = 2}\na").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
-    expect("{let a = 2}\na").to fail_with(Clarke::Language::NameError)
+    expect("{let a = 2}\na").to fail_with(Clarke::Errors::NameError)
   end
 
   it 'handles classes without initializer' do
@@ -227,7 +227,7 @@ describe 'Clarke' do
   end
 
   it 'does not allow multiple functions of the same name' do
-    expect(<<~CODE).to fail_with(Clarke::Language::DoubleNameError)
+    expect(<<~CODE).to fail_with(Clarke::Errors::DoubleNameError)
       class Foo {
         fun a() {
           1
@@ -251,7 +251,7 @@ describe 'Clarke' do
   end
 
   it 'cannot set defined props' do
-    expect(<<~CODE).to fail_with(Clarke::Language::NameError)
+    expect(<<~CODE).to fail_with(Clarke::Errors::NameError)
       class Foo {
       }
       let f = Foo()
@@ -261,7 +261,7 @@ describe 'Clarke' do
   end
 
   it 'prevents prop getters from returning non-member data' do
-    expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Language::NameError)
+    expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Errors::NameError)
   end
 
   it 'prints things properly' do
@@ -273,31 +273,31 @@ describe 'Clarke' do
   end
 
   it 'raises NameError when appropriate' do
-    expect('x()').to fail_with(Clarke::Language::NameError)
-    expect('a').to fail_with(Clarke::Language::NameError)
+    expect('x()').to fail_with(Clarke::Errors::NameError)
+    expect('a').to fail_with(Clarke::Errors::NameError)
   end
 
   it 'can’t create functions with uppercase name' do
-    expect("class A {\n  fun b() { true }\n}").not_to fail_with(Clarke::Language::SyntaxError)
-    expect("class A {\n  fun B() { true }\n}").to fail_with(Clarke::Language::SyntaxError)
+    expect("class A {\n  fun b() { true }\n}").not_to fail_with(Clarke::Errors::SyntaxError)
+    expect("class A {\n  fun B() { true }\n}").to fail_with(Clarke::Errors::SyntaxError)
   end
 
   it 'raises TypeError when appropriate' do
-    expect("let x = 1\nx()").to fail_with(Clarke::Language::TypeError)
-    expect("let x = true\nx()").to fail_with(Clarke::Language::TypeError)
-    expect("let x = false\nx()").to fail_with(Clarke::Language::TypeError)
+    expect("let x = 1\nx()").to fail_with(Clarke::Errors::TypeError)
+    expect("let x = true\nx()").to fail_with(Clarke::Errors::TypeError)
+    expect("let x = false\nx()").to fail_with(Clarke::Errors::TypeError)
 
-    expect('if (0) { 1 } else { 2 }').to fail_with(Clarke::Language::TypeError)
-    expect("let x = fun () { 5 }\nif (x) { 1 } else { 2 }").to fail_with(Clarke::Language::TypeError)
+    expect('if (0) { 1 } else { 2 }').to fail_with(Clarke::Errors::TypeError)
+    expect("let x = fun () { 5 }\nif (x) { 1 } else { 2 }").to fail_with(Clarke::Errors::TypeError)
   end
 
   it 'does not allow reserved words for variables' do
-    expect('let else = 1').to fail_with(Clarke::Language::SyntaxError)
-    expect('let false = 1').to fail_with(Clarke::Language::SyntaxError)
-    expect('let fun = 1').to fail_with(Clarke::Language::SyntaxError)
-    expect('let if = 1').to fail_with(Clarke::Language::SyntaxError)
-    expect('let let = 1').to fail_with(Clarke::Language::SyntaxError)
-    expect('let true = 1').to fail_with(Clarke::Language::SyntaxError)
+    expect('let else = 1').to fail_with(Clarke::Errors::SyntaxError)
+    expect('let false = 1').to fail_with(Clarke::Errors::SyntaxError)
+    expect('let fun = 1').to fail_with(Clarke::Errors::SyntaxError)
+    expect('let if = 1').to fail_with(Clarke::Errors::SyntaxError)
+    expect('let let = 1').to fail_with(Clarke::Errors::SyntaxError)
+    expect('let true = 1').to fail_with(Clarke::Errors::SyntaxError)
   end
 
   it 'handles arrays' do

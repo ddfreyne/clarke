@@ -10,7 +10,7 @@ module Clarke
 
       def check_argument_count(function, arguments)
         if arguments.count != function.parameters.size
-          raise Clarke::Language::ArgumentCountError.new(
+          raise Clarke::Errors::ArgumentCountError.new(
             expected: function.parameters.size,
             actual: arguments.count,
           )
@@ -36,7 +36,7 @@ module Clarke
 
           instance
         else
-          raise Clarke::Language::TypeError.new(base, [Clarke::Interpreter::Runtime::Fun, Clarke::Interpreter::Runtime::Class], expr.base)
+          raise Clarke::Errors::TypeError.new(base, [Clarke::Interpreter::Runtime::Fun, Clarke::Interpreter::Runtime::Class], expr.base)
         end
       end
 
@@ -45,7 +45,7 @@ module Clarke
         name = expr.name.to_sym
 
         unless base.is_a?(Clarke::Interpreter::Runtime::Instance)
-          raise Clarke::Language::NameError.new(name)
+          raise Clarke::Errors::NameError.new(name)
         end
 
         prop_sym = base.klass.scope.resolve(name)
@@ -171,7 +171,7 @@ module Clarke
         base_value = visit_expr(expr.base, env)
 
         unless base_value.is_a?(Clarke::Interpreter::Runtime::Instance)
-          raise Clarke::Language::NameError.new(expr.name)
+          raise Clarke::Errors::NameError.new(expr.name)
         end
 
         instance = base_value
@@ -245,7 +245,7 @@ module Clarke
         else
           raise ArgumentError, "don’t know how to handle #{expr.inspect}"
         end
-      rescue Clarke::Language::Error => e
+      rescue Clarke::Errors::Error => e
         e.expr = expr unless e.expr
         raise e
       end
@@ -261,7 +261,7 @@ module Clarke
         if val.is_a?(klass)
           val
         else
-          raise Clarke::Language::TypeError.new(val, [klass], expr)
+          raise Clarke::Errors::TypeError.new(val, [klass], expr)
         end
       end
 

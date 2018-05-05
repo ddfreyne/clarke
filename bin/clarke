@@ -29,14 +29,14 @@ when 'interpret'
   code = File.read(args.fetch(:filename))
   begin
     Clarke.run(code, verbose: options[:verbose])
-  rescue Clarke::Language::Error => e
+  rescue Clarke::Errors::Error => e
     puts e.fancy_message
   end
 when 'transpile-to-ruby'
   code = File.read(args.fetch(:filename))
   begin
     Clarke.transpile_to_ruby(code, verbose: options[:verbose])
-  rescue Clarke::Language::Error => e
+  rescue Clarke::Errors::Error => e
     puts e.fancy_message
   end
 else

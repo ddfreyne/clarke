@@ -12,7 +12,7 @@ module Clarke
 
       def define(sym)
         if @contents.key?(sym.name.to_s)
-          raise Clarke::Language::DoubleNameError.new(sym.name.to_s)
+          raise Clarke::Errors::DoubleNameError.new(sym.name.to_s)
         end
 
         self.class.new(
@@ -29,7 +29,7 @@ module Clarke
         elsif @parent
           @parent.resolve(name, fallback)
         elsif UNDEFINED.equal?(fallback)
-          raise Clarke::Language::NameError.new(name)
+          raise Clarke::Errors::NameError.new(name)
         else
           fallback
         end

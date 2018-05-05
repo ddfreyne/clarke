@@ -9,7 +9,7 @@ module Clarke
     # Parse
     res = Clarke::Grammar::PROGRAM.apply(code)
     if res.is_a?(DParse::Failure)
-      raise Clarke::Language::SyntaxError.new(res.pretty_message)
+      raise Clarke::Errors::SyntaxError.new(res.pretty_message)
     end
     exprs = res.data
 
@@ -56,6 +56,7 @@ require_relative 'clarke/util/symbol_table'
 require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
 require_relative 'clarke/language'
+require_relative 'clarke/errors'
 
 require_relative 'clarke/visitor'
 require_relative 'clarke/transformer'
