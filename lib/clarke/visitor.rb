@@ -7,8 +7,13 @@ module Clarke
       nil
     end
 
-    def visit_var_def(expr)
-      visit_expr(expr.expr)
+    def visit_block(expr)
+      expr.exprs.map { |e| visit_expr(e) }
+      nil
+    end
+
+    def visit_class_def(expr)
+      expr.members.each { |e| visit_expr(e) }
       nil
     end
 
@@ -19,6 +24,11 @@ module Clarke
     def visit_fun_call(expr)
       expr.arguments.map { |a| visit_expr(a) }
       visit_expr(expr.base)
+      nil
+    end
+
+    def visit_fun_def(expr)
+      visit_expr(expr.body)
       nil
     end
 
@@ -128,8 +138,13 @@ module Clarke
       nil
     end
 
-    def visit_block(expr)
-      expr.exprs.map { |e| visit_expr(e) }
+    def visit_ref(_expr)
+      nil
+    end
+
+    def visit_set_prop(expr)
+      visit_expr(expr.base)
+      visit_expr(expr.value)
       nil
     end
 
@@ -141,23 +156,8 @@ module Clarke
       nil
     end
 
-    def visit_ref(_expr)
-      nil
-    end
-
-    def visit_class_def(expr)
-      expr.members.each { |e| visit_expr(e) }
-      nil
-    end
-
-    def visit_fun_def(expr)
-      visit_expr(expr.body)
-      nil
-    end
-
-    def visit_set_prop(expr)
-      visit_expr(expr.base)
-      visit_expr(expr.value)
+    def visit_var_def(expr)
+      visit_expr(expr.expr)
       nil
     end
 
