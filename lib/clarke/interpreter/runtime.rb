@@ -27,11 +27,6 @@ module Clarke
           new_env = env.push
           new_env[this_sym] = instance
 
-          if body.respond_to?(:scope)
-            new_scope = body.scope.define(this_sym)
-            body.replace_scope(new_scope)
-          end
-
           Fun.new(
             parameters: parameters,
             body:       body,
