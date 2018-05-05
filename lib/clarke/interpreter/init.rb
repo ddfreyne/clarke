@@ -10,6 +10,7 @@ module Clarke
 
       def initialize
         any_type = Clarke::Sym::BuiltinType.new('any')
+        auto_type = Clarke::Sym::BuiltinType.new('auto')
         bool_type = Clarke::Sym::BuiltinType.new('bool')
         int_type = Clarke::Sym::BuiltinType.new('int')
         string_type = Clarke::Sym::BuiltinType.new('string')
@@ -102,6 +103,7 @@ module Clarke
           Clarke::Util::SymbolTable
           .new
           .define(any_type)
+          .define(auto_type)
           .define(bool_type)
           .define(function_type)
           .define(int_type)

@@ -47,6 +47,9 @@ Style/EmptyElse:
 Style/GuardClause:
   Enabled: false
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 
 
 # ----- DISABLED (metrics) -----

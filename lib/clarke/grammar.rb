@@ -83,6 +83,7 @@ module Clarke
       describe(
         alt(
           string('any'),
+          string('auto'),
           string('bool'),
           string('class'),
           string('else'),
@@ -159,6 +160,7 @@ module Clarke
     TYPE_NAME = alt(
       CLASS_NAME,
       string('any').capture,
+      string('auto').capture,
       string('bool').capture,
       string('function').capture, # TODO: remove
       string('int').capture,
@@ -292,7 +294,7 @@ module Clarke
           TYPE_NAME,
         ).compact.first,
       ).map do |data|
-        data || 'any'
+        data || 'auto'
       end
 
     PARAM_LIST =

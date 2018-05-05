@@ -70,10 +70,9 @@ module Clarke
 
         expr.type = expr.name_sym
 
-        # If the ret type is any, tighten it
-        # TODO: maybe don’t
+        # Tighten `auto` type
         ret_type = expr.name_sym.ret_type
-        if ret_type.is_a?(Clarke::Sym::BuiltinType) && ret_type.name == 'any'
+        if ret_type.auto?
           expr.type.ret_type = expr.body.type
         end
       end
@@ -115,12 +114,9 @@ module Clarke
 
         super
 
-        # If the ret type is any, tighten it
-        # TODO: maybe don’t
-        if ret_type.is_a?(Clarke::Sym::BuiltinType) && ret_type.name == 'any'
-          expr.type = Clarke::Sym::Fun.new(
-            '(anon)', expr.params.count, expr.body.type,
-          )
+        # Tighten `auto` type
+        if ret_type.auto?
+          expr.type = Clarke::Sym::Fun.new('(anon)', expr.params.count, expr.body.type)
         end
       end
 

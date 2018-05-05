@@ -33,6 +33,10 @@ module Clarke
       def type
         self
       end
+
+      def auto?
+        false
+      end
     end
 
     module HasType
@@ -41,6 +45,10 @@ module Clarke
 
     class BuiltinType < Base
       include Type
+
+      def auto?
+        name == 'auto'
+      end
     end
 
     class InstanceType
