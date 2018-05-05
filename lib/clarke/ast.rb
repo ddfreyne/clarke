@@ -230,6 +230,7 @@ module Clarke
       attribute :name, Dry::Types::Any
       attribute :parameters, Dry::Types::Any
       attribute :body, Dry::Types::Any
+      attr_accessor :name_sym
 
       include WithScope
       include Printable
@@ -247,6 +248,7 @@ module Clarke
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
       attribute :members, Dry::Types::Any
+      attr_accessor :name_sym
 
       include WithScope
       include Printable

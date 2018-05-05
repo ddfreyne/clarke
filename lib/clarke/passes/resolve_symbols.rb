@@ -17,6 +17,16 @@ module Clarke
         expr.var_name_sym = expr.scope.resolve(expr.var_name)
         super
       end
+
+      def visit_class_def(expr)
+        expr.name_sym = expr.scope.resolve(expr.name)
+        super
+      end
+
+      def visit_fun_def(expr)
+        expr.name_sym = expr.scope.resolve(expr.name)
+        super
+      end
     end
   end
 end

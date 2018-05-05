@@ -149,8 +149,7 @@ module Clarke
 
         expr.members.each { |e| visit_expr(e, inner_env) }
 
-        sym = expr.scope.resolve(expr.name)
-        env[sym] = klass
+        env[expr.name_sym] = klass
       end
 
       def visit_fun_def(expr, env)
@@ -162,8 +161,7 @@ module Clarke
             scope: expr.scope,
           )
 
-        sym = expr.scope.resolve(expr.name)
-        env[sym] = fun
+        env[expr.name_sym] = fun
       end
 
       def visit_prop_decl(_expr, _env); end
