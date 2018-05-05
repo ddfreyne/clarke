@@ -80,7 +80,6 @@ module Clarke
             name: 'Array',
             env: array_class_env,
             scope: array_class_scope,
-            functions: {}, # TODO: remove
           )
 
           {

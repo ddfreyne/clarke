@@ -157,7 +157,7 @@ module Clarke
         this_sym = expr.scope.resolve('this')
 
         inner_env = env.push
-        klass = Clarke::Interpreter::Runtime::Class.new(name: expr.name, functions: {}, env: inner_env, scope: expr.scope)
+        klass = Clarke::Interpreter::Runtime::Class.new(name: expr.name, env: inner_env, scope: expr.scope)
         inner_env[this_sym] = klass
 
         expr.functions.each { |e| visit_expr(e, inner_env) }
