@@ -40,17 +40,18 @@ module Clarke
       def visit_fun_call(expr)
         super
 
-        # TODO: verify arg count
-        # TODO: verify arg types
+        expr.type =
+          case expr.base.type
+          when Clarke::Sym::Class
+            Clarke::Sym::InstanceType.new(expr.base.type)
+          when Clarke::Sym::Fun
+            expr.base.type.ret_type
+          else
+            raise Clarke::Errors::NotCallable.new(expr: expr.base)
+          end
 
-        case expr.base.type
-        when Clarke::Sym::Class
-          expr.type = Clarke::Sym::InstanceType.new(expr.base.type)
-        when Clarke::Sym::Fun
-          expr.type = expr.base.type.ret_type
-        else
-          raise Clarke::Errors::NotCallable.new(expr: expr.base)
-        end
+        # Verify arguments (counts + types)
+        # TODO
       end
 
       def visit_fun_def(expr)
