@@ -134,7 +134,7 @@ module Clarke
 
       def visit_lambda_def(expr, env)
         Clarke::Interpreter::Runtime::Fun.new(
-          parameters: expr.parameters,
+          parameters: expr.parameters.map(&:name),
           body: expr.body,
           env: env,
           scope: expr.scope,
@@ -156,7 +156,7 @@ module Clarke
       def visit_fun_def(expr, env)
         fun =
           Clarke::Interpreter::Runtime::Fun.new(
-            parameters: expr.parameters,
+            parameters: expr.parameters.map(&:name),
             body: expr.body,
             env: env,
             scope: expr.scope,

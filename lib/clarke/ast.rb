@@ -39,6 +39,11 @@ module Clarke
       end
     end
 
+    class NameAndType < Dry::Struct
+      attribute :name, Types::String
+      attribute :type, Types::String
+    end
+
     class FalseLit < Dry::Struct
       attribute :context, Dry::Types::Any
 
@@ -210,7 +215,7 @@ module Clarke
 
     class LambdaDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :parameters, Types::Strict::Array.of(Types::Strict::String)
+      attribute :parameters, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
 
       include WithScope
@@ -228,7 +233,7 @@ module Clarke
     class FunDef < Dry::Struct
       attribute :context, Dry::Types::Any
       attribute :name, Dry::Types::Any
-      attribute :parameters, Dry::Types::Any
+      attribute :parameters, Types::Strict::Array.of(NameAndType)
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
 

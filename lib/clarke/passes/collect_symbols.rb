@@ -32,7 +32,7 @@ module Clarke
 
         push do
           expr.parameters.each do |param|
-            define(Clarke::Sym::Var.new(param))
+            define(Clarke::Sym::Var.new(param.name))
           end
 
           super
@@ -42,7 +42,7 @@ module Clarke
       def visit_lambda_def(expr)
         push do
           expr.parameters.each do |param|
-            define(Clarke::Sym::Var.new(param))
+            define(Clarke::Sym::Var.new(param.name))
           end
 
           super
