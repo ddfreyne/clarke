@@ -10,8 +10,16 @@ module Clarke
       end
 
       def inspect
+        class_name = self.class.to_s.sub(/^.*::/, '')
         id = Clarke::Util::Num2String.call(object_id)
-        "<#{self.class.to_s.sub(/^.*::/, '')} #{@name} #{id}>"
+
+        extra = inspect_hash.map { |k, v| " #{k}=#{v}" }.join('')
+
+        "<#{class_name} [#{id}] #{@name}#{extra}>"
+      end
+
+      def inspect_hash
+        {}
       end
 
       def to_s
@@ -19,16 +27,46 @@ module Clarke
       end
     end
 
+    module Type
+      # Marker module
+
+      def type
+        self
+      end
+    end
+
+    module HasType
+      attr_accessor :type
+    end
+
     class BuiltinType < Base
+      include Type
     end
 
     class Var < Base
+      include HasType
+
+      def inspect_hash
+        super.merge(type: type || '?')
+      end
     end
 
     class Class < Base
+      include Type
     end
 
     class Fun < Base
+      include Type
+
+      attr_reader :param_count
+      attr_accessor :ret_type
+
+      def initialize(name, param_count, ret_type)
+        super(name)
+
+        @param_count = param_count
+        @ret_type = ret_type
+      end
     end
 
     class Prop < Base

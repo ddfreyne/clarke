@@ -49,9 +49,18 @@ module Clarke
 
     class AbstractNode < Dry::Struct
       attribute :context, Dry::Types::Any
+      attr_reader :type
 
       include Printable
       include WithScope
+
+      def type=(type)
+        unless type.is_a?(Clarke::Sym::Type) || type.nil?
+          raise ArgumentError, "Expected Clarke::Sym::Type or nil, but got #{type.class.inspect}"
+        end
+
+        @type = type
+      end
     end
 
     class Assignment < AbstractNode

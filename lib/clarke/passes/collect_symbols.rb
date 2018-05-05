@@ -28,7 +28,7 @@ module Clarke
       end
 
       def visit_fun_def(expr)
-        define(Clarke::Sym::Fun.new(expr.name))
+        define(Clarke::Sym::Fun.new(expr.name, expr.params.size))
 
         push do
           expr.params.each do |param|

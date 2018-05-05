@@ -86,10 +86,20 @@ module Clarke
           scope: array_class_scope,
         )
 
-        @scope = Clarke::Util::SymbolTable.new
-        @scope = @scope.define(Clarke::Sym::Var.new('print'))
-        @scope = @scope.define(Clarke::Sym::Class.new('Array'))
-        @scope = @scope.define(Clarke::Sym::BuiltinType.new('any'))
+        any_type = Clarke::Sym::BuiltinType.new('any')
+        int_type = Clarke::Sym::BuiltinType.new('int')
+        bool_type = Clarke::Sym::BuiltinType.new('bool')
+        void_type = Clarke::Sym::BuiltinType.new('void')
+
+        @scope =
+          Clarke::Util::SymbolTable
+          .new
+          .define(any_type)
+          .define(int_type)
+          .define(bool_type)
+          .define(void_type)
+          .define(Clarke::Sym::Fun.new('print', 1, void_type))
+          .define(Clarke::Sym::Class.new('Array'))
 
         @envish = {
           @scope.resolve('print') => print,

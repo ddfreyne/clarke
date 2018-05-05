@@ -24,7 +24,7 @@ module Clarke
     global_scope = pass.scope
 
     # Resolve symbols
-    pass = Clarke::Passes::ResolveSymbols.new
+    pass = Clarke::Passes::ResolveSymbols.new(global_scope)
     pass.visit_exprs(exprs)
 
     # Debug
