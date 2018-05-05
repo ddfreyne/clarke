@@ -1,4 +1,5 @@
 class Foo {
+  prop a
 }
 
 let f = Foo()
