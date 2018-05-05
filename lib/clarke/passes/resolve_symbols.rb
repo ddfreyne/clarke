@@ -183,6 +183,8 @@ module Clarke
         # FIXME: name_sym needed?
         expr.name_sym = expr.base.type.klass.scope.resolve(expr.name)
 
+        # FIXME: check type
+
         expr.type = @global_scope.resolve('void')
       end
 
