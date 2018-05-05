@@ -301,7 +301,9 @@ describe 'Clarke' do
   end
 
   it 'handles arrays' do
-    array_class = Clarke::Interpreter::Init.instance.envish.fetch('Array')
+    init = Clarke::Interpreter::Init.instance
+    array_sym = init.scope.resolve('Array')
+    array_class = init.envish.fetch(array_sym)
 
     expect('Array()')
       .to evaluate_to(a_clarke_instance_of(array_class))

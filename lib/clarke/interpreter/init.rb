@@ -6,6 +6,7 @@ module Clarke
       include Singleton
 
       attr_reader :envish
+      attr_reader :scope
 
       def initialize
         print = Clarke::Interpreter::Runtime::Fun.new(
@@ -85,9 +86,13 @@ module Clarke
           scope: array_class_scope,
         )
 
+        @scope = Clarke::Util::SymbolTable.new
+        @scope = @scope.define(Clarke::Language::VarSym.new('print'))
+        @scope = @scope.define(Clarke::Language::ClassSym.new('Array'))
+
         @envish = {
-          'print' => print,
-          'Array' => array_class,
+          @scope.resolve('print') => print,
+          @scope.resolve('Array') => array_class,
         }
       end
     end

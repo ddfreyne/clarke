@@ -7,12 +7,8 @@ module Clarke
     class CollectSymbols < Clarke::Visitor
       attr_reader :scope
 
-      def initialize(initial_env)
-        @scope = Clarke::Util::SymbolTable.new
-
-        initial_env.each do |name, _thing|
-          define(Clarke::Language::VarSym.new(name))
-        end
+      def initialize(initial_global_scope)
+        @scope = initial_global_scope
       end
 
       def visit_block(expr)

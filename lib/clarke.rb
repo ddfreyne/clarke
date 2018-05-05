@@ -19,7 +19,7 @@ module Clarke
 
     # Collect symbols
     init = Clarke::Interpreter::Init.instance
-    pass = Clarke::Passes::CollectSymbols.new(init.envish)
+    pass = Clarke::Passes::CollectSymbols.new(init.scope)
     pass.visit_exprs(exprs)
     global_scope = pass.scope
 
@@ -32,8 +32,7 @@ module Clarke
 
     # Generate initial env
     initial_env = Clarke::Util::Env.new
-    Clarke::Interpreter::Init.instance.envish.each_pair do |name, val|
-      sym = global_scope.resolve(name)
+    Clarke::Interpreter::Init.instance.envish.each_pair do |sym, val|
       initial_env[sym] = val
     end
 
