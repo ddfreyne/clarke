@@ -52,4 +52,36 @@ describe 'Clarke types' do
   it 'resolves function calls' do
     expect('(() => 1)()').to have_type(init_scope.resolve('int'))
   end
+
+  it 'handles op+ type mismatch' do
+    expect('1+1').to have_type(init_scope.resolve('int'))
+    expect('1+true').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+    expect('true+1').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+  end
+
+  it 'handles op* type mismatch' do
+    expect('1*1').to have_type(init_scope.resolve('int'))
+    expect('1*true').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+    expect('true*1').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+  end
+
+  it 'handles op/ type mismatch' do
+    expect('1/1').to have_type(init_scope.resolve('int'))
+    expect('1/true').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+    expect('true/1').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+  end
+
+  it 'handles op^ type mismatch' do
+    expect('1^1').to have_type(init_scope.resolve('int'))
+    expect('1^true').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+    expect('true^1').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+  end
+
+  it 'handles op- type mismatch' do
+    expect('1-1').to have_type(init_scope.resolve('int'))
+    expect('1-true').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+    expect('true-1').to fail_with(Clarke::Errors::BinOpTypeMismatch)
+  end
+
+  # TODO: == >= > <= < && ||
 end

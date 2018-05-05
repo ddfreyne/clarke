@@ -122,35 +122,76 @@ module Clarke
         end
       end
 
-      def visit_op_add(expr)
-        super
-
+      def generic_visit_binop(expr)
         types = [expr.lhs, expr.rhs].map(&:type).uniq
         if [expr.lhs, expr.rhs].map(&:type).uniq.size != 1
-          # TODO: get a proper exception
-          raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
+          raise Clarke::Errors::BinOpTypeMismatch.new(expr)
         end
 
         # TODO: verify that op exists for this type
 
         expr.type = types.first
+      end
+
+      def visit_op_add(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_subtract(expr)
+        super
+        generic_visit_binop(expr)
       end
 
       def visit_op_multiply(expr)
         super
-
-        types = [expr.lhs, expr.rhs].map(&:type).uniq
-        if [expr.lhs, expr.rhs].map(&:type).uniq.size != 1
-          # TODO: get a proper exception
-          raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
-        end
-
-        # TODO: verify that op exists for this type
-
-        expr.type = types.first
+        generic_visit_binop(expr)
       end
 
-      # TODO: handle other op_
+      def visit_op_divide(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_exponentiate(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_eq(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_gt(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_lt(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_gte(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_lte(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_and(expr)
+        super
+        generic_visit_binop(expr)
+      end
+
+      def visit_op_or(expr)
+        super
+        generic_visit_binop(expr)
+      end
 
       def visit_ref(expr)
         super

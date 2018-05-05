@@ -56,6 +56,17 @@ module Clarke
       end
     end
 
+    class BinOpTypeMismatch < GenericError
+      def initialize(expr)
+        @expr = expr
+        super(message, expr: expr)
+      end
+
+      def message
+        "Left-hand side and right-hand side have distinct types (“#{@expr.lhs.type}” and “#{@expr.rhs.type}”, respectively)"
+      end
+    end
+
     class NameError < Error
       attr_reader :name
 
