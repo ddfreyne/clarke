@@ -300,6 +300,20 @@ describe 'Clarke' do
     expect('let true = 1').to fail_with(Clarke::Errors::SyntaxError)
   end
 
+  it 'accepts type annotations' do
+    expect("fun stuff(a) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("fun stuff(a: Array) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("fun stuff(a: any) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+
+    expect("let stuff = fun (a) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let stuff = fun (a: Array) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let stuff = fun (a: any) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+
+    expect("let stuff = (a) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let stuff = (a: Array) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+    expect("let stuff = (a: any) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
+  end
+
   it 'handles arrays' do
     init = Clarke::Interpreter::Init.instance
     array_sym = init.scope.resolve('Array')

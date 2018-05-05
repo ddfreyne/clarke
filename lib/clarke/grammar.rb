@@ -82,6 +82,7 @@ module Clarke
     RESERVED_WORD =
       describe(
         alt(
+          string('any'),
           string('class'),
           string('else'),
           string('false'),
@@ -149,6 +150,11 @@ module Clarke
         ),
         RESERVED_WORD,
       ).capture
+
+    TYPE_NAME = alt(
+      CLASS_NAME,
+      string('any'),
+    )
 
     REF =
       NAME.map do |data, success, old_pos|
@@ -274,6 +280,13 @@ module Clarke
             seq(
               WS0.ignore,
               VAR_NAME,
+              opt(
+                seq(
+                  char(':').ignore,
+                  WS1.ignore,
+                  TYPE_NAME,
+                ),
+              ),
               WS0.ignore,
             ).compact.first,
             char(',').ignore,
