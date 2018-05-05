@@ -192,7 +192,7 @@ module Clarke
 
     class IntegerLit < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :value, Types::Strict::Int
+      attribute :value, Types::Strict::Integer
 
       include WithScope
       include Printable
@@ -208,7 +208,7 @@ module Clarke
 
     class LambdaDef < Dry::Struct
       attribute :context, Dry::Types::Any
-      attribute :parameters, Types::Strict::Array.of(String)
+      attribute :parameters, Types::Strict::Array.of(Types::Strict::String)
       attribute :body, Dry::Types::Any
 
       include WithScope
