@@ -16,9 +16,6 @@ module Clarke
         string_type = Clarke::Sym::BuiltinType.new('string')
         void_type = Clarke::Sym::BuiltinType.new('void')
 
-        # FIXME: total hack
-        function_type = Clarke::Sym::Fun.new('function', 1, int_type)
-
         print = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new,
@@ -105,7 +102,6 @@ module Clarke
           .define(any_type)
           .define(auto_type)
           .define(bool_type)
-          .define(function_type)
           .define(int_type)
           .define(string_type)
           .define(void_type)
