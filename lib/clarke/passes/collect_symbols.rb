@@ -7,8 +7,9 @@ module Clarke
     class CollectSymbols < Clarke::Visitor
       attr_reader :scope
 
-      def initialize(initial_global_scope)
-        @scope = initial_global_scope
+      def initialize(global_scope)
+        @global_scope = global_scope
+        @scope = global_scope
       end
 
       def visit_block(expr)
@@ -18,12 +19,16 @@ module Clarke
       end
 
       def visit_class_def(expr)
-        define(Clarke::Sym::Class.new(expr.name))
+        class_sym = Clarke::Sym::Class.new(expr.name)
+        define(class_sym)
 
         push do
-          define(Clarke::Sym::Var.new('this'))
+          this_sym = Clarke::Sym::Var.new('this')
+          this_sym.type = Clarke::Sym::InstanceType.new(class_sym)
+          define(this_sym)
           super
           update_scope(expr)
+          update_scope(class_sym)
         end
       end
 
@@ -60,7 +65,9 @@ module Clarke
       end
 
       def visit_prop_decl(expr)
-        define(Clarke::Sym::Prop.new(expr.name))
+        sym = Clarke::Sym::Prop.new(expr.name)
+        sym.type = @global_scope.resolve('int') # FIXME: configure
+        define(sym)
       end
 
       def visit_expr(expr)
@@ -70,8 +77,8 @@ module Clarke
 
       private
 
-      def update_scope(expr)
-        expr.scope = @scope
+      def update_scope(thing)
+        thing.scope = @scope
       end
 
       def define(sym)

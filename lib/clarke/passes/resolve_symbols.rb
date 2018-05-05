@@ -51,7 +51,7 @@ module Clarke
         when Clarke::Sym::Fun
           expr.type = expr.base.type.ret_type
         else
-          raise Clarke::Errors::GenericError.new("unexpected type #{expr.base.type}", expr: expr)
+          raise Clarke::Errors::TypeError.new(expr.base.type, [Clarke::Sym::Class, Clarke::Sym::Fun], expr.base)
         end
 
         assert_typed(expr)
@@ -70,6 +70,34 @@ module Clarke
         expr.name_sym = expr.scope.resolve(expr.name)
         expr.name_sym.ret_type = expr.body.type
         expr.type = expr.name_sym
+        assert_typed(expr)
+      end
+
+      def visit_get_prop(expr)
+        super
+
+        assert_typed(expr.base)
+
+        klass =
+          case expr.base.type
+          when Clarke::Sym::InstanceType
+            expr.base.type.klass
+          when Clarke::Sym::Class
+            # FIXME: this is because expr.base.type.klass is erroneously set to Class rather than InstanceType
+            expr.base.type
+          else
+            raise Clarke::Errors::GenericError.new("can only get props of instances (not #{expr.base.type.inspect})", expr: expr)
+          end
+
+        thing = klass.scope.resolve(expr.name)
+        case thing
+        when Clarke::Sym::Fun
+          expr.type = thing
+        when Clarke::Sym::Prop
+          expr.type = thing.type
+        else
+          raise Clarke::Errors::NameError.new(expr.name)
+        end
         assert_typed(expr)
       end
 
@@ -110,6 +138,21 @@ module Clarke
         assert_typed(expr)
       end
 
+      def visit_op_multiply(expr)
+        super
+
+        types = [expr.lhs, expr.rhs].map(&:type).uniq
+        if [expr.lhs, expr.rhs].map(&:type).uniq.size != 1
+          # TODO get a proper exception
+          raise Clarke::Errors::GenericError.new("Left-hand side and right-hand side have distinct types (“#{expr.lhs.type}” and “#{expr.rhs.type}”, respectively)", expr: expr)
+        end
+
+        # TODO: verify that op exists for this type
+
+        expr.type = types.first
+        assert_typed(expr)
+      end
+
       # TODO: handle other op_
 
       def visit_ref(expr)
@@ -117,6 +160,26 @@ module Clarke
 
         expr.name_sym = expr.scope.resolve(expr.name)
         expr.type = expr.name_sym.type
+        assert_typed(expr)
+      end
+
+      def visit_prop_decl(expr)
+        super
+
+        # FIXME: name_sym needed?
+        expr.name_sym = expr.scope.resolve(expr.name)
+
+        expr.type = @global_scope.resolve('void')
+        assert_typed(expr)
+      end
+
+      def visit_set_prop(expr)
+        super
+
+        # FIXME: name_sym needed?
+        expr.name_sym = expr.base.type.klass.scope.resolve(expr.name)
+
+        expr.type = @global_scope.resolve('void')
         assert_typed(expr)
       end
 
@@ -145,9 +208,11 @@ module Clarke
       end
 
       def assert_typed(expr)
-        return if expr.type
-
-        raise Clarke::Errors::GenericError.new("could not type #{expr.inspect}", expr: expr)
+        if expr.type.nil?
+          raise Clarke::Errors::GenericError.new("could not type #{expr.inspect}", expr: expr)
+        elsif !expr.type.is_a?(Clarke::Sym::Type)
+          raise Clarke::Errors::GenericError.new("type is not a type #{expr.type.inspect} -- for #{expr.inspect}", expr: expr)
+        end
       end
     end
   end

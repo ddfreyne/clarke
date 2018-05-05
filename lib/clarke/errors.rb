@@ -18,7 +18,7 @@ module Clarke
         lines << "line #{ctx.from.line + 1}: #{message}"
         lines << ''
         lines << (ctx.input.lines[ctx.from.line] || '').rstrip
-        lines << "\e[31m" + ' ' * ctx.from.column + ('〰' * ((ctx.to.column - ctx.from.column) / 2)) + "\e[0m"
+        lines << "\e[31m" + ' ' * ctx.from.column + ('〰' * ((ctx.to.column - ctx.from.column + 1) / 2)) + "\e[0m"
         lines.join("\n")
       end
     end
@@ -75,7 +75,7 @@ module Clarke
       end
 
       def message
-        "expected #{@classes.map(&:describe).join(' or ')}, but got #{@val.describe}"
+        "expected #{@classes.map(&:inspect).join(' or ')}, but got #{@val.inspect}"
       end
     end
 

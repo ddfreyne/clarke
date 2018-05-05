@@ -87,6 +87,7 @@ module Clarke
           string('class'),
           string('else'),
           string('false'),
+          string('function'),
           string('fun'),
           string('if'),
           string('int'),
@@ -158,6 +159,7 @@ module Clarke
       CLASS_NAME,
       string('any').capture,
       string('bool').capture,
+      string('function').capture, # TODO: remove
       string('int').capture,
       string('void').capture,
     )

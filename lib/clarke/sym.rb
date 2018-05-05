@@ -51,6 +51,10 @@ module Clarke
       def initialize(klass)
         @klass = klass
       end
+
+      def inspect
+        "<InstanceType klass=#{klass.inspect}>"
+      end
     end
 
     class Var < Base
@@ -63,6 +67,15 @@ module Clarke
 
     class Class < Base
       include Type
+
+      attr_reader :members
+      attr_accessor :scope
+
+      def initialize(name)
+        super(name)
+
+        @members = []
+      end
     end
 
     class Fun < Base
@@ -80,6 +93,7 @@ module Clarke
     end
 
     class Prop < Base
+      include HasType
     end
   end
 end

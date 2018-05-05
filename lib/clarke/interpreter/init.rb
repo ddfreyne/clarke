@@ -9,6 +9,15 @@ module Clarke
       attr_reader :scope
 
       def initialize
+        any_type = Clarke::Sym::BuiltinType.new('any')
+        bool_type = Clarke::Sym::BuiltinType.new('bool')
+        int_type = Clarke::Sym::BuiltinType.new('int')
+        string_type = Clarke::Sym::BuiltinType.new('string')
+        void_type = Clarke::Sym::BuiltinType.new('void')
+
+        # FIXME: total hack
+        function_type = Clarke::Sym::Fun.new('function', 1, int_type)
+
         print = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
           scope: Clarke::Util::SymbolTable.new,
@@ -69,9 +78,9 @@ module Clarke
           Clarke::Util::SymbolTable
           .new
           .define(Clarke::Sym::Var.new('this'))
-          .define(Clarke::Sym::Var.new('init'))
-          .define(Clarke::Sym::Var.new('add'))
-          .define(Clarke::Sym::Var.new('each'))
+          .define(Clarke::Sym::Fun.new('init', 0, void_type))
+          .define(Clarke::Sym::Fun.new('add', 1, void_type))
+          .define(Clarke::Sym::Fun.new('each', 1, void_type))
 
         array_class_env =
           Clarke::Util::Env.new.tap do |env|
@@ -86,22 +95,20 @@ module Clarke
           scope: array_class_scope,
         )
 
-        any_type = Clarke::Sym::BuiltinType.new('any')
-        bool_type = Clarke::Sym::BuiltinType.new('bool')
-        int_type = Clarke::Sym::BuiltinType.new('int')
-        string_type = Clarke::Sym::BuiltinType.new('string')
-        void_type = Clarke::Sym::BuiltinType.new('void')
+        array_class_sym = Clarke::Sym::Class.new('Array')
+        array_class_sym.scope = array_class_scope
 
         @scope =
           Clarke::Util::SymbolTable
           .new
           .define(any_type)
           .define(bool_type)
+          .define(function_type)
           .define(int_type)
           .define(string_type)
           .define(void_type)
           .define(Clarke::Sym::Fun.new('print', 1, void_type))
-          .define(Clarke::Sym::Class.new('Array'))
+          .define(array_class_sym)
 
         @envish = {
           @scope.resolve('print') => print,

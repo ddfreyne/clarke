@@ -10,9 +10,9 @@ print(arr)
 arr.each((e) => print(e))
 print(arr.each((e) => print(e)))
 
-let map = (arr, fn) => {
+let map = (arr: Array, fn: function) => {
     let res = Array()
     arr.each((elem) => res.add(fn(elem)))
     res
 }
-print(map(arr, (e) => e * 2))
+print(map(arr, (e: int) => e * 2))
