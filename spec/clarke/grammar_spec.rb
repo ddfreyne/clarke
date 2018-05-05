@@ -219,6 +219,19 @@ describe 'Clarke' do
     expect('class Foo {}').to evaluate_to(instance_of(Clarke::Interpreter::Runtime::Class))
   end
 
+  it 'does not allow multiple functions of the same name' do
+    expect(<<~CODE).to fail_with(Clarke::Language::DoubleNameError)
+      class Foo {
+        fun a() {
+          1
+        }
+        fun a() {
+          2
+        }
+      }
+    CODE
+  end
+
   it 'prevents prop getters from returning non-member data' do
     expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Language::NameError)
   end

@@ -69,6 +69,20 @@ module Clarke
       end
     end
 
+    class DoubleNameError < Error
+      attr_reader :name
+
+      def initialize(name)
+        super(nil)
+
+        @name = name
+      end
+
+      def message
+        "#{@name}: already defined"
+      end
+    end
+
     class TypeError < Error
       attr_reader :val, :klass
 

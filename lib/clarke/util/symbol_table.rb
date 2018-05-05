@@ -11,6 +11,10 @@ module Clarke
       end
 
       def define(sym)
+        if @contents.key?(sym.name.to_s)
+          raise Clarke::Language::DoubleNameError.new(sym.name.to_s)
+        end
+
         self.class.new(
           parent: @parent,
           contents: @contents.merge(sym.name.to_s => sym),
