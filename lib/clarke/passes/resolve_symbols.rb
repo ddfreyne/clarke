@@ -74,15 +74,7 @@ module Clarke
       end
 
       def visit_fun_def(expr)
-        expr.params.each do |param|
-          param_sym = expr.scope.resolve(param.name)
-          type_sym = expr.scope.resolve(param.type_name)
-          param.type_sym = type_sym
-          param_sym.type = type_sym
-        end
-
         expr.name_sym = expr.scope.resolve(expr.name)
-
         expr.name_sym.ret_type = expr.scope.resolve(expr.ret_type_name)
 
         super
@@ -125,12 +117,6 @@ module Clarke
       def visit_lambda_def(expr)
         param_syms =
           expr.params.each { |param| expr.scope.resolve(param.name) }
-
-        expr.params.zip(param_syms).each do |(param, param_sym)|
-          type_sym = expr.scope.resolve(param.type_name)
-          param.type_sym = type_sym
-          param_sym.type = type_sym
-        end
 
         ret_type = expr.scope.resolve(expr.ret_type_name)
         expr.type = Clarke::Sym::Fun.new('(anon)', param_syms, ret_type)
