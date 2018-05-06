@@ -39,12 +39,6 @@ module Clarke
       end
     end
 
-    class NameAndType < Dry::Struct
-      attribute :name, Types::Strict::String
-      attribute :type_name, Types::Strict::String
-      attr_accessor :type_sym
-    end
-
     ###
 
     class AbstractNode < Dry::Struct
@@ -62,6 +56,24 @@ module Clarke
         @type = type
       end
     end
+
+    ###
+
+    class Param < AbstractNode
+      attribute :name, Types::Strict::String
+      attribute :type_name, Types::Strict::String
+      attr_accessor :type_sym
+
+      def ast_name
+        'Param'
+      end
+
+      def ast_children
+        [name, type_name]
+      end
+    end
+
+    ###
 
     class Assignment < AbstractNode
       attribute :var_name, Dry::Types::Any
@@ -142,7 +154,7 @@ module Clarke
 
     class FunDef < AbstractNode
       attribute :name, Dry::Types::Any
-      attribute :params, Types::Strict::Array.of(NameAndType)
+      attribute :params, Types::Strict::Array.of(Param)
       attribute :ret_type_name, Types::Strict::String
       attribute :body, Dry::Types::Any
       attr_accessor :name_sym
@@ -197,7 +209,7 @@ module Clarke
     end
 
     class LambdaDef < AbstractNode
-      attribute :params, Types::Strict::Array.of(NameAndType)
+      attribute :params, Types::Strict::Array.of(Param)
       attribute :ret_type_name, Types::Strict::String
       attribute :body, Dry::Types::Any
 

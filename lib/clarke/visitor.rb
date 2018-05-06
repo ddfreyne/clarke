@@ -28,6 +28,7 @@ module Clarke
     end
 
     def visit_fun_def(expr)
+      expr.params.each { |e| visit_expr(e) }
       visit_expr(expr.body)
       nil
     end
@@ -49,6 +50,7 @@ module Clarke
     end
 
     def visit_lambda_def(expr)
+      expr.params.each { |e| visit_expr(e) }
       visit_expr(expr.body)
       nil
     end
@@ -58,7 +60,7 @@ module Clarke
     end
 
     def visit_op_seq(expr)
-      expr.seq.map { |e| visit_expr(e) }
+      expr.seq.each { |e| visit_expr(e) }
       nil
     end
 
@@ -131,6 +133,10 @@ module Clarke
     def visit_op_or(expr)
       visit_expr(expr.lhs)
       visit_expr(expr.rhs)
+      nil
+    end
+
+    def visit_param(_expr)
       nil
     end
 
@@ -207,6 +213,8 @@ module Clarke
         visit_op_and(expr)
       when Clarke::AST::OpOr
         visit_op_or(expr)
+      when Clarke::AST::Param
+        visit_param(expr)
       when Clarke::AST::PropDecl
         visit_prop_decl(expr)
       when Clarke::AST::Block

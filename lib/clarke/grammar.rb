@@ -307,7 +307,10 @@ module Clarke
               VAR_NAME,
               TYPE_ANNOTATION,
               WS0.ignore,
-            ).compact.map { |data| Clarke::AST::NameAndType.new(name: data[0], type_name: data.fetch(1, 'any')) },
+            ).compact.map do |data, success, old_pos|
+              context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
+              Clarke::AST::Param.new(name: data[0], type_name: data.fetch(1, 'any'), context: context)
+            end,
             char(',').ignore,
           ).select_even,
         ).map { |d| d || [] },
