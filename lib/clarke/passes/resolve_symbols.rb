@@ -56,13 +56,20 @@ module Clarke
           end
 
         # Verify argument count
-        # TOD: verify argument types
         if param_syms.size != expr.arguments.size
           raise Clarke::Errors::ArgumentCountError.new(
             actual: expr.arguments.size,
             expected: param_syms.size,
           )
         end
+
+        # Verify argument types
+        missing = param_syms.select { |e| e.type.nil? || !e.type.concrete? }
+        if missing.any?
+          raise Clarke::Errors::UntypedArguments.new(missing)
+        end
+
+        # TODO: verify type (`any` is OK for now, `auto` is not, `void` is not, …)
       end
 
       def visit_fun_def(expr)

@@ -56,6 +56,18 @@ module Clarke
       end
     end
 
+    class UntypedArguments < GenericError
+      def initialize(missing)
+        @missing = missing
+
+        super(message)
+      end
+
+      def message
+        "The argument(s) #{@missing.map(&:name).join(', ')} have no types"
+      end
+    end
+
     class BinOpTypeMismatch < GenericError
       def initialize(expr)
         @expr = expr

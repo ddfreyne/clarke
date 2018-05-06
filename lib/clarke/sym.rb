@@ -49,6 +49,14 @@ module Clarke
       def auto?
         name == 'auto'
       end
+
+      def void?
+        name == 'void'
+      end
+
+      def concrete?
+        !auto? && !void?
+      end
     end
 
     class InstanceType

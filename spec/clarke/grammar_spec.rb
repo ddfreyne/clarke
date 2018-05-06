@@ -119,13 +119,13 @@ describe 'Clarke' do
   end
 
   it 'handles function definitions and function calls' do
-    expect("let x = fun (a,b) { a + b }\nx(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
+    expect("let x = fun (a: int, b: int) { a + b }\nx(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
     expect("let x = fun (a: int) { a + 3 }\nx(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
     expect("let x = fun () { 5 }\nx()").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
   end
 
   it 'handles arrow function definitions and function calls' do
-    expect("let x = (a, b) => a + b\nx(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
+    expect("let x = (a: int, b: int) => a + b\nx(2, 3)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
     expect("let x = (a: int) => a + 3\nx(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
     expect("let x = () => 5\nx()").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 5))
   end
@@ -168,13 +168,16 @@ describe 'Clarke' do
   end
 
   it 'handles non-anonymous function definitions' do
-    expect("fun sum(a, b) { a + b }\nsum(1, 2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
+    expect("fun sum(a: int, b: int) { a + b }\nsum(1, 2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
   end
 
   it 'handles complex function calls' do
-    expect("let sum = fun (a) { fun (b) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
-    expect("let sum = (a) => (b) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
-    expect { run('print(((a) => (b) => a + b)(1)(2))') }.to output("3\n").to_stdout
+    # FIXME: for this to work, we need a generic function type
+    # something like (type, …) => type
+
+    expect("let sum = fun (a: int) { fun (b: int) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
+    expect("let sum = (a: int) => (b: int) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
+    expect { run('print(((a: int) => (b: int) => a + b)(1)(2))') }.to output("3\n").to_stdout
   end
 
   it 'handles if' do
@@ -239,8 +242,8 @@ describe 'Clarke' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
       class Foo {
         prop a: string
-        fun init(a) { this.a = a }
-        fun oink() { this.a }
+        fun init(a: string): void { this.a = a }
+        fun oink(): void { this.a }
       }
       Foo("stuff").oink()
     CODE
