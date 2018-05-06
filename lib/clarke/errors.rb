@@ -79,6 +79,19 @@ module Clarke
       end
     end
 
+    class ArgumentTypeMismatch < GenericError
+      def initialize(arg_type, param_type)
+        @arg_type = arg_type
+        @param_type = param_type
+
+        super(message)
+      end
+
+      def message
+        "Argument has type #{@arg_type}, which is incompatible with parameter type #{@param_type}"
+      end
+    end
+
     class NameError < Error
       attr_reader :name
 

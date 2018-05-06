@@ -37,6 +37,17 @@ module Clarke
       def auto?
         false
       end
+
+      def any?
+        false
+      end
+
+      # FIXME: #void?
+      # FIXME: #concrete?
+
+      def match?(other_type)
+        self == other_type || other_type.any?
+      end
     end
 
     module HasType
@@ -48,6 +59,10 @@ module Clarke
 
       def auto?
         name == 'auto'
+      end
+
+      def any?
+        name == 'any'
       end
 
       def void?

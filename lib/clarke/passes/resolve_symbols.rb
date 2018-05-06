@@ -63,13 +63,21 @@ module Clarke
           )
         end
 
-        # Verify argument types
+        # Verify argument type presence
         missing = param_syms.select { |e| e.type.nil? || !e.type.concrete? }
         if missing.any?
           raise Clarke::Errors::UntypedArguments.new(missing)
         end
 
-        # TODO: verify type (`any` is OK for now, `auto` is not, `void` is not, …)
+        # Verify argument type
+        pairs = param_syms.zip(expr.arguments.map)
+        wrong_pairs = pairs.reject { |(param_sym, arg)| arg.type.match?(param_sym.type) }
+        if wrong_pairs.any?
+          raise Clarke::Errors::ArgumentTypeMismatch.new(
+            wrong_pairs.first[0],
+            wrong_pairs.first[1],
+          )
+        end
       end
 
       def visit_fun_def(expr)

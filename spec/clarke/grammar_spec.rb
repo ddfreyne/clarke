@@ -287,6 +287,10 @@ describe 'Clarke' do
     CODE
   end
 
+  it 'does not allow calling function with wrong args' do
+    expect("fun test(a: int) { a }\ntest(\"oink\")").to fail_with(Clarke::Errors::ArgumentTypeMismatch)
+  end
+
   it 'handles getters for props' do
     expect { run("class Foo {\n  prop a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().a)") }
       .to output("123\n").to_stdout
