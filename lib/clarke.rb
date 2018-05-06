@@ -25,7 +25,7 @@ module Clarke
     global_scope = pass.scope
 
     # Resolve explicit types
-    pass = Clarke::Passes::ResolveExplicitTypes.new
+    pass = Clarke::Passes::ResolveExplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
     # Resolve symbols

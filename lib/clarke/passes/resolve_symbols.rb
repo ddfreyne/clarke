@@ -27,14 +27,6 @@ module Clarke
         super
 
         expr.name_sym = expr.scope.resolve(expr.name)
-
-        expr.type = @global_scope.resolve('void')
-      end
-
-      def visit_false_lit(expr)
-        super
-
-        expr.type = @global_scope.resolve('bool')
       end
 
       def visit_fun_call(expr)
@@ -79,15 +71,11 @@ module Clarke
 
         super
 
-        expr.type = expr.name_sym
-
         # Tighten `auto` type
         ret_type = expr.name_sym.ret_type
         if ret_type.auto?
-          expr.type.ret_type = expr.body.type
+          expr.name_sym.ret_type = expr.body.type
         end
-
-        expr.type = @global_scope.resolve('void')
       end
 
       def visit_get_prop(expr)
@@ -106,12 +94,6 @@ module Clarke
         else
           raise Clarke::Errors::NameError.new(expr.name)
         end
-      end
-
-      def visit_integer_lit(expr)
-        super
-
-        expr.type = @global_scope.resolve('int')
       end
 
       def visit_lambda_def(expr)
@@ -205,32 +187,6 @@ module Clarke
 
         expr.name_sym = expr.scope.resolve(expr.name)
         expr.type = expr.name_sym.type
-      end
-
-      def visit_prop_decl(expr)
-        super
-
-        expr.type = @global_scope.resolve('void')
-      end
-
-      def visit_set_prop(expr)
-        super
-
-        # FIXME: check type
-
-        expr.type = @global_scope.resolve('void')
-      end
-
-      def visit_string_lit(expr)
-        super
-
-        expr.type = @global_scope.resolve('string')
-      end
-
-      def visit_true_lit(expr)
-        super
-
-        expr.type = @global_scope.resolve('bool')
       end
 
       def visit_var_def(expr)
