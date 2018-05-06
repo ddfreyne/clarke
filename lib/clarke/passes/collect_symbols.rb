@@ -32,27 +32,31 @@ module Clarke
       end
 
       def visit_fun_def(expr)
-        define(Clarke::Sym::Fun.new(expr.name, expr.params.size, nil))
+        param_syms = expr.params.map do |param|
+          Clarke::Sym::Var.new(param.name).tap do |sym|
+            sym.type = @scope.resolve(param.type_name)
+          end
+        end
+
+        define(Clarke::Sym::Fun.new(expr.name, param_syms, nil))
 
         push do
-          expr.params.each do |param|
-            define(Clarke::Sym::Var.new(param.name))
-          end
-
+          param_syms.each { |ps| define(ps) }
           super
-
           update_scope(expr)
         end
       end
 
       def visit_lambda_def(expr)
-        push do
-          expr.params.each do |param|
-            define(Clarke::Sym::Var.new(param.name))
+        param_syms = expr.params.map do |param|
+          Clarke::Sym::Var.new(param.name).tap do |sym|
+            sym.type = @scope.resolve(param.type_name)
           end
+        end
 
+        push do
+          param_syms.each { |ps| define(ps) }
           super
-
           update_scope(expr)
         end
       end

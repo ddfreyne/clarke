@@ -76,9 +76,9 @@ module Clarke
           Clarke::Util::SymbolTable
           .new
           .define(Clarke::Sym::Var.new('this'))
-          .define(Clarke::Sym::Fun.new('init', 0, void_type))
-          .define(Clarke::Sym::Fun.new('add', 1, void_type))
-          .define(Clarke::Sym::Fun.new('each', 1, void_type))
+          .define(Clarke::Sym::Fun.new('init', [], void_type))
+          .define(Clarke::Sym::Fun.new('add', [Clarke::Sym::Var.new(name: 'elem')], void_type))
+          .define(Clarke::Sym::Fun.new('each', [Clarke::Sym::Var.new(name: 'fn')], void_type))
 
         array_class_env =
           Clarke::Util::Env.new.tap do |env|
@@ -105,7 +105,7 @@ module Clarke
           .define(int_type)
           .define(string_type)
           .define(void_type)
-          .define(Clarke::Sym::Fun.new('print', 1, void_type))
+          .define(Clarke::Sym::Fun.new('print', [Clarke::Sym::Var.new(name: 'e')], void_type))
           .define(array_class_sym)
 
         @envish = {

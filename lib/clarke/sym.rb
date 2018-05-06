@@ -89,14 +89,18 @@ module Clarke
     class Fun < Base
       include Type
 
-      attr_reader :param_count
+      attr_reader :params
       attr_reader :ret_type
 
-      def initialize(name, param_count, ret_type)
+      def initialize(name, params, ret_type)
         super(name)
 
-        @param_count = param_count
+        @params = params
         @ret_type = ret_type
+      end
+
+      def param_count
+        @params.size
       end
 
       def inspect_hash

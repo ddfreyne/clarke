@@ -104,21 +104,23 @@ module Clarke
       end
 
       def visit_lambda_def(expr)
-        expr.params.each do |param|
-          param_sym = expr.scope.resolve(param.name)
+        param_syms =
+          expr.params.each { |param| expr.scope.resolve(param.name) }
+
+        expr.params.zip(param_syms).each do |(param, param_sym)|
           type_sym = expr.scope.resolve(param.type_name)
           param.type_sym = type_sym
           param_sym.type = type_sym
         end
 
         ret_type = expr.scope.resolve(expr.ret_type_name)
-        expr.type = Clarke::Sym::Fun.new('(anon)', expr.params.count, ret_type)
+        expr.type = Clarke::Sym::Fun.new('(anon)', param_syms, ret_type)
 
         super
 
         # Tighten `auto` type
         if ret_type.auto?
-          expr.type = Clarke::Sym::Fun.new('(anon)', expr.params.count, expr.body.type)
+          expr.type = Clarke::Sym::Fun.new('(anon)', param_syms, expr.body.type)
         end
       end
 
