@@ -33,9 +33,7 @@ module Clarke
 
       def visit_fun_def(expr)
         param_syms = expr.params.map do |param|
-          Clarke::Sym::Var.new(param.name).tap do |sym|
-            sym.type = @scope.resolve(param.type_name)
-          end
+          Clarke::Sym::Var.new(param.name)
         end
 
         define(Clarke::Sym::Fun.new(expr.name, param_syms, nil))
@@ -49,9 +47,7 @@ module Clarke
 
       def visit_lambda_def(expr)
         param_syms = expr.params.map do |param|
-          Clarke::Sym::Var.new(param.name).tap do |sym|
-            sym.type = @scope.resolve(param.type_name)
-          end
+          Clarke::Sym::Var.new(param.name)
         end
 
         push do
@@ -68,11 +64,7 @@ module Clarke
       end
 
       def visit_prop_decl(expr)
-        type = @scope.resolve(expr.type_name)
-        type = Clarke::Sym::InstanceType.new(type) if type.is_a?(Clarke::Sym::Class)
-
         sym = Clarke::Sym::Prop.new(expr.name)
-        sym.type = type
         define(sym)
       end
 
