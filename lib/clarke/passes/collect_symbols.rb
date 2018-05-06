@@ -8,7 +8,6 @@ module Clarke
       attr_reader :scope
 
       def initialize(global_scope)
-        @global_scope = global_scope
         @scope = global_scope
       end
 
