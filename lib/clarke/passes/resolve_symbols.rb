@@ -40,6 +40,7 @@ module Clarke
       def visit_fun_call(expr)
         super
 
+        # Set type
         expr.type =
           case expr.base.type
           when Clarke::Sym::Class
@@ -50,8 +51,26 @@ module Clarke
             raise Clarke::Errors::NotCallable.new(expr: expr.base)
           end
 
-        # Verify arguments (counts + types)
-        # TODO
+        # Get param syms
+        param_syms =
+          case expr.base.type
+          when Clarke::Sym::Class
+            fun = expr.base.type.scope.resolve('init', nil)
+            fun ? fun.params : []
+          when Clarke::Sym::Fun
+            expr.base.type.params
+          else
+            raise Clarke::Errors::NotCallable.new(expr: expr.base)
+          end
+
+        # Verify argument count
+        # TOD: verify argument types
+        if param_syms.size != expr.arguments.size
+          raise Clarke::Errors::ArgumentCountError.new(
+            actual: expr.arguments.size,
+            expected: param_syms.size,
+          )
+        end
       end
 
       def visit_fun_def(expr)

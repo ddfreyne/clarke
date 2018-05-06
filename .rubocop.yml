@@ -50,6 +50,9 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/SafeNavigation:
+  Enabled: false
+
 
 
 # ----- DISABLED (metrics) -----

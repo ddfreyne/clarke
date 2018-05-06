@@ -8,21 +8,11 @@ module Clarke
         @initial_env = initial_env
       end
 
-      def check_argument_count(function, arguments)
-        if arguments.count != function.params.size
-          raise Clarke::Errors::ArgumentCountError.new(
-            expected: function.params.size,
-            actual: arguments.count,
-          )
-        end
-      end
-
       def visit_fun_call(expr, env)
         base = visit_expr(expr.base, env)
         values = expr.arguments.map { |e| visit_expr(e, env) }
 
         if base.is_a?(Clarke::Interpreter::Runtime::Fun)
-          check_argument_count(base, values)
           base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
           instance = Clarke::Interpreter::Runtime::Instance.new(internal_state: {}, env: Clarke::Util::Env.new, klass: base)
@@ -30,7 +20,6 @@ module Clarke
           init_sym = base.scope.resolve('init', nil)
           init_fun = init_sym && base.env.fetch(init_sym)
           if init_fun
-            check_argument_count(init_fun, values)
             init_fun.bind(instance).call(values, self)
           end
 
