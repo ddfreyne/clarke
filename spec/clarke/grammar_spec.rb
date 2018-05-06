@@ -141,6 +141,22 @@ describe 'Clarke' do
     expect('(((1)))').to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
   end
 
+  it 'handles props with class type' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
+      class Oink {
+        prop a: int
+        fun init() { this.a = 123 }
+      }
+
+      class Squeal {
+        prop a: Oink
+        fun init() { this.a = Oink() }
+      }
+
+      Squeal().a.a
+    CODE
+  end
+
   it 'errors on wrong argument counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
     expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Errors::ArgumentCountError)

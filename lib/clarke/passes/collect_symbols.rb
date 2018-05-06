@@ -65,8 +65,11 @@ module Clarke
       end
 
       def visit_prop_decl(expr)
+        type = @scope.resolve(expr.type_name)
+        type = Clarke::Sym::InstanceType.new(type) if type.is_a?(Clarke::Sym::Class)
+
         sym = Clarke::Sym::Prop.new(expr.name)
-        sym.type = @global_scope.resolve(expr.type_name)
+        sym.type = type
         define(sym)
       end
 

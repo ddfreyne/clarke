@@ -230,7 +230,6 @@ module Clarke
         super
 
         expr.var_name_sym = expr.scope.resolve(expr.var_name)
-
         expr.var_name_sym.type = expr.expr.type
 
         expr.type = expr.expr.type
