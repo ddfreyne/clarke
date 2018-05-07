@@ -79,6 +79,17 @@ module Clarke
       end
     end
 
+    class IfTypeMismatch < GenericError
+      def initialize(expr)
+        @expr = expr
+        super(message, expr: expr)
+      end
+
+      def message
+        "True and false bodies have distinct types (“#{@expr.body_true.type}” and “#{@expr.body_false.type}”, respectively)"
+      end
+    end
+
     class ArgumentTypeMismatch < GenericError
       def initialize(arg_type, param_type)
         @arg_type = arg_type

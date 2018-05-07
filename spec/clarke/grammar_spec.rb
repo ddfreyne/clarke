@@ -342,15 +342,12 @@ describe 'Clarke' do
   end
 
   it 'accepts type annotations' do
-    expect("fun stuff(a) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("fun stuff(a: Array) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("fun stuff(a: any) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
 
-    expect("let stuff = fun (a) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("let stuff = fun (a: Array) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("let stuff = fun (a: any) { 1 }\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
 
-    expect("let stuff = (a) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("let stuff = (a: Array) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
     expect("let stuff = (a: any) => 1\n1").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
   end
@@ -375,10 +372,10 @@ describe 'Clarke' do
     expect("let x = Array()\nx.add(1)\nx")
       .to evaluate_to(a_clarke_array_containing([Clarke::Interpreter::Runtime::Integer.new(value: 1)]))
 
-    expect("let x = Array()\nx.add(1)\nx.each((a) => print(a))")
+    expect("let x = Array()\nx.add(1)\nx.each((a: any) => print(a))")
       .to evaluate_to(Clarke::Interpreter::Runtime::Null.instance)
 
-    expect { run("let x = Array()\nx.add(1)\nx.each((a) => print(a))") }
+    expect { run("let x = Array()\nx.add(1)\nx.each((a: any) => print(a))") }
       .to output("1\n").to_stdout
   end
 end

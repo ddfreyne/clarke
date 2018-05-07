@@ -111,6 +111,17 @@ module Clarke
         end
       end
 
+      def visit_if(expr)
+        super
+
+        types = [expr.body_true, expr.body_false].map(&:type)
+        if types.uniq.size != 1
+          raise Clarke::Errors::IfTypeMismatch.new(expr)
+        end
+
+        expr.type = types.first
+      end
+
       def visit_lambda_def(expr)
         param_syms =
           expr.params.each { |param| expr.scope.resolve(param.name) }

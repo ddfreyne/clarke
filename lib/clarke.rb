@@ -33,9 +33,8 @@ module Clarke
     pass.visit_exprs(exprs)
 
     # Typecheck
-    # TODO: enable
-    # pass = Clarke::Passes::Typecheck.new
-    # pass.visit_exprs(exprs)
+    pass = Clarke::Passes::Typecheck.new
+    pass.visit_exprs(exprs)
 
     # Debug
     exprs.each { |e| p e } if verbose
