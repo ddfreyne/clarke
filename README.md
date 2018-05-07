@@ -121,3 +121,4 @@ In no particular order:
   * In return value
   * In let
 * Modules
+  * Require all exported functions to be explicitly typed
