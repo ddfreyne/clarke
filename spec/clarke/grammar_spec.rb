@@ -284,6 +284,24 @@ describe 'Clarke' do
     CODE
   end
 
+  it 'disallows defining fun with same name as prop' do
+    expect(<<~CODE).to fail_with(Clarke::Errors::DoubleNameError)
+      class Foo {
+        prop a: int
+        fun a(): int { 123 }
+      }
+    CODE
+  end
+
+  it 'disallows defining prop with same name as fun' do
+    expect(<<~CODE).to fail_with(Clarke::Errors::DoubleNameError)
+      class Foo {
+        fun a(): int { 123 }
+        prop a: int
+      }
+    CODE
+  end
+
   it 'does not allow calling function with wrong args' do
     expect("fun test(a: int) { a }\ntest(\"oink\")").to fail_with(Clarke::Errors::ArgumentTypeMismatch)
   end
