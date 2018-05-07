@@ -114,11 +114,6 @@ In no particular order:
   * Sets
   * Enumerable mixin
 * Iterators
-* Classes (without inheritance)
 * If without else
-* Static types
-  * In arguments (x int, y int ; x, y int)
-  * In return value
-  * In let
 * Modules
   * Require all exported functions to be explicitly typed
