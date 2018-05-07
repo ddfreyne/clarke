@@ -5,12 +5,7 @@ module Clarke
     class Typecheck < Clarke::Visitor
       def visit_expr(expr)
         super
-
-        case expr
-        when Clarke::AST::Param
-        else
-          assert_typed(expr)
-        end
+        assert_typed(expr)
       end
 
       def assert_typed(thing, expr: thing)

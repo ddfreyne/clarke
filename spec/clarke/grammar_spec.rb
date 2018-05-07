@@ -172,9 +172,6 @@ describe 'Clarke' do
   end
 
   it 'handles complex function calls' do
-    # FIXME: for this to work, we need a generic function type
-    # something like (type, …) => type
-
     expect("let sum = fun (a: int) { fun (b: int) { a + b } }\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
     expect("let sum = (a: int) => (b: int) => a + b\nsum(1)(2)").to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 3))
     expect { run('print(((a: int) => (b: int) => a + b)(1)(2))') }.to output("3\n").to_stdout

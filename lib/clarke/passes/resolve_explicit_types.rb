@@ -18,14 +18,9 @@ module Clarke
       end
 
       def visit_fun_def(expr)
-        expr.params.each do |param|
-          sym = expr.scope.resolve(param.name)
-          sym.type = expr.scope.resolve(param.type_name)
-        end
+        super
 
         expr.type = @global_scope.resolve('void')
-
-        super
       end
 
       def visit_integer_lit(expr)
@@ -33,13 +28,12 @@ module Clarke
         super
       end
 
-      def visit_lambda_def(expr)
-        expr.params.each do |param|
-          sym = expr.scope.resolve(param.name)
-          sym.type = expr.scope.resolve(param.type_name)
-        end
-
+      def visit_param(expr)
         super
+
+        sym = expr.scope.resolve(expr.name)
+        sym.type = expr.scope.resolve(expr.type_name)
+        expr.type = sym.type
       end
 
       def visit_prop_decl(expr)

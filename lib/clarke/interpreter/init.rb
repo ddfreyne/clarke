@@ -82,14 +82,14 @@ module Clarke
               'add',
               [Clarke::Sym::Var.new('elem').tap { |s| s.type = any_type }],
               void_type,
-            )
+            ),
           )
           .define(
             Clarke::Sym::Fun.new(
               'each',
               [Clarke::Sym::Var.new('fn').tap { |s| s.type = any_type }],
               void_type,
-            )
+            ),
           )
 
         array_class_env =
