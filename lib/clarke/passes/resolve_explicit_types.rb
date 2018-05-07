@@ -18,9 +18,8 @@ module Clarke
       end
 
       def visit_fun_def(expr)
-        super
-
         expr.type = @global_scope.resolve('void')
+        super
       end
 
       def visit_integer_lit(expr)
@@ -37,8 +36,6 @@ module Clarke
       end
 
       def visit_prop_decl(expr)
-        super
-
         type = expr.scope.resolve(expr.type_name)
         type = Clarke::Sym::InstanceType.new(type) if type.is_a?(Clarke::Sym::Class)
 
@@ -46,6 +43,8 @@ module Clarke
         sym.type = type
 
         expr.type = @global_scope.resolve('void')
+
+        super
       end
 
       def visit_set_prop(expr)
