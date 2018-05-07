@@ -28,8 +28,8 @@ module Clarke
     pass = Clarke::Passes::ResolveExplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
-    # Resolve symbols
-    pass = Clarke::Passes::ResolveSymbols.new(global_scope)
+    # Resolve implicit types
+    pass = Clarke::Passes::ResolveImplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
     # Debug
@@ -80,7 +80,7 @@ end
 
 require_relative 'clarke/passes/collect_symbols'
 require_relative 'clarke/passes/resolve_explicit_types'
-require_relative 'clarke/passes/resolve_symbols'
+require_relative 'clarke/passes/resolve_implicit_types'
 require_relative 'clarke/passes/simplify_op_seq'
 require_relative 'clarke/passes/lift_let_lambdas'
 require_relative 'clarke/passes/verify_typed'

@@ -2,7 +2,7 @@
 
 module Clarke
   module Passes
-    class ResolveSymbols < Clarke::Visitor
+    class ResolveImplicitTypes < Clarke::Visitor
       def initialize(global_scope)
         @global_scope = global_scope
       end
