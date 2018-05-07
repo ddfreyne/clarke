@@ -159,10 +159,10 @@ describe 'Clarke' do
 
   it 'errors on wrong argument counts' do
     expect("let x = fun () { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx()").to fail_with(Clarke::Errors::ArgumentCountError)
-    expect("let x = fun (a) { 5 }\nx(1, 2)").to fail_with(Clarke::Errors::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
-    expect("let x = fun (a, b) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a: int) { 5 }\nx()").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a: int) { 5 }\nx(1, 2)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a: int, b: int) { 5 }\nx(1)").to fail_with(Clarke::Errors::ArgumentCountError)
+    expect("let x = fun (a: int, b: int) { 5 }\nx(1, 2, 3)").to fail_with(Clarke::Errors::ArgumentCountError)
     expect('Array(1)').to fail_with(Clarke::Errors::ArgumentCountError)
     expect('Array(1, 2)').to fail_with(Clarke::Errors::ArgumentCountError)
   end

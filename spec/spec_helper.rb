@@ -124,9 +124,8 @@ end
 
 RSpec::Matchers.define :fail_with do |expected|
   match do |input|
-    res = error_for(input)
-    @actual = res
-    res.is_a?(expected)
+    @actual = error_for(input)
+    @actual.is_a?(expected)
   end
 
   def error_for(input)
@@ -138,7 +137,7 @@ RSpec::Matchers.define :fail_with do |expected|
 
   failure_message do |input|
     if @actual
-      "expected #{input.inspect} to fail, but with #{expected} rather than #{@actual.inspect}"
+      "expected #{input.inspect} to fail, but with #{expected} rather than #{@actual.class} (“#{@actual.message}”)"
     else
       "expected #{input.inspect} to fail with #{expected}, but it didn’t"
     end
@@ -148,7 +147,7 @@ RSpec::Matchers.define :fail_with do |expected|
     if @actual
       "expected #{input.inspect} not to fail with #{expected}, but it did"
     else
-      "expected #{input.inspect} not to fail, but with #{expected} rather than #{@actual.inspect}"
+      "expected #{input.inspect} not to fail, but with #{expected} rather than #{@actual.class} (“#{@actual.message}”)"
     end
   end
 end
