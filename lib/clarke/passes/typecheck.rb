@@ -2,7 +2,7 @@
 
 module Clarke
   module Passes
-    class VerifyTyped < Clarke::Visitor
+    class Typecheck < Clarke::Visitor
       def visit_expr(expr)
         super
         assert_typed(expr)

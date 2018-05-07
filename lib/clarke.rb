@@ -32,6 +32,11 @@ module Clarke
     pass = Clarke::Passes::ResolveImplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
+    # Typecheck
+    # TODO: enable
+    # pass = Clarke::Passes::Typecheck.new
+    # pass.visit_exprs(exprs)
+
     # Debug
     exprs.each { |e| p e } if verbose
 
@@ -83,7 +88,7 @@ require_relative 'clarke/passes/resolve_explicit_types'
 require_relative 'clarke/passes/resolve_implicit_types'
 require_relative 'clarke/passes/simplify_op_seq'
 require_relative 'clarke/passes/lift_let_lambdas'
-require_relative 'clarke/passes/verify_typed'
+require_relative 'clarke/passes/typecheck'
 
 module Clarke
   module Interpreter
