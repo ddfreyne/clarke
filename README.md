@@ -92,6 +92,8 @@ if (b > 0) {
 ## To do
 
 * Allow mutually recursive functions
+* Avoid `any`-typed expressions
+  * Introduce well-typed function type: (type, …) => type
 
 ## Ideas
 
