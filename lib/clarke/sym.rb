@@ -99,14 +99,7 @@ module Clarke
     class Class < Base
       include Type
 
-      attr_reader :members
       attr_accessor :scope
-
-      def initialize(name)
-        super(name)
-
-        @members = []
-      end
     end
 
     class Fun < Base
