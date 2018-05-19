@@ -33,10 +33,6 @@ module Clarke
 
     module WithScope
       attr_accessor :scope
-
-      def replace_scope(scope)
-        self.scope = scope
-      end
     end
 
     ###
