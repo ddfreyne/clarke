@@ -14,9 +14,9 @@ module Clarke
     exprs = res.data
 
     # Simplify
-    exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
-    exprs = Clarke::Passes::SimplifyOpSeq.new.visit_exprs(exprs)
-    exprs = Clarke::Passes::LiftLetLambdas.new.visit_exprs(exprs)
+    exprs = Clarke::Parser::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Parser::SimplifyOpSeq.new.visit_exprs(exprs)
+    exprs = Clarke::Parser::LiftLetLambdas.new.visit_exprs(exprs)
 
     # Collect symbols
     init = Clarke::Interpreter::Init.instance
@@ -73,10 +73,12 @@ require_relative 'clarke/ast'
 require_relative 'clarke/sym'
 require_relative 'clarke/errors'
 
-require_relative 'clarke/parser/grammar'
-
 require_relative 'clarke/common/visitor'
 require_relative 'clarke/common/transformer'
+
+require_relative 'clarke/parser/grammar'
+require_relative 'clarke/parser/simplify_op_seq'
+require_relative 'clarke/parser/lift_let_lambdas'
 
 module Clarke
   module Passes
@@ -86,8 +88,6 @@ end
 require_relative 'clarke/passes/collect_symbols'
 require_relative 'clarke/passes/resolve_explicit_types'
 require_relative 'clarke/passes/resolve_implicit_types'
-require_relative 'clarke/passes/simplify_op_seq'
-require_relative 'clarke/passes/lift_let_lambdas'
 require_relative 'clarke/passes/typecheck'
 
 module Clarke

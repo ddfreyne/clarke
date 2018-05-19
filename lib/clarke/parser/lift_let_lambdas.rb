@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Passes
+  module Parser
     # Convert
     #
     #   let x = fun(…) { … }

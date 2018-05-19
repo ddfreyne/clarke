@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Passes
+  module Parser
     # Replaces OpSeq nodes with binary Op* nodes.
     class SimplifyOpSeq < Clarke::Transformer
       PRECEDENCES = {
