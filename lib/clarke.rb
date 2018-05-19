@@ -20,20 +20,20 @@ module Clarke
 
     # Collect symbols
     init = Clarke::Interpreter::Init.instance
-    pass = Clarke::Passes::CollectSymbols.new(init.scope)
+    pass = Clarke::Sema::CollectSymbols.new(init.scope)
     pass.visit_exprs(exprs)
     global_scope = pass.scope
 
     # Resolve explicit types
-    pass = Clarke::Passes::ResolveExplicitTypes.new(global_scope)
+    pass = Clarke::Sema::ResolveExplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
     # Resolve implicit types
-    pass = Clarke::Passes::ResolveImplicitTypes.new(global_scope)
+    pass = Clarke::Sema::ResolveImplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
     # Typecheck
-    pass = Clarke::Passes::Typecheck.new
+    pass = Clarke::Sema::Typecheck.new
     pass.visit_exprs(exprs)
 
     # Debug
@@ -80,15 +80,10 @@ require_relative 'clarke/parser/grammar'
 require_relative 'clarke/parser/simplify_op_seq'
 require_relative 'clarke/parser/lift_let_lambdas'
 
-module Clarke
-  module Passes
-  end
-end
-
-require_relative 'clarke/passes/collect_symbols'
-require_relative 'clarke/passes/resolve_explicit_types'
-require_relative 'clarke/passes/resolve_implicit_types'
-require_relative 'clarke/passes/typecheck'
+require_relative 'clarke/sema/collect_symbols'
+require_relative 'clarke/sema/resolve_explicit_types'
+require_relative 'clarke/sema/resolve_implicit_types'
+require_relative 'clarke/sema/typecheck'
 
 module Clarke
   module Interpreter

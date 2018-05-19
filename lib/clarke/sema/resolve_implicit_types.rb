@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Passes
+  module Sema
     class ResolveImplicitTypes < Clarke::Visitor
       def initialize(global_scope)
         @global_scope = global_scope

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Passes
+  module Sema
     class Typecheck < Clarke::Visitor
       def visit_expr(expr)
         super

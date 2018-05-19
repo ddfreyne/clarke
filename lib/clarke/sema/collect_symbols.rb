@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Clarke
-  module Passes
+  module Sema
     # After this pass, each expression will have a `scope` (SymbolTable
     # instance).
     class CollectSymbols < Clarke::Visitor
