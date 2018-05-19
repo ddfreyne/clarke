@@ -74,8 +74,8 @@ require_relative 'clarke/ast'
 require_relative 'clarke/sym'
 require_relative 'clarke/errors'
 
-require_relative 'clarke/visitor'
-require_relative 'clarke/transformer'
+require_relative 'clarke/common/visitor'
+require_relative 'clarke/common/transformer'
 
 module Clarke
   module Passes
