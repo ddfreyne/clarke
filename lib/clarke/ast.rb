@@ -169,12 +169,12 @@ module Clarke
       end
     end
 
-    class GetProp < AbstractNode
+    class Getter < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
 
       def ast_name
-        'GetProp'
+        'Getter'
       end
 
       def ast_children
@@ -222,13 +222,13 @@ module Clarke
       end
     end
 
-    class SetProp < AbstractNode
+    class Setter < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
       attribute :value, Dry::Types::Any
 
       def ast_name
-        'SetProp'
+        'Setter'
       end
 
       def ast_children
@@ -354,12 +354,12 @@ module Clarke
       end
     end
 
-    class PropDecl < AbstractNode
+    class IvarDecl < AbstractNode
       attribute :name, Dry::Types::Any
       attribute :type_name, Dry::Types::Any
 
       def ast_name
-        'PropDecl'
+        'IvarDecl'
       end
 
       def ast_children

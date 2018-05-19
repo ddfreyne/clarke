@@ -144,12 +144,12 @@ describe 'Clarke' do
   it 'handles props with class type' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
       class Oink {
-        prop a: int
+        ivar a: int
         fun init() { this.a = 123 }
       }
 
       class Squeal {
-        prop a: Oink
+        ivar a: Oink
         fun init() { this.a = Oink() }
       }
 
@@ -238,7 +238,7 @@ describe 'Clarke' do
   it 'handles classes with initializer' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::String.new(value: 'stuff'))
       class Foo {
-        prop a: string
+        ivar a: string
         fun init(a: string): void { this.a = a }
         fun oink(): void { this.a }
       }
@@ -266,7 +266,7 @@ describe 'Clarke' do
   it 'can set defined props' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
       class Foo {
-        prop a: int
+        ivar a: int
       }
       let f = Foo()
       f.a = 123
@@ -287,7 +287,7 @@ describe 'Clarke' do
   it 'disallows defining fun with same name as prop' do
     expect(<<~CODE).to fail_with(Clarke::Errors::DoubleNameError)
       class Foo {
-        prop a: int
+        ivar a: int
         fun a(): int { 123 }
       }
     CODE
@@ -297,7 +297,7 @@ describe 'Clarke' do
     expect(<<~CODE).to fail_with(Clarke::Errors::DoubleNameError)
       class Foo {
         fun a(): int { 123 }
-        prop a: int
+        ivar a: int
       }
     CODE
   end
@@ -307,16 +307,16 @@ describe 'Clarke' do
   end
 
   it 'handles getters for props' do
-    expect { run("class Foo {\n  prop a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().a)") }
+    expect { run("class Foo {\n  ivar a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().a)") }
       .to output("123\n").to_stdout
   end
 
   it 'handles getters for functions' do
-    expect { run("class Foo {\n  prop a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().init)") }
+    expect { run("class Foo {\n  ivar a: int\n  fun init() { this.a = 123 }\n}\nprint(Foo().init)") }
       .to output("<function>\n").to_stdout
   end
 
-  it 'prevents prop getters from returning non-member data' do
+  it 'prevents ivar getters from returning non-member data' do
     expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Errors::NameError)
   end
 

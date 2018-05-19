@@ -33,7 +33,7 @@ module Clarke
       nil
     end
 
-    def visit_get_prop(expr)
+    def visit_getter(expr)
       visit_expr(expr.base)
       nil
     end
@@ -140,7 +140,7 @@ module Clarke
       nil
     end
 
-    def visit_prop_decl(_expr)
+    def visit_ivar_decl(_expr)
       nil
     end
 
@@ -148,7 +148,7 @@ module Clarke
       nil
     end
 
-    def visit_set_prop(expr)
+    def visit_setter(expr)
       visit_expr(expr.base)
       visit_expr(expr.value)
       nil
@@ -177,8 +177,8 @@ module Clarke
         visit_false_lit(expr)
       when Clarke::AST::FunCall
         visit_fun_call(expr)
-      when Clarke::AST::GetProp
-        visit_get_prop(expr)
+      when Clarke::AST::Getter
+        visit_getter(expr)
       when Clarke::AST::If
         visit_if(expr)
       when Clarke::AST::IntegerLit
@@ -215,8 +215,8 @@ module Clarke
         visit_op_or(expr)
       when Clarke::AST::Param
         visit_param(expr)
-      when Clarke::AST::PropDecl
-        visit_prop_decl(expr)
+      when Clarke::AST::IvarDecl
+        visit_ivar_decl(expr)
       when Clarke::AST::Block
         visit_block(expr)
       when Clarke::AST::StringLit
@@ -229,8 +229,8 @@ module Clarke
         visit_class_def(expr)
       when Clarke::AST::FunDef
         visit_fun_def(expr)
-      when Clarke::AST::SetProp
-        visit_set_prop(expr)
+      when Clarke::AST::Setter
+        visit_setter(expr)
       else
         raise ArgumentError, "don’t know how to handle #{expr.inspect}"
       end

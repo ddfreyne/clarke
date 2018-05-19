@@ -56,7 +56,7 @@ module Clarke
         end
       end
 
-      def visit_get_prop(expr)
+      def visit_getter(expr)
         super
 
         unless expr.base.type.is_a?(Clarke::Sym::InstanceType)

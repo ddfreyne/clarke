@@ -63,7 +63,7 @@ module Clarke
         super
       end
 
-      def visit_prop_decl(expr)
+      def visit_ivar_decl(expr)
         sym = Clarke::Sym::Prop.new(expr.name)
         define(sym)
       end

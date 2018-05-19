@@ -203,7 +203,7 @@ module Clarke
       seq(
         char('.').ignore,
         NAME,
-      ).compact.first.map { |d| [:prop, d] }
+      ).compact.first.map { |d| [:ivar, d] }
 
     EXT_SEQ =
       seq(
@@ -220,8 +220,8 @@ module Clarke
           case ext[0]
           when :call
             Clarke::AST::FunCall.new(base: base, arguments: ext[1], context: context)
-          when :prop
-            Clarke::AST::GetProp.new(base: base, name: ext[1], context: context)
+          when :ivar
+            Clarke::AST::Getter.new(base: base, name: ext[1], context: context)
           end
         end
       end
@@ -381,13 +381,13 @@ module Clarke
 
     PROP_DECL =
       seq(
-        string('prop').ignore,
+        string('ivar').ignore,
         WS1.ignore,
         VAR_NAME,
         TYPE_ANNOTATION,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::PropDecl.new(name: data[0], type_name: data[1], context: context)
+        Clarke::AST::IvarDecl.new(name: data[0], type_name: data[1], context: context)
       end
 
     CLASS_BODY_STMT =
@@ -487,7 +487,7 @@ module Clarke
         EXPR,
       ).compact.map do |data, success, old_pos|
         context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-        Clarke::AST::SetProp.new(base: data[0], name: data[1], value: data[2], context: context)
+        Clarke::AST::Setter.new(base: data[0], name: data[1], value: data[2], context: context)
       end
 
     STATEMENT =

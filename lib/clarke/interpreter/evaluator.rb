@@ -32,7 +32,7 @@ module Clarke
         end
       end
 
-      def visit_get_prop(expr, env)
+      def visit_getter(expr, env)
         base = visit_expr(expr.base, env)
         name = expr.name.to_sym
 
@@ -157,9 +157,9 @@ module Clarke
         env[expr.name_sym] = fun
       end
 
-      def visit_prop_decl(_expr, _env); end
+      def visit_ivar_decl(_expr, _env); end
 
-      def visit_set_prop(expr, env)
+      def visit_setter(expr, env)
         base_value = visit_expr(expr.base, env)
 
         unless base_value.is_a?(Clarke::Interpreter::Runtime::Instance)
@@ -188,8 +188,8 @@ module Clarke
           Clarke::Interpreter::Runtime::String.new(value: expr.value)
         when Clarke::AST::FunCall
           visit_fun_call(expr, env)
-        when Clarke::AST::GetProp
-          visit_get_prop(expr, env)
+        when Clarke::AST::Getter
+          visit_getter(expr, env)
         when Clarke::AST::Ref
           visit_ref(expr, env)
         when Clarke::AST::VarDef
@@ -224,16 +224,16 @@ module Clarke
           visit_op_and(expr, env)
         when Clarke::AST::OpOr
           visit_op_or(expr, env)
-        when Clarke::AST::PropDecl
-          visit_prop_decl(expr, env)
+        when Clarke::AST::IvarDecl
+          visit_ivar_decl(expr, env)
         when Clarke::AST::LambdaDef
           visit_lambda_def(expr, env)
         when Clarke::AST::ClassDef
           visit_class_def(expr, env)
         when Clarke::AST::FunDef
           visit_fun_def(expr, env)
-        when Clarke::AST::SetProp
-          visit_set_prop(expr, env)
+        when Clarke::AST::Setter
+          visit_setter(expr, env)
         else
           raise ArgumentError, "don’t know how to handle #{expr.inspect}"
         end

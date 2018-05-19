@@ -35,7 +35,7 @@ module Clarke
         expr.type = sym.type
       end
 
-      def visit_prop_decl(expr)
+      def visit_ivar_decl(expr)
         type = expr.scope.resolve(expr.type_name)
         type = Clarke::Sym::InstanceType.new(type) if type.is_a?(Clarke::Sym::Class)
 
@@ -47,7 +47,7 @@ module Clarke
         super
       end
 
-      def visit_set_prop(expr)
+      def visit_setter(expr)
         expr.type = @global_scope.resolve('void')
         super
       end
