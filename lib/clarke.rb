@@ -7,7 +7,7 @@ require 'singleton'
 module Clarke
   def self.run(code, mode: :eval, verbose:)
     # Parse
-    res = Clarke::Grammar::PROGRAM.apply(code)
+    res = Clarke::Parser::Grammar::PROGRAM.apply(code)
     if res.is_a?(DParse::Failure)
       raise Clarke::Errors::SyntaxError.new(res.pretty_message)
     end
@@ -69,10 +69,11 @@ require_relative 'clarke/util/num2string'
 require_relative 'clarke/util/shunting_yard'
 require_relative 'clarke/util/symbol_table'
 
-require_relative 'clarke/grammar'
 require_relative 'clarke/ast'
 require_relative 'clarke/sym'
 require_relative 'clarke/errors'
+
+require_relative 'clarke/parser/grammar'
 
 require_relative 'clarke/common/visitor'
 require_relative 'clarke/common/transformer'
