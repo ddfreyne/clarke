@@ -59,11 +59,13 @@ module Clarke
       def visit_getter(expr)
         super
 
-        unless expr.base.type.is_a?(Clarke::Sym::InstanceType)
+        base_type = expr.base.type
+        unless base_type.is_a?(Clarke::Sym::InstanceType)
           raise Clarke::Errors::NotGettable.new(expr: expr.base)
         end
 
-        thing = expr.base.type.klass.scope.resolve(expr.name)
+        class_sym = base_type.klass
+        thing = class_sym.scope.resolve(expr.name)
         case thing
         when Clarke::Sym::Fun
           expr.type = thing
