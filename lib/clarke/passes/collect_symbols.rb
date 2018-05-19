@@ -64,7 +64,7 @@ module Clarke
       end
 
       def visit_ivar_decl(expr)
-        sym = Clarke::Sym::Prop.new(expr.name)
+        sym = Clarke::Sym::Ivar.new(expr.name)
         define(sym)
       end
 

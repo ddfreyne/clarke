@@ -67,7 +67,7 @@ module Clarke
         case thing
         when Clarke::Sym::Fun
           expr.type = thing
-        when Clarke::Sym::Prop
+        when Clarke::Sym::Ivar
           expr.type = thing.type
         else
           raise Clarke::Errors::NameError.new(expr.name)

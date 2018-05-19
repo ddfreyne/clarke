@@ -136,7 +136,7 @@ module Clarke
       end
     end
 
-    class Prop < Base
+    class Ivar < Base
       include HasType
     end
   end
