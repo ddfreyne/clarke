@@ -94,6 +94,7 @@ if (b > 0) {
 * Allow mutually recursive functions
 * Avoid `any`-typed expressions
   * Introduce well-typed function type: (type, …) => type
+* Initialize all ivars
 
 ## Ideas
 
