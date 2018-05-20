@@ -200,7 +200,7 @@ module Clarke
       CALL_EXT =
         ARG_LIST.map { |d| [:call, d] }
 
-      GET_PROP_EXT =
+      GET_IVAR_EXT =
         seq(
           char('.').ignore,
           NAME,
@@ -212,7 +212,7 @@ module Clarke
           repeat1(
             alt(
               CALL_EXT,
-              GET_PROP_EXT,
+              GET_IVAR_EXT,
             ),
           ),
         ).compact.map do |data, success, old_pos|
@@ -380,7 +380,7 @@ module Clarke
           )
         end
 
-      PROP_DECL =
+      IVAR_DECL =
         seq(
           string('ivar').ignore,
           WS1.ignore,
@@ -394,7 +394,7 @@ module Clarke
       CLASS_BODY_STMT =
         alt(
           FUN_DEF,
-          PROP_DECL,
+          IVAR_DECL,
         )
 
       CLASS_DEF =
