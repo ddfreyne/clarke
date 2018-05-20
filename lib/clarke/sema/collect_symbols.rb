@@ -12,7 +12,7 @@ module Clarke
       end
 
       def visit_block(expr)
-        push do
+        push_local do
           super
         end
       end
@@ -21,7 +21,8 @@ module Clarke
         class_sym = Clarke::Sym::Class.new(expr.name)
         define(class_sym)
 
-        push do
+        # push_local do
+        push_class(class_sym) do
           this_sym = Clarke::Sym::Var.new('this')
           this_sym.type = Clarke::Sym::InstanceType.new(class_sym)
           define(this_sym)
@@ -38,7 +39,7 @@ module Clarke
 
         define(Clarke::Sym::Fun.new(expr.name, param_syms, nil))
 
-        push do
+        push_local do
           param_syms.each { |ps| define(ps) }
           super
           update_scope(expr)
@@ -50,7 +51,7 @@ module Clarke
           Clarke::Sym::Var.new(param.name)
         end
 
-        push do
+        push_local do
           param_syms.each { |ps| define(ps) }
           super
           update_scope(expr)
@@ -83,9 +84,17 @@ module Clarke
         @scope = @scope.define(sym)
       end
 
-      def push
+      def push_local
         original_scope = @scope
-        @scope = @scope.push
+        @scope = @scope.push_local
+        res = yield
+        @scope = original_scope
+        res
+      end
+
+      def push_class(class_sym)
+        original_scope = @scope
+        @scope = @scope.push_class(class_sym)
         res = yield
         @scope = original_scope
         res

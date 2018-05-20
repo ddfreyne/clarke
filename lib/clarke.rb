@@ -72,6 +72,7 @@ require_relative 'clarke/util/symbol_table'
 require_relative 'clarke/ast'
 require_relative 'clarke/sym'
 require_relative 'clarke/errors'
+require_relative 'clarke/scope'
 
 require_relative 'clarke/common/visitor'
 require_relative 'clarke/common/transformer'

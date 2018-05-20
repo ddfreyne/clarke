@@ -114,7 +114,7 @@ module Clarke
           void_type,
         )
 
-        @scope =
+        symtab =
           Clarke::Util::SymbolTable
           .new
           .define(any_type)
@@ -125,6 +125,8 @@ module Clarke
           .define(void_type)
           .define(print_sym)
           .define(array_class_sym)
+
+        @scope = Clarke::Scope::Local.new(symtab)
 
         @envish = {
           @scope.resolve('print') => print,
