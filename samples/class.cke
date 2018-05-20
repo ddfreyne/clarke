@@ -1,23 +1,23 @@
 class Person {
-  prop firstName: string
-  prop lastName: string
+  ivar firstName: string
+  ivar lastName: string
 
-  fun init(firstName, lastName) {
-    this.firstName = firstName
-    this.lastName = lastName
+  fun init(firstName: string, lastName: string) {
+    @firstName = firstName
+    @lastName = lastName
   }
 
-  fun getFirstName() { this.firstName }
-  fun getLastName() { this.lastName }
+  fun firstName() { @firstName }
+  fun lastName() { @lastName }
 }
 
 let person = Person("Denis", "Defreyne")
 
-print(person.getFirstName())
-print(person.getLastName())
+print(person.firstName())
+print(person.lastName())
 
-let getFirstName = person.getFirstName
-print(getFirstName())
+let firstName = person.firstName
+print(firstName())
 
 print(person.firstName)
 print(person.lastName)

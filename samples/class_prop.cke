@@ -1,8 +1,0 @@
-class Foo {
-  prop a: int
-}
-
-let f = Foo()
-
-f.a = 123
-print(f.a)
