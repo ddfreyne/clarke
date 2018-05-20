@@ -132,7 +132,7 @@ module Clarke
           .define(print_sym)
           .define(array_class_sym)
 
-        @scope = Clarke::Scope::Local.new(symtab)
+        @scope = Clarke::Scope::Global.new(symtab)
 
         @envish = {
           @scope.resolve('print') => print,

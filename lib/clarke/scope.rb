@@ -26,6 +26,12 @@ module Clarke
       end
     end
 
+    class Global < Base
+      def with_symtab(symtab)
+        self.class.new(symtab)
+      end
+    end
+
     class Local < Base
       def with_symtab(symtab)
         self.class.new(symtab)

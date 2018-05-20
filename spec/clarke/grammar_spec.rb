@@ -141,9 +141,7 @@ describe 'Clarke' do
     expect('(((1)))').to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 1))
   end
 
-  xit 'handles props with class type' do
-    # TODO: This won’t work until we have a proper global scope
-
+  it 'handles props with class type' do
     expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
       class Oink {
         ivar a: int

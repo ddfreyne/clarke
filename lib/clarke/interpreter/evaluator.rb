@@ -6,6 +6,8 @@ module Clarke
       def initialize(global_scope, initial_env)
         @global_scope = global_scope
         @initial_env = initial_env
+
+        @global_env = @initial_env.push
       end
 
       def visit_fun_call(expr, env)
@@ -15,7 +17,7 @@ module Clarke
         if base.is_a?(Clarke::Interpreter::Runtime::Fun)
           base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
-          instance_env = Clarke::Util::Env.new
+          instance_env = @global_env.push
 
           # Set ivars
           base.scope.class_sym.ivar_syms.each do |ivar_sym|
@@ -255,8 +257,7 @@ module Clarke
       end
 
       def visit_exprs(exprs)
-        env = @initial_env.push
-        multi_visit(exprs, env)
+        multi_visit(exprs, @global_env)
       end
 
       private
