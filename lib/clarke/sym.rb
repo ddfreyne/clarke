@@ -100,6 +100,13 @@ module Clarke
       include Type
 
       attr_accessor :scope
+      attr_reader :ivar_syms
+
+      def initialize(*)
+        super
+
+        @ivar_syms = []
+      end
     end
 
     class Fun < Base

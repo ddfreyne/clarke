@@ -15,8 +15,20 @@ module Clarke
         if base.is_a?(Clarke::Interpreter::Runtime::Fun)
           base.call(values, self)
         elsif base.is_a?(Clarke::Interpreter::Runtime::Class)
-          instance = Clarke::Interpreter::Runtime::Instance.new(internal_state: {}, env: Clarke::Util::Env.new, klass: base)
+          instance_env = Clarke::Util::Env.new
 
+          # Set ivars
+          base.scope.class_sym.ivar_syms.each do |ivar_sym|
+            instance_env[ivar_sym] = Clarke::Interpreter::Runtime::Null.instance
+          end
+
+          instance = Clarke::Interpreter::Runtime::Instance.new(
+            internal_state: {},
+            env: instance_env,
+            klass: base,
+          )
+
+          # Call initializer
           init_sym = base.scope.resolve('init', nil)
           init_fun = init_sym && base.env.fetch(init_sym)
           if init_fun

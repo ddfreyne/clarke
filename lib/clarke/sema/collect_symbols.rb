@@ -67,6 +67,9 @@ module Clarke
       def visit_ivar_decl(expr)
         sym = Clarke::Sym::Ivar.new(expr.name)
         define(sym)
+
+        class_sym = @scope.class_sym
+        class_sym.ivar_syms << sym
       end
 
       def visit_expr(expr)

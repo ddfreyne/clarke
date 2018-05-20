@@ -316,6 +316,27 @@ describe 'Clarke' do
       .to output("<function>\n").to_stdout
   end
 
+  it 'handles undefined ivars' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Null.instance)
+      class Foo {
+        ivar b: int
+        fun a(): int { this.b }
+      }
+      Foo().a()
+    CODE
+  end
+
+  it 'handles ivars' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 123))
+      class Foo {
+        ivar b: int
+        fun init(): void { this.b = 123 }
+        fun a(): int { this.b }
+      }
+      Foo().a()
+    CODE
+  end
+
   it 'prevents ivar getters from returning non-member data' do
     expect("let a = 1\nclass Foo {}\nFoo().a").to fail_with(Clarke::Errors::NameError)
   end

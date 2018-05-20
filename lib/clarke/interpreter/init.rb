@@ -9,6 +9,8 @@ module Clarke
       attr_reader :scope
 
       def initialize
+        # TODO: use Scope, not SymbolTable, for scopes
+
         any_type = Clarke::Sym::BuiltinType.new('any')
         auto_type = Clarke::Sym::BuiltinType.new('auto')
         bool_type = Clarke::Sym::BuiltinType.new('bool')
@@ -72,7 +74,7 @@ module Clarke
           end,
         )
 
-        array_class_scope =
+        array_class_symtab =
           Clarke::Util::SymbolTable
           .new
           .define(Clarke::Sym::Var.new('this'))
@@ -92,6 +94,11 @@ module Clarke
             ),
           )
 
+        array_class_sym = Clarke::Sym::Class.new('Array')
+
+        array_class_scope =
+          Clarke::Scope::Class.new(array_class_sym, array_class_symtab)
+
         array_class_env =
           Clarke::Util::Env.new.tap do |env|
             env[array_class_scope.resolve('init')] = array_init
@@ -105,7 +112,6 @@ module Clarke
           scope: array_class_scope,
         )
 
-        array_class_sym = Clarke::Sym::Class.new('Array')
         array_class_sym.scope = array_class_scope
 
         print_sym = Clarke::Sym::Fun.new(
