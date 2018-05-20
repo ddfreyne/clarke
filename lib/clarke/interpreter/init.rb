@@ -9,8 +9,6 @@ module Clarke
       attr_reader :scope
 
       def initialize
-        # TODO: use Scope, not SymbolTable, for scopes
-
         any_type = Clarke::Sym::BuiltinType.new('any')
         auto_type = Clarke::Sym::BuiltinType.new('auto')
         bool_type = Clarke::Sym::BuiltinType.new('bool')
@@ -20,7 +18,7 @@ module Clarke
 
         print = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new,
+          scope: Clarke::Scope::Local.new,
           params: %w[a],
           body: lambda do |_ev, _env, _scope, a|
             puts(a.clarke_to_string)
@@ -30,7 +28,7 @@ module Clarke
 
         array_init = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
+          scope: Clarke::Scope::Local.new.define(Clarke::Sym::Var.new('this')),
           params: %w[],
           body: lambda do |_ev, env, scope|
             this_sym = scope.resolve('this')
@@ -41,7 +39,7 @@ module Clarke
 
         array_add = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
+          scope: Clarke::Scope::Local.new.define(Clarke::Sym::Var.new('this')),
           params: %w[elem],
           body: lambda do |_ev, env, scope, elem|
             this_sym = scope.resolve('this')
@@ -53,7 +51,7 @@ module Clarke
 
         array_each = Clarke::Interpreter::Runtime::Fun.new(
           env: Clarke::Util::Env.new,
-          scope: Clarke::Util::SymbolTable.new.define(Clarke::Sym::Var.new('this')),
+          scope: Clarke::Scope::Local.new.define(Clarke::Sym::Var.new('this')),
           params: %w[fn],
           body: lambda do |ev, env, scope, fn|
             this_sym = scope.resolve('this')
