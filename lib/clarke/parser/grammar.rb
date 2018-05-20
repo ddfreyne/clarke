@@ -170,9 +170,13 @@ module Clarke
       )
 
       REF =
-        NAME.map do |data, success, old_pos|
+        seq(
+          opt(char('@').capture),
+          NAME,
+        ).map do |data, success, old_pos|
           context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-          Clarke::AST::Ref.new(name: data, context: context)
+          name = data.take(2).join('') # prefix with sigil
+          Clarke::AST::Ref.new(name: name, context: context)
         end
 
       ARG_LIST =
@@ -243,6 +247,7 @@ module Clarke
 
       ASSIGNMENT =
         seq(
+          opt(char('@').capture).map { |d| d || '' },
           VAR_NAME,
           WS0.ignore,
           char('=').ignore,
@@ -250,7 +255,8 @@ module Clarke
           lazy { EXPR },
         ).compact.map do |data, success, old_pos|
           context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-          Clarke::AST::Assignment.new(var_name: data[0], expr: data[1], context: context)
+          var_name = data.take(2).join('') # prefix with sigil
+          Clarke::AST::Assignment.new(var_name: var_name, expr: data[2], context: context)
         end
 
       VAR_DECL =
@@ -388,7 +394,7 @@ module Clarke
           TYPE_ANNOTATION,
         ).compact.map do |data, success, old_pos|
           context = Clarke::Util::Context.new(input: success.input, from: old_pos, to: success.pos)
-          Clarke::AST::IvarDecl.new(name: data[0], type_name: data[1], context: context)
+          Clarke::AST::IvarDecl.new(name: '@' + data[0], type_name: data[1], context: context)
         end
 
       CLASS_BODY_STMT =

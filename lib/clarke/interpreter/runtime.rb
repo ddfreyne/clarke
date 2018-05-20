@@ -6,7 +6,7 @@ module Clarke
       class Fun < Dry::Struct
         attribute :params, Dry::Types::Any
         attribute :body, Dry::Types::Any
-        attribute :env, Dry::Types::Any
+        attribute :env, Dry::Types::Any # TODO: remove?
         attribute :scope, Dry::Types::Any
 
         def describe
@@ -24,6 +24,7 @@ module Clarke
         def bind(instance)
           this_sym = scope.resolve('this')
 
+          # TODO: define params in env
           new_env = instance.env.push
           new_env[this_sym] = instance
 
