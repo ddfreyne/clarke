@@ -24,7 +24,6 @@ module Clarke
         def bind(instance)
           this_sym = scope.resolve('this')
 
-          # TODO: define params in env
           new_env = instance.env.push
           new_env[this_sym] = instance
 
