@@ -43,7 +43,10 @@ module Clarke
       end
 
       # FIXME: #void?
-      # FIXME: #concrete?
+
+      def concrete?
+        true
+      end
 
       def match?(other_type)
         self == other_type || other_type.any?
@@ -85,6 +88,14 @@ module Clarke
 
       def inspect
         "<InstanceType klass=#{klass.inspect}>"
+      end
+
+      def hash
+        self.class.hash ^ klass.hash
+      end
+
+      def ==(other)
+        other.is_a?(self.class) && other.klass == klass
       end
     end
 

@@ -322,6 +322,20 @@ describe 'Clarke' do
     expect('a').to fail_with(Clarke::Errors::NameError)
   end
 
+  it 'allows class params' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 110))
+      class Foo {
+        fun a(): int { 100 }
+      }
+
+      class Bar {
+        fun a(f: Foo): int { f.a() + 10 }
+      }
+
+      Bar().a(Foo())
+    CODE
+  end
+
   it 'can’t create functions with uppercase name' do
     expect("class A {\n  fun b() { true }\n}").not_to fail_with(Clarke::Errors::SyntaxError)
     expect("class A {\n  fun B() { true }\n}").to fail_with(Clarke::Errors::SyntaxError)

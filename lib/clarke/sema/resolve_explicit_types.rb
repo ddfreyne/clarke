@@ -31,8 +31,11 @@ module Clarke
         super
 
         sym = expr.scope.resolve(expr.name)
-        sym.type = expr.scope.resolve(expr.type_name)
-        expr.type = sym.type
+        type = expr.scope.resolve(expr.type_name)
+        type = Clarke::Sym::InstanceType.new(type) if type.is_a?(Clarke::Sym::Class)
+
+        sym.type = type
+        expr.type = type
       end
 
       def visit_ivar_decl(expr)

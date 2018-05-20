@@ -91,15 +91,15 @@ module Clarke
     end
 
     class ArgumentTypeMismatch < GenericError
-      def initialize(arg_type, param_type)
-        @arg_type = arg_type
+      def initialize(param_type, arg_type)
         @param_type = param_type
+        @arg_type = arg_type
 
         super(message)
       end
 
       def message
-        "Argument has type #{@arg_type}, which is incompatible with parameter type #{@param_type}"
+        "Argument has type #{@arg_type.inspect}, which is incompatible with parameter type #{@param_type.inspect}"
       end
     end
 

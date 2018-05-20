@@ -36,8 +36,11 @@ module Clarke
         end
 
         # Verify argument type
-        pairs = param_syms.zip(expr.arguments.map)
-        wrong_pairs = pairs.reject { |(param_sym, arg)| arg.type.match?(param_sym.type) }
+        pairs =
+          param_syms
+          .zip(expr.arguments.map)
+          .map { |x| x.map(&:type) }
+        wrong_pairs = pairs.reject { |(param_type, arg_type)| arg_type.match?(param_type) }
         if wrong_pairs.any?
           raise Clarke::Errors::ArgumentTypeMismatch.new(
             wrong_pairs.first[0],

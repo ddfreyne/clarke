@@ -32,12 +32,12 @@ module Clarke
     pass = Clarke::Sema::ResolveImplicitTypes.new(global_scope)
     pass.visit_exprs(exprs)
 
+    # Debug
+    exprs.each { |e| p e } if verbose
+
     # Typecheck
     pass = Clarke::Sema::Typecheck.new
     pass.visit_exprs(exprs)
-
-    # Debug
-    exprs.each { |e| p e } if verbose
 
     # Generate initial env
     initial_env = Clarke::Util::Env.new
