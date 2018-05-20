@@ -21,7 +21,6 @@ module Clarke
         class_sym = Clarke::Sym::Class.new(expr.name)
         define(class_sym)
 
-        # push_local do
         push_class(class_sym) do
           this_sym = Clarke::Sym::Var.new('this')
           this_sym.type = Clarke::Sym::InstanceType.new(class_sym)

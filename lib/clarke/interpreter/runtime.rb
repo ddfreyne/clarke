@@ -24,7 +24,7 @@ module Clarke
         def bind(instance)
           this_sym = scope.resolve('this')
 
-          new_env = env.push
+          new_env = instance.env.push
           new_env[this_sym] = instance
 
           Fun.new(
