@@ -24,7 +24,6 @@ module Clarke
         def bind(instance)
           this_sym = scope.resolve('this')
 
-          # TODO: define params
           new_env = instance.env.push
           new_env[this_sym] = instance
 
@@ -130,6 +129,14 @@ module Clarke
 
         def self.describe
           'integer'
+        end
+
+        def inspect
+          "<#{self.class} value=#{value}>"
+        end
+
+        def to_s
+          inspect
         end
 
         def clarke_to_string

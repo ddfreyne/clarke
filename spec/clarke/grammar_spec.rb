@@ -246,6 +246,16 @@ describe 'Clarke' do
     CODE
   end
 
+  it 'can fetch arguments from methods' do
+    expect(<<~CODE).to evaluate_to(Clarke::Interpreter::Runtime::Integer.new(value: 119))
+      class Foo {
+        ivar a: string
+        fun add_one(a: int): int { a + 1 }
+      }
+      Foo().add_one(118)
+    CODE
+  end
+
   it 'handles empty classes' do
     expect('class Foo {}').to evaluate_to(instance_of(Clarke::Interpreter::Runtime::Class))
   end
