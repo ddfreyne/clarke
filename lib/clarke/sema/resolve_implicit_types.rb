@@ -66,6 +66,7 @@ module Clarke
 
         class_sym = base_type.klass
         thing = class_sym.scope.resolve(expr.name)
+        expr.name_sym = thing
         case thing
         when Clarke::Sym::Fun
           expr.type = thing

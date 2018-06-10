@@ -169,6 +169,7 @@ module Clarke
     class Getter < AbstractNode
       attribute :base, Dry::Types::Any
       attribute :name, Dry::Types::Any
+      attr_accessor :name_sym
 
       def ast_name
         'Getter'

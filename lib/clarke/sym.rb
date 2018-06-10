@@ -22,6 +22,18 @@ module Clarke
         {}
       end
 
+      def hash
+        self.class.hash ^ @name.hash
+      end
+
+      def ==(other)
+        other.is_a?(self.class) && @name == other.name
+      end
+
+      def eql?(other)
+        other.is_a?(self.class) && @name == other.name
+      end
+
       def to_s
         @name
       end

@@ -16,6 +16,12 @@ class Node {
   fun init(context: NodeContext) {
     @context = context
   }
+
+  fun context() {
+    @context
+  }
 }
 
-print(Node(NodeContext("asdf", 1, 2)))
+let node = Node(NodeContext("asdf", 1, 2))
+print(node)
+node.context

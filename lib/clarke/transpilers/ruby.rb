@@ -9,9 +9,11 @@ module Clarke
       end
 
       def run
+        visitor = MyVisitor.new
+
         puts 'print = ->(a) { puts a }'
         puts
-        puts @exprs.map { |e| MyVisitor.new.visit_expr(e) }.join("\n")
+        puts @exprs.map { |e| visitor.visit_expr(e) }.join("\n")
       end
 
       class MyVisitor < Clarke::Visitor
@@ -31,9 +33,9 @@ module Clarke
           (+'').tap do |res|
             res << "class #{expr.name}\n"
             res << expr.members
-              .map { |m| indent(visit_expr(m)) + "\n" }
-              .reject { |m| m.strip.empty? }
-              .join("\n")
+                       .map { |m| indent(visit_expr(m)) + "\n" }
+                       .reject { |m| m.strip.empty? }
+                       .join("\n")
             res << "end\n"
           end
         end
@@ -59,12 +61,12 @@ module Clarke
           (+'').tap do |res|
             res << "def #{name_for(expr.name_sym)}#{params}" << "\n"
             res << indent(visit_expr(expr.body)) << "\n"
-            res << "end"
+            res << 'end'
           end
         end
 
         def visit_getter(expr)
-          visit_expr(expr.base) + '.' + expr.name
+          visit_expr(expr.base) + '.' + name_for(expr.name_sym)
         end
 
         def visit_if(expr)
@@ -81,7 +83,7 @@ module Clarke
           expr.value.to_s
         end
 
-        def visit_ivar_decl(expr)
+        def visit_ivar_decl(_expr)
           ''
         end
 
