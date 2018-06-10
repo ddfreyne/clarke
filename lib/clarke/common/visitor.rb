@@ -49,6 +49,10 @@ module Clarke
       nil
     end
 
+    def visit_ivar_decl(_expr)
+      nil
+    end
+
     def visit_lambda_def(expr)
       expr.params.each { |e| visit_expr(e) }
       visit_expr(expr.body)
@@ -137,10 +141,6 @@ module Clarke
     end
 
     def visit_param(_expr)
-      nil
-    end
-
-    def visit_ivar_decl(_expr)
       nil
     end
 

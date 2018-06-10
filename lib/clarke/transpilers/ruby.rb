@@ -14,13 +14,57 @@ module Clarke
         puts @exprs.map { |e| MyVisitor.new.visit_expr(e) }.join("\n")
       end
 
-      class MyVisitor
+      class MyVisitor < Clarke::Visitor
         def indent(lines)
           lines.each_line.map { |l| '  ' + l.rstrip }.join("\n")
         end
 
+        def visit_assignment(expr)
+          expr.var_name + ' = ' + visit_expr(expr.expr)
+        end
+
         def visit_block(expr)
           expr.exprs.map { |e| visit_expr(e) }.join("\n")
+        end
+
+        def visit_class_def(expr)
+          (+'').tap do |res|
+            res << "class #{expr.name}\n"
+            res << expr.members
+              .map { |m| indent(visit_expr(m)) + "\n" }
+              .reject { |m| m.strip.empty? }
+              .join("\n")
+            res << "end\n"
+          end
+        end
+
+        def visit_false_lit(_expr)
+          'false'
+        end
+
+        def visit_fun_call(expr)
+          args = expr.arguments.map { |a| visit_expr(a) }.join(', ')
+
+          case expr.base.type
+          when Clarke::Sym::Class
+            visit_expr(expr.base) + '.new(' + args + ')'
+          when Clarke::Sym::Fun
+            visit_expr(expr.base) + '.(' + args + ')'
+          end
+        end
+
+        def visit_fun_def(expr)
+          params = '(' + expr.params.map(&:name).join(', ') + ')'
+
+          (+'').tap do |res|
+            res << "def #{name_for(expr.name_sym)}#{params}" << "\n"
+            res << indent(visit_expr(expr.body)) << "\n"
+            res << "end"
+          end
+        end
+
+        def visit_getter(expr)
+          visit_expr(expr.base) + '.' + expr.name
         end
 
         def visit_if(expr)
@@ -31,6 +75,19 @@ module Clarke
             res << indent(visit_expr(expr.body_false)) << "\n"
             res << 'end'
           end
+        end
+
+        def visit_integer_lit(expr)
+          expr.value.to_s
+        end
+
+        def visit_ivar_decl(expr)
+          ''
+        end
+
+        def visit_lambda_def(expr)
+          params = expr.params.any? ? ' |' + expr.params.map(&:name).join(', ') + '|' : ''
+          "lambda do#{params}\n#{indent visit_expr(expr.body)}\nend"
         end
 
         def visit_op(expr)
@@ -49,26 +106,19 @@ module Clarke
           [expr.lhs, expr.rhs].map { |e| visit_expr(e) }.join(' - ')
         end
 
-        def visit_integer_lit(expr)
-          expr.value.to_s
+        # TODO: visit_op*
+
+        def visit_param(expr)
+          expr.name
         end
 
-        def visit_false_lit(_expr)
-          'false'
+        def visit_ref(expr)
+          sym = expr.scope.resolve(expr.name)
+          name_for(sym)
         end
 
-        def visit_fun_call(expr)
-          visit_expr(expr.base) + '.(' + expr.arguments.map { |a| visit_expr(a) }.join(', ') + ')'
-        end
-
-        def visit_fun_def(expr)
-          params = expr.params.any? ? ' |' + expr.params.map(&:name).join(', ') + '|' : ''
-          "#{name_for(expr.name_sym)} = lambda do#{params}\n#{indent visit_expr(expr.body)}\nend"
-        end
-
-        def visit_lambda_def(expr)
-          params = expr.params.any? ? ' |' + expr.params.map(&:name).join(', ') + '|' : ''
-          "lambda do#{params}\n#{indent visit_expr(expr.body)}\nend"
+        def visit_setter(expr)
+          visit_expr(expr.base) + ' = ' + visit_expr(expr.value)
         end
 
         def visit_string_lit(expr)
@@ -79,59 +129,9 @@ module Clarke
           'true'
         end
 
-        def visit_var(expr)
-          sym = expr.scope.resolve(expr.name)
-          name_for(sym)
-        end
-
-        def visit_var_decl(expr)
+        def visit_var_def(expr)
           sym = expr.scope.resolve(expr.var_name)
           "#{name_for(sym)} = #{visit_expr(expr.expr)}"
-        end
-
-        def visit_expr(expr)
-          case expr
-          when Clarke::AST::IntegerLit
-            visit_integer_lit(expr)
-          when Clarke::AST::TrueLit
-            visit_true_lit(expr)
-          when Clarke::AST::FalseLit
-            visit_false_lit(expr)
-          when Clarke::AST::StringLit
-            visit_string_lit(expr)
-          when Clarke::AST::FunCall
-            visit_fun_call(expr)
-          when Clarke::AST::FunDef
-            visit_fun_def(expr)
-          when Clarke::AST::Getter
-            visit_get_prop(expr)
-          when Clarke::AST::Ref
-            visit_var(expr)
-          when Clarke::AST::VarDef
-            visit_var_decl(expr)
-          when Clarke::AST::Assignment
-            visit_assignment(expr)
-          when Clarke::AST::Block
-            visit_block(expr)
-          when Clarke::AST::If
-            visit_if(expr)
-          when Clarke::AST::Op
-            visit_op(expr)
-          when Clarke::AST::OpAdd
-            visit_op_add(expr)
-          when Clarke::AST::OpGt
-            visit_op_gt(expr)
-          when Clarke::AST::OpSubtract
-            visit_op_subtract(expr)
-          when Clarke::AST::LambdaDef
-            visit_lambda_def(expr)
-          when Clarke::AST::ClassDef
-            visit_class_def(expr)
-          when Clarke::AST::Setter
-            visit_set_prop(expr)
-          else
-            raise ArgumentError, "don’t know how to handle #{expr.inspect}"
-          end
         end
 
         def name_for(sym)
@@ -140,6 +140,11 @@ module Clarke
 
           @sym_to_name.fetch(sym) do
             candidate = sym.name
+
+            if candidate == 'init'
+              candidate = 'initialize'
+            end
+
             loop do
               if @name_to_sym.key?(candidate)
                 candidate += '_'
