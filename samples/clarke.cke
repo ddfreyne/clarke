@@ -1,0 +1,21 @@
+class NodeContext {
+  ivar input: string
+  ivar from: int
+  ivar to: int
+
+  fun init(input: string, from: int, to: int) {
+    @input = input
+    @from = from
+    @to = to
+  }
+}
+
+class Node {
+  ivar context: NodeContext
+
+  fun init(context: NodeContext) {
+    @context = context
+  }
+}
+
+print(Node(NodeContext("asdf", 1, 2)))

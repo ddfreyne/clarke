@@ -173,6 +173,11 @@ module Clarke
         generic_visit_binop(expr)
       end
 
+      def visit_param(expr)
+        super
+        expr.name_sym = expr.scope.resolve(expr.name)
+      end
+
       def visit_ref(expr)
         super
 

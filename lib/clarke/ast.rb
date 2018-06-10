@@ -59,6 +59,7 @@ module Clarke
       attribute :name, Types::Strict::String
       attribute :type_name, Types::Strict::String
       attr_accessor :type_sym
+      attr_accessor :name_sym
 
       def ast_name
         'Param'

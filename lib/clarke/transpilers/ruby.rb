@@ -20,7 +20,7 @@ module Clarke
         end
 
         def visit_assignment(expr)
-          expr.var_name + ' = ' + visit_expr(expr.expr)
+          name_for(expr.var_name_sym) + ' = ' + visit_expr(expr.expr)
         end
 
         def visit_block(expr)
@@ -54,7 +54,7 @@ module Clarke
         end
 
         def visit_fun_def(expr)
-          params = '(' + expr.params.map(&:name).join(', ') + ')'
+          params = '(' + expr.params.map { |pa| visit_expr(pa) }.join(', ') + ')'
 
           (+'').tap do |res|
             res << "def #{name_for(expr.name_sym)}#{params}" << "\n"
@@ -109,7 +109,7 @@ module Clarke
         # TODO: visit_op*
 
         def visit_param(expr)
-          expr.name
+          name_for(expr.name_sym)
         end
 
         def visit_ref(expr)
@@ -135,6 +135,8 @@ module Clarke
         end
 
         def name_for(sym)
+          # TODO: make this depend on scope
+
           @name_to_sym ||= {}
           @sym_to_name ||= {}
 
